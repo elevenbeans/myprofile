@@ -66,10 +66,47 @@
       background: var(--card-bg);
       border-color: var(--accent);
     }
+
+    main {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .hero {
+      padding: 4rem 0 3rem;
+    }
+
+    .hero__name {
+      font-size: 4rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      margin-bottom: 0.5rem;
+    }
+
+    .hero__title {
+      font-size: 1.25rem;
+      color: var(--accent);
+      font-weight: 500;
+      margin-bottom: 1rem;
+    }
+
+    .hero__tagline {
+      font-size: 1.125rem;
+      color: var(--text-muted);
+      max-width: 480px;
+    }
   </style>
 </head>
 <body>
-  <!-- content will be added in subsequent tasks -->
+  <main>
+    <section class="hero">
+      <h1 class="hero__name">elevenbeans</h1>
+      <p class="hero__title">software eng</p>
+      <p class="hero__tagline">Building things for the web</p>
+    </section>
+  </main>
   <script>
     /* JS will be added in a later task */
   </script>
