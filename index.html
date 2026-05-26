@@ -539,6 +539,9 @@
       toggle.textContent = dark ? '\u2600' : '\u263E';
     }
 
+    const expToggle = document.getElementById('expToggle');
+    const timeline = document.querySelector('.timeline');
+
     if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && prefersDark.matches)) {
       applyTheme(true);
     }
@@ -555,8 +558,6 @@
       applyLang(currentLang === 'en' ? 'zh' : 'en');
     });
 
-    const expToggle = document.getElementById('expToggle');
-    const timeline = document.querySelector('.timeline');
     if (expToggle && timeline) {
       expToggle.addEventListener('click', () => {
         const expanded = timeline.classList.toggle('expanded');
