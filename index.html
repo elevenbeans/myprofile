@@ -390,7 +390,7 @@
   </div>
   <main>
     <section class="hero">
-      <h1 class="hero__name">Elevenbeans</h1>
+      <h1 class="hero__name" id="heroName">Elevenbeans</h1>
       <p class="hero__title" data-i18n="hero-title">Software Eng</p>
       <p class="hero__tagline" data-i18n="hero-tagline">Building things for the web</p>
     </section>
@@ -725,6 +725,15 @@
         closeTerminal();
       }
     });
+
+    const heroName = document.getElementById('heroName');
+    if (heroName) {
+      heroName.addEventListener('dblclick', (e) => {
+        e.preventDefault();
+        openTerminal();
+      });
+      heroName.style.cursor = 'default';
+    }
 
     if (termInput) {
       termInput.addEventListener('keydown', (e) => {
