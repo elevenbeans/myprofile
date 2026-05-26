@@ -276,6 +276,50 @@
       border-color: var(--accent);
     }
 
+    .term-hint {
+      display: none;
+      align-items: center;
+      gap: 0.25rem;
+      font-family: 'Courier New', monospace;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 0.5rem 0;
+      transition: color 0.2s;
+      user-select: none;
+    }
+
+    .term-hint:hover {
+      color: var(--accent);
+    }
+
+    .term-hint__prompt {
+      color: var(--accent);
+      font-weight: bold;
+    }
+
+    .term-hint__cursor {
+      display: inline-block;
+      width: 0.55em;
+      height: 1em;
+      background: var(--text-muted);
+      margin-left: 0.1em;
+      animation: blink 1s step-end infinite;
+      vertical-align: text-bottom;
+    }
+
+    .term-hint:hover .term-hint__cursor {
+      background: var(--accent);
+    }
+
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+
+    @media (min-width: 601px) {
+      .term-hint { display: inline-flex; }
+    }
+
     .terminal-overlay {
       display: none;
       position: fixed;
@@ -477,6 +521,10 @@
         <span class="tag" data-i18n="tag-7">Vibe Coding</span>
       </div>
     </section>
+
+    <div class="term-hint" id="termHint" role="button" tabindex="0" aria-label="Open terminal">
+      <span class="term-hint__prompt">&gt;</span> terminal<span class="term-hint__cursor"></span>
+    </div>
 
     <footer class="footer">
       <div class="footer__links">
@@ -733,6 +781,11 @@
         openTerminal();
       });
       heroName.style.cursor = 'default';
+    }
+
+    const termHint = document.getElementById('termHint');
+    if (termHint) {
+      termHint.addEventListener('click', openTerminal);
     }
 
     if (termInput) {
