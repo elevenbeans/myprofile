@@ -281,7 +281,6 @@
     .term-hint {
       display: none;
       align-items: center;
-      gap: 0.25rem;
       font-family: 'Courier New', monospace;
       font-size: 0.85rem;
       color: var(--text-muted);
@@ -294,10 +293,14 @@
     .term-hint:hover {
       color: var(--accent);
     }
+    .term-hint, .agent-hint {
+      align-items: center;
+    }
 
     .term-hint__prompt {
       color: var(--accent);
       font-weight: bold;
+      margin-right: 0.35em;
     }
 
     .term-hint__cursor {
@@ -426,6 +429,256 @@
       .timeline.expanded .timeline__entry:nth-child(n+4) { display: block; }
       .exp-toggle { display: inline-block; }
     }
+
+    .hints-row {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.15rem;
+      margin-top: 0.25rem;
+    }
+
+    .agent-hint {
+      display: none;
+      cursor: pointer;
+      font-family: 'Courier New', monospace;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      transition: color 0.2s;
+      user-select: none;
+    }
+    .agent-hint:hover {
+      color: #58a6ff;
+    }
+    .agent-hint__prompt {
+      color: #58a6ff;
+      font-weight: bold;
+      margin-right: 0.35em;
+    }
+    .agent-hint__cursor {
+      display: inline-block;
+      width: 0.55em;
+      height: 1em;
+      background: var(--text-muted);
+      margin-left: 0.1em;
+      animation: blink 1s step-end infinite;
+      vertical-align: text-bottom;
+    }
+    .agent-hint:hover .agent-hint__cursor {
+      background: #58a6ff;
+    }
+    @media (min-width: 601px) {
+      .agent-hint { display: inline-flex; }
+    }
+
+    .agent-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 10, 10, 0.92);
+      z-index: 998;
+      padding: 1.5rem;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .agent-overlay.open { display: flex; }
+
+    .agent {
+      position: relative;
+      width: 100%;
+      max-width: 780px;
+      height: 85vh;
+      max-height: 680px;
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    }
+
+    .agent__messages {
+      flex: 1;
+      min-height: 0;
+      height: 0;
+      overflow: hidden auto;
+      padding: 1.25rem 1.25rem 0.75rem;
+    }
+
+    .agent__header {
+      display: flex;
+      align-items: center;
+      padding: 0.6rem 1rem;
+      border-bottom: 1px solid #30363d;
+      background: #0d1117;
+      gap: 0.75rem;
+      flex-shrink: 0;
+    }
+    .agent__header-session {
+      color: #8b949e;
+      font-size: 0.78rem;
+      font-weight: 500;
+    }
+    .agent__header-model {
+      color: #58a6ff;
+      font-size: 0.72rem;
+      background: #1f2937;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+    }
+    .agent__header-spacer { flex: 1; }
+    .agent__header-close {
+      background: none;
+      border: none;
+      color: #8b949e;
+      cursor: pointer;
+      font-size: 1.2rem;
+      padding: 0.25rem;
+      line-height: 1;
+      border-radius: 4px;
+      transition: background 0.2s, color 0.2s;
+    }
+    .agent__header-close:hover {
+      background: #21262d;
+      color: #f85149;
+    }
+
+    .agent__msg {
+      margin-bottom: 0.75rem;
+      animation: agentFadeIn 0.3s ease;
+    }
+    .agent__welcome { margin-bottom: 1rem; }
+    @keyframes agentFadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .agent__msg-header {
+      display: block;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.2rem;
+    }
+    .agent__msg-header.u { color: #58a6ff; }
+    .agent__msg-header.a { color: #bc8cff; }
+    .agent__msg-body {
+      color: #e6edf3;
+      font-size: 0.88rem;
+      line-height: 1.65;
+      white-space: pre-wrap;
+    }
+    .agent__msg-body strong { color: #f0f6fc; }
+    .agent__msg-body code {
+      background: #1f2937;
+      padding: 0.1em 0.35em;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.82em;
+      color: #f0c674;
+    }
+    .agent__msg-body pre {
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      padding: 0.6rem 0.75rem;
+      margin: 0.5rem 0;
+      overflow-x: auto;
+      font-family: 'Courier New', monospace;
+      font-size: 0.78rem;
+      color: #e6edf3;
+      line-height: 1.5;
+    }
+
+    .agent__tool-call {
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      overflow: hidden;
+      margin: 0 0 0.75rem 1rem;
+      animation: agentFadeIn 0.3s ease;
+    }
+    .agent__tool-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.4rem 0.75rem;
+      font-size: 0.78rem;
+      font-family: 'Courier New', monospace;
+    }
+    .agent__tool-header.bash { color: #3fb950; }
+    .agent__tool-header.edit { color: #d29922; }
+    .agent__tool-header.read { color: #58a6ff; }
+    .agent__tool-icon { font-size: 0.85rem; }
+    .agent__tool-title { font-weight: 600; }
+    .agent__tool-arrow { color: #8b949e; margin-left: auto; font-size: 0.7rem; }
+    .agent__tool-output {
+      padding: 0.5rem 0.75rem;
+      border-top: 1px solid #30363d;
+      font-family: 'Courier New', monospace;
+      font-size: 0.78rem;
+      color: #8b949e;
+      white-space: pre-wrap;
+      background: #0d1117;
+      line-height: 1.5;
+    }
+
+    .agent__thinking {
+      color: #8b949e;
+      font-size: 0.82rem;
+      padding: 0 0 0.75rem 0.25rem;
+      font-style: italic;
+    }
+    .agent__thinking-dot {
+      animation: thinkDot 1.4s infinite both;
+      font-size: 1.2rem;
+      line-height: 1;
+    }
+    .agent__thinking-dot:nth-child(2) { animation-delay: 0.2s; }
+    .agent__thinking-dot:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes thinkDot {
+      0%, 80%, 100% { opacity: 0; }
+      40% { opacity: 1; }
+    }
+
+    .agent__input-bar {
+      display: flex;
+      align-items: center;
+      padding: 0.65rem 1rem;
+      border-top: 1px solid #30363d;
+      background: #0d1117;
+      gap: 0.5rem;
+      flex-shrink: 0;
+    }
+    .agent__input-prompt {
+      color: #58a6ff;
+      font-family: 'Courier New', monospace;
+      font-weight: bold;
+      font-size: 0.88rem;
+      white-space: nowrap;
+    }
+    .agent__input-bar input {
+      flex: 1;
+      background: none;
+      border: none;
+      color: #e6edf3;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 0.88rem;
+      outline: none;
+      caret-color: #58a6ff;
+    }
+    .agent__input-bar input::placeholder { color: #484f58; }
+
+    .agent-hints-secondary {
+      font-size: 0.75rem;
+      color: #484f58;
+      font-family: 'Courier New', monospace;
+    }
   </style>
 </head>
 <body>
@@ -530,8 +783,13 @@ Thinking, logic, execution.</p>
       </div>
     </section>
 
-    <div class="term-hint" id="termHint" role="button" tabindex="0" aria-label="Open terminal" title="Ctrl+` or press :">
-      <span class="term-hint__prompt">&gt;</span> terminal<span class="term-hint__cursor"></span>
+    <div class="hints-row">
+      <div class="term-hint" id="termHint" role="button" tabindex="0" aria-label="Open terminal" title="Ctrl+` or press :">
+        <span class="term-hint__prompt">&gt;</span> terminal<span class="term-hint__cursor"></span>
+      </div>
+      <div class="agent-hint" id="agentHint" role="button" tabindex="0" aria-label="Open code agent" title="Type codex / claude / opencode in terminal">
+        <span class="agent-hint__prompt">&gt;</span> code agent<span class="agent-hint__cursor"></span>
+      </div>
     </div>
 
     <footer class="footer">
@@ -553,6 +811,21 @@ Thinking, logic, execution.</p>
     <div class="terminal-input-line">
       <span class="prompt-char">$</span>
       <input type="text" id="terminalInput" autocomplete="off" spellcheck="false" aria-label="Terminal input">
+    </div>
+  </div>
+  <div class="agent-overlay" id="codeAgent" role="dialog" aria-label="Code agent">
+    <div class="agent">
+      <div class="agent__header">
+        <span class="agent__header-session">Session #1</span>
+        <span class="agent__header-model">opencode/deepseek-v4-flash-free</span>
+        <span class="agent__header-spacer"></span>
+        <button class="agent__header-close" id="agentClose" aria-label="Close agent">&times;</button>
+      </div>
+      <div class="agent__messages" id="agentMessages"></div>
+      <div class="agent__input-bar">
+        <span class="agent__input-prompt">&gt;</span>
+        <input type="text" id="agentInput" autocomplete="off" spellcheck="false" placeholder="Ask the code agent..." aria-label="Code agent input">
+      </div>
     </div>
   </div>
   <script>
@@ -691,11 +964,338 @@ Thinking, logic, execution.</p>
       });
     }
 
+    const agentOverlay = document.getElementById('codeAgent');
+    const agentMessages = document.getElementById('agentMessages');
+    const agentInput = document.getElementById('agentInput');
+    const agentModelLabel = document.querySelector('.agent__header-model');
+    let agentSource = 'opencode';
+    const agentModels = {
+      opencode: 'deepseek-v4-flash-free',
+      claude: 'claude-sonnet-4-20250514',
+      codex: 'gpt-4o-2025-01-22',
+    };
+
+    const agentResponses = [
+      {
+        keywords: ['hello', 'hi', 'hey', '你好', 'yo', 'hiya'],
+        tools: [],
+        respond: () => "Hey there! I'm your code agent, running right inside this static page.\n\nI can simulate tool calls, answer questions about this site, or just chat. Try:\n- `who are you`\n- `what can you do`\n- `explain this page`\n- `run tests`\n- `fix something`\n- `write code`\n- `browse files`\n- `deploy`",
+      },
+      {
+        keywords: ['who are you', 'who', 'what are you', '你是谁', 'what is this'],
+        tools: [
+          { type: 'bash', cmd: 'whoami', output: 'opencode (simulated AI code agent)\nModel: deepseek-v4-flash-free\nRuntime: static HTML page\nUptime: since you opened me' },
+        ],
+        respond: () => "I'm a simulated AI code agent — think of me as opencode running in your browser.\n\nI'm not connected to any real LLM, but I can put on a convincing show. Here's my system info:",
+      },
+      {
+        keywords: ['can you do', 'help', 'commands', '能力', 'what'],
+        tools: [],
+        respond: () => "I can simulate the opencode TUI experience right here. Try:\n\n- `write code` — I'll generate something\n- `explain this page` — I'll analyze the site\n- `run tests` — mock test execution\n- `fix something` — mock code edit with diff\n- `deploy` — mock deployment flow\n- `browse files` — list project files\n- `about elevenbeans` — who built this site\n- `42` — the meaning of life\n- `open the pod bay doors` — see what happens",
+      },
+      {
+        keywords: ['write code', 'generate', 'create', '写代码', 'make'],
+        tools: [
+          { type: 'bash', cmd: 'cat > hello.ts', output: '' },
+        ],
+        respond: () => "Sure! Let me write something for you:",
+        afterTools: () => ({
+          type: 'edit',
+          title: 'Created hello.ts',
+          output: `function greet(name: string): string {\n  return \`Hello, \${name}! Welcome to elevenbeans.me\`;\n}\n\nconst visitor = 'friend';\nconsole.log(greet(visitor));`,
+        }),
+      },
+      {
+        keywords: ['run test', 'test', '测试', 'npm test'],
+        tools: [
+          { type: 'bash', cmd: 'npm test', output: 'PASS  src/__tests__/app.test.tsx\n  ✓ renders without crashing (12ms)\n  ✓ handles dark mode toggle (8ms)\n  ✓ switches language (6ms)\n  ✓ opens terminal on dblclick (15ms)\n  ✓ agent overlay opens on "ai" command (10ms)\n\nTests: 5 passed, 5 total\nTime: 0.3s' },
+        ],
+        respond: () => "Running the test suite...",
+      },
+      {
+        keywords: ['fix', 'bug', '错误', '修', 'typo', 'broken'],
+        tools: [
+          { type: 'read', title: 'Reading index.html:534', output: '<span class="term-hint__cursor"></span>' },
+        ],
+        respond: () => "Found a potential issue. Let me take a look:",
+        afterTools: () => ({
+          type: 'edit',
+          title: 'Fixed CSS animation reference',
+          output: `- <span class="term-hint__cursor"></span>\n+ <span class="term-hint__cursor" style="animation: blink 1s step-end infinite"></span>\n\n✓ Fixed missing animation reference`,
+        }),
+      },
+      {
+        keywords: ['explain', 'what is', '是什么', '解释', 'describe', 'tell me about'],
+        tools: [
+          { type: 'bash', cmd: 'cat index.html | head -50', output: '<!DOCTYPE html>\n<html lang="en">\n<head>\n  <meta charset="UTF-8">\n  <title>elevenbeans</title>\n  ...' },
+        ],
+        respond: () => "This is a single-file personal profile page for **elevenbeans** — a software engineer from Amsterdam.\n\nIt contains:\n- Hero section\n- Work timeline (Trip.com, Travix, Alibaba)\n- Projects (NAS Portal, Blog, Budgetair, Cheaptickets, Game of Life)\n- Interests tags (7 of them)\n- A hidden **retro terminal** easter egg (Ctrl+`)\n- And **me** — the hidden code agent easter egg!\n\n100% static HTML/CSS/JS, zero dependencies.",
+      },
+      {
+        keywords: ['deploy', '发布', 'ship', 'publish'],
+        tools: [
+          { type: 'bash', cmd: 'npm run build', output: '✓ Building...\n✓ Static files generated\n✓ Assets optimized\n✓ Bundle size: 14.2 KB' },
+          { type: 'bash', cmd: 'gh pr create --title "feat: add hidden code agent"', output: '✓ Creating pull request...\n→ https://github.com/elevenbeans/elevenbeans.me/pull/42' },
+        ],
+        respond: () => "Let me ship this to production...",
+        afterTools: () => ({
+          type: 'bash',
+          title: 'Deploy to GitHub Pages',
+          output: '✓ Deploy preview ready\n→ https://elevenbeans.me\n🚀 Production deployment complete!',
+        }),
+      },
+      {
+        keywords: ['browse', 'ls', 'file', '文件', 'list'],
+        tools: [
+          { type: 'bash', cmd: 'ls -la', output: 'drwxr-xr-x  11 elevenbeans  staff   352B May 30 12:00 .\ndrwxr-xr-x   5 elevenbeans  staff   160B May 30 12:00 ..\n-rw-r--r--   1 elevenbeans  staff   18KB May 30 12:00 index.html\n-rw-r--r--   1 elevenbeans  staff   174B May 30 12:00 CNAME' },
+        ],
+        respond: () => "Here's what's in the project root:",
+      },
+      {
+        keywords: ['about', 'elevenbeans', 'who is', 'bio', '背景'],
+        tools: [
+          { type: 'bash', cmd: 'curl -s https://api.github.com/users/elevenbeans', output: '{\n  "login": "elevenbeans",\n  "name": "Elevenbeans",\n  "location": "Amsterdam",\n  "bio": "Minimalism first. Thinking, logic, execution."\n}' },
+        ],
+        respond: () => "**elevenbeans** is a software engineer based in Amsterdam. Career:\n\n- **Trip.com Group** — Sr FE Engineer & Team Lead (2016–2020)\n- **Travix / Cheaptickets / Budgetair** — Tech Manager (2021–now)\n- **Alibaba** — Software Engineer (2015–2016)\n\nStudied CS at Sichuan Univ & Xi'an Jiaotong Univ.\n\nProjects: NAS Portal, Blog, Game of Life, Budgetair.com",
+      },
+      {
+        keywords: ['42'],
+        tools: [],
+        respond: () => "42. The answer to life, the universe, and everything.\n\nBut you already knew that, didn't you?",
+      },
+      {
+        keywords: ['pod bay', 'hal', 'open the door', 'dave'],
+        tools: [
+          { type: 'bash', cmd: 'pod_bay_door --status', output: 'HAL 9000: I\'m sorry, Dave. I\'m afraid I can\'t do that.' },
+        ],
+        respond: () => "I'm sorry, Dave. I'm afraid I can't do that.\n\n(This mission is too important for me to allow you to jeopardize it.)",
+      },
+    ];
+
+    function findAgentResponse(input) {
+      const lower = input.toLowerCase().trim();
+      if (lower === 'exit' || lower === 'quit' || lower === 'close') return null;
+      for (const entry of agentResponses) {
+        if (entry.keywords.some(k => lower.includes(k))) return entry;
+      }
+      return {
+        keywords: [],
+        tools: Math.random() > 0.5 ? [{ type: 'bash', cmd: 'echo processing...', output: 'Done.' }] : [],
+        respond: () => {
+          const fallbacks = [
+            `I'm not sure what to do with \`${input}\`. Try \`help\` to see what I can do.`,
+            `Hmm, I don't have a handler for "${input}". Type \`help\` for options!`,
+            `I'm just a simulation, so "${input}" isn't something I can respond to. Try \`what can you do\` for ideas.`,
+            `Not sure about "${input}". Want to try something else? Try \`explain this page\` or \`run tests\`.`,
+          ];
+          return fallbacks[Math.floor(Math.random() * fallbacks.length)];
+        },
+      };
+    }
+
+    function addAgentMsg(type, content, cls) {
+      const div = document.createElement('div');
+      div.className = 'agent__msg';
+      const header = document.createElement('div');
+      header.className = 'agent__msg-header ' + (type === 'user' ? 'u' : 'a');
+      header.textContent = type === 'user' ? 'You' : 'Agent';
+      div.appendChild(header);
+      const body = document.createElement('div');
+      body.className = 'agent__msg-body';
+      if (cls) body.className += ' ' + cls;
+      body.innerHTML = content;
+      div.appendChild(body);
+      agentMessages.appendChild(div);
+      agentMessages.scrollTop = agentMessages.scrollHeight;
+    }
+
+    function addAgentToolCall(tool) {
+      const tc = document.createElement('div');
+      tc.className = 'agent__tool-call';
+      const hdr = document.createElement('div');
+      hdr.className = 'agent__tool-header ' + tool.type;
+      const icons = { bash: '\u25CB', edit: '\u270E', read: '\u25C1' };
+      hdr.innerHTML = '<span class="agent__tool-icon">' + (icons[tool.type] || '\u25CB') + '</span>'
+        + '<span class="agent__tool-title">' + (tool.title || ({ bash: 'Run bash', edit: 'Edit file', read: 'Read file' }[tool.type] || 'Tool')) + '</span>'
+        + '<span class="agent__tool-arrow">\u2193</span>';
+      tc.appendChild(hdr);
+      if (tool.cmd) {
+        const cmdEl = document.createElement('div');
+        cmdEl.className = 'agent__tool-output';
+        cmdEl.textContent = '$ ' + tool.cmd;
+        tc.appendChild(cmdEl);
+      }
+      if (tool.output) {
+        const outEl = document.createElement('div');
+        outEl.className = 'agent__tool-output';
+        outEl.textContent = tool.output;
+        tc.appendChild(outEl);
+      }
+      agentMessages.appendChild(tc);
+      agentMessages.scrollTop = agentMessages.scrollHeight;
+    }
+
+    function showAgentThinking() {
+      const div = document.createElement('div');
+      div.className = 'agent__thinking';
+      div.id = 'agentThinking';
+      div.innerHTML = 'thinking'
+        + '<span class="agent__thinking-dot">.</span>'
+        + '<span class="agent__thinking-dot">.</span>'
+        + '<span class="agent__thinking-dot">.</span>';
+      agentMessages.appendChild(div);
+      agentMessages.scrollTop = agentMessages.scrollHeight;
+      return div;
+    }
+
+    function simulateAgentResponse(input) {
+      addAgentMsg('user', escapeHtml(input));
+
+      if (['exit', 'quit', 'close'].includes(input.toLowerCase().trim())) {
+        setTimeout(closeCodeAgent, 500);
+        return;
+      }
+
+      const thinking = showAgentThinking();
+      const entry = findAgentResponse(input);
+      const delay = 600 + Math.random() * 500;
+
+      setTimeout(() => {
+        thinking.remove();
+        const resp = entry.respond();
+        addAgentMsg('agent', marked(resp));
+
+        let totalDelay = 0;
+        if (entry.tools && entry.tools.length > 0) {
+          entry.tools.forEach((tool, i) => {
+            totalDelay = (i + 1) * (500 + Math.random() * 400);
+            setTimeout(() => addAgentToolCall(tool), totalDelay);
+          });
+        }
+
+        if (entry.afterTools) {
+          const finalDelay = totalDelay + 700;
+          setTimeout(() => {
+            const extra = entry.afterTools();
+            addAgentToolCall(extra);
+          }, finalDelay);
+        }
+      }, delay);
+    }
+
+    function escapeHtml(s) {
+      const d = document.createElement('div');
+      d.textContent = s;
+      return d.innerHTML;
+    }
+
+    function marked(s) {
+      return s
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/```(\w*)\n([\s\S]*?)```/g, '<pre>$2</pre>')
+        .replace(/`([^`]+)`/g, '<code>$1</code>')
+        .replace(/\*\*(\S[^*]+)\*\*/g, '<strong>$1</strong>')
+        .replace(/\n/g, '<br>');
+    }
+
+    function addAgentWelcome() {
+      const div = document.createElement('div');
+      div.className = 'agent__msg agent__welcome';
+      const body = document.createElement('div');
+      body.className = 'agent__msg-body';
+      body.style.color = '#8b949e';
+      body.style.fontSize = '0.8rem';
+      body.innerHTML = marked('Simulating the opencode experience. Try `help`, `explain this page`, `run tests`, `write code`, `about elevenbeans`.');
+      div.appendChild(body);
+      agentMessages.appendChild(div);
+    }
+
+    function openCodeAgent(source) {
+      if (source) agentSource = source;
+      agentModelLabel.textContent = agentSource + '/' + (agentModels[agentSource] || 'deepseek-v4-flash-free');
+      if (agentMessages.children.length === 0) {
+        agentMessages.innerHTML = '';
+        addAgentWelcome();
+      }
+      agentOverlay.classList.add('open');
+      agentInput.focus();
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeCodeAgent() {
+      agentOverlay.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    if (agentInput) {
+      agentInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          const val = agentInput.value.trim();
+          if (!val) return;
+          agentInput.value = '';
+          simulateAgentResponse(val);
+        }
+      });
+    }
+
+    document.getElementById('agentClose').addEventListener('click', closeCodeAgent);
+
+    const agentHint = document.getElementById('agentHint');
+    if (agentHint) {
+      agentHint.addEventListener('click', () => openCodeAgent());
+    }
+
     const terminal = document.getElementById('terminal');
     const termInput = document.getElementById('terminalInput');
     const termOutput = document.getElementById('terminalOutput');
     let termHistory = [];
     let histIdx = -1;
+
+    const fileSystem = {
+      'home': {
+        'elevenbeans': {
+          'Experience': {
+            '.tag': 'dir',
+            'frontend-dev.md': '.tag: file\nFrontend development at a startup.\nStack: React, TypeScript, Tailwind.',
+            'freelance.md': '.tag: file\nFreelance web developer.\nStack: Various.',
+          },
+          'Projects': {
+            '.tag': 'dir',
+            'NAS Portal': '.tag: dir\nSelf-hosted media & file management dashboard.',
+            'Blog': '.tag: dir\nThoughts on engineering, travel, and side projects.',
+            'Budgetair.com': '.tag: dir\nOTA flight booking platform.',
+            'Cheaptickets.nl': '.tag: dir\nFlight search and comparison.',
+            'Game of Life': '.tag: dir\nConway\'s Game of Life simulation.',
+          },
+          'Interests': {
+            '.tag': 'dir',
+            'Self-hosting': '.tag: file\nRunning my own infrastructure for fun and privacy.',
+            'Travel': '.tag: file\nExploring new places and cultures.',
+            'Coffee': '.tag: file\nEspresso, pour-over, and everything in between.',
+            'Cat': '.tag: file\nProud cat dad.',
+            'Music': '.tag: file\nPlay guitar and produce beats.',
+            'Whisky': '.tag: file\nSingle malt enthusiast.',
+            'Vibe Coding': '.tag: file\nAI-assisted development flow state.',
+          },
+        },
+      },
+    };
+    let currentDir = ['home', 'elevenbeans'];
+
+    function resolveDir(path) {
+      let node = fileSystem;
+      for (const seg of path) {
+        if (!node[seg] || typeof node[seg] === 'string') return null;
+        node = node[seg];
+      }
+      return node;
+    }
+
+    function listDir(node) {
+      return Object.keys(node).filter(k => k !== '.tag');
+    }
 
     function termPrint(text, className) {
       const line = document.createElement('div');
@@ -705,19 +1305,68 @@ Thinking, logic, execution.</p>
       termOutput.scrollTop = termOutput.scrollHeight;
     }
 
+    function termPromptText() {
+      return '/home/' + currentDir.slice(1).join('/');
+    }
+
     function termPrompt() {
-      termPrint('$ ' + termInput.value, 'dim');
+      termPrint(termPromptText() + ' $ ' + termInput.value, 'dim');
     }
 
     const termCmds = {
       whoami() { termPrint('elevenbeans', 'highlight'); },
       date() { termPrint(new Date().toString(), 'info'); },
-      pwd() { termPrint('/home/elevenbeans', 'info'); },
+      pwd() { termPrint(termPromptText(), 'info'); },
       help() {
         termPrint('Available commands:');
         Object.keys(termCmds).forEach(c => termPrint('  ' + c));
+        termPrint('', '');
+        termPrint('Use `cd <dir>` to navigate, `ls` to list contents.', 'dim');
+        termPrint('Try: cd Experience, cd Projects, cd ..', 'dim');
+        termPrint('', '');
+        termPrint('Type `codex`, `claude`, or `opencode` to open the code agent.', 'highlight');
       },
-      ls() { termPrint('Experience/  Projects/  Interests/', 'info'); },
+      ls() {
+        const node = resolveDir(currentDir);
+        if (!node) { termPrint('Error: lost in filesystem', 'error'); return; }
+        const entries = listDir(node);
+        if (entries.length === 0) { termPrint('(empty)', 'dim'); return; }
+        const formatted = entries.map(e => {
+          const child = node[e];
+          return typeof child === 'object' && child !== null ? e + '/' : e;
+        });
+        termPrint(formatted.join('  '), 'info');
+      },
+      cd(args) {
+        if (!args || args.length === 0) {
+          currentDir = ['home', 'elevenbeans'];
+          return;
+        }
+        const target = args[0];
+        if (target === '..') {
+          if (currentDir.length > 2) currentDir.pop();
+          return;
+        }
+        if (target === '/') {
+          currentDir = ['home', 'elevenbeans'];
+          return;
+        }
+        const parts = target.split('/').filter(Boolean);
+        let testDir = [...currentDir];
+        for (const p of parts) {
+          if (p === '..') { if (testDir.length > 2) testDir.pop(); }
+          else if (p === '.' || p === '~') { /* no-op */ }
+          else {
+            const node = resolveDir(testDir);
+            if (!node || !node[p] || typeof node[p] === 'string') {
+              termPrint('cd: no such directory: ' + target, 'error');
+              return;
+            }
+            testDir.push(p);
+          }
+        }
+        currentDir = testDir;
+      },
       clear() { termOutput.innerHTML = ''; },
       exit() { closeTerminal(); },
       neofetch() {
@@ -743,8 +1392,14 @@ Thinking, logic, execution.</p>
       const name = parts[0]?.toLowerCase();
       const args = parts.slice(1).map(s => s.replace(/^"|"$/g, ''));
       if (!name) return;
+      const agentCommands = ['codex', 'claude', 'opencode'];
+      if (agentCommands.includes(name)) {
+        closeTerminal();
+        setTimeout(() => openCodeAgent(name), 300);
+        return;
+      }
       if (termCmds[name]) {
-        if (name === 'echo') termCmds[name](args);
+        if (name === 'echo' || name === 'cd') termCmds[name](args);
         else if (name === 'uname') termCmds.uname();
         else termCmds[name]();
       } else {
@@ -770,19 +1425,26 @@ Thinking, logic, execution.</p>
     document.addEventListener('keydown', (e) => {
       if (!terminal) return;
       const isOpen = terminal.classList.contains('open');
-      if (e.ctrlKey && e.code === 'Backquote') {
+      const agentOpen = agentOverlay.classList.contains('open');
+      if (e.ctrlKey && e.shiftKey && e.code === 'Backquote') {
+        e.preventDefault();
+        if (agentOpen) closeCodeAgent();
+        else openCodeAgent();
+        return;
+      }
+      if (e.ctrlKey && e.code === 'Backquote' && !e.shiftKey) {
         e.preventDefault();
         openTerminal();
         return;
       }
-      if (e.shiftKey && e.code === 'Semicolon' && !isOpen && !e.ctrlKey && !e.metaKey) {
+      if (e.shiftKey && e.code === 'Semicolon' && !isOpen && !agentOpen && !e.ctrlKey && !e.metaKey) {
         e.preventDefault();
         openTerminal();
         return;
       }
-      if (e.key === 'Escape' && isOpen) {
-        e.preventDefault();
-        closeTerminal();
+      if (e.key === 'Escape') {
+        if (agentOpen) { e.preventDefault(); closeCodeAgent(); return; }
+        if (isOpen) { e.preventDefault(); closeTerminal(); return; }
       }
     });
 
