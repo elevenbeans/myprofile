@@ -1,0 +1,548 @@
+# Personal Profile One-Pager Implementation Plan
+
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+
+**Goal:** Build a single-file `index.html` personal profile page for elevenbeans with experience, projects, hobbies, and dark mode.
+
+**Architecture:** Single `index.html` with embedded CSS and minimal inline JS. No build step, zero dependencies, deployable to GitHub Pages.
+
+**Tech Stack:** HTML5, CSS (custom properties, flexbox), vanilla JS (dark mode toggle), Google Fonts (Inter).
+
+---
+
+### Task 1: HTML Skeleton + Base Styles
+
+**Files:**
+- Create: `index.html`
+
+- [ ] **Step 1: Create the HTML skeleton with head metadata**
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>elevenbeans</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* all styles go here */
+  </style>
+</head>
+<body>
+  <!-- content goes here -->
+  <script>
+    /* dark mode toggle goes here */
+  </script>
+</body>
+</html>
+```
+
+- [ ] **Step 2: Write CSS reset and custom properties**
+
+```css
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg: #f5f5f5;
+  --text: #0a0a0a;
+  --text-muted: #6b6b6b;
+  --accent: #d4a373;
+  --accent-hover: #c08f5e;
+  --border: #e0e0e0;
+  --card-bg: #ffffff;
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --max-w: 720px;
+  --gap: 2rem;
+}
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.8;
+  -webkit-font-smoothing: antialiased;
+}
+```
+
+- [ ] **Step 3: Add dark mode CSS variables**
+
+```css
+body.dark {
+  --bg: #121212;
+  --text: #e8e8e8;
+  --text-muted: #999;
+  --border: #2a2a2a;
+  --card-bg: #1a1a1a;
+}
+```
+
+- [ ] **Step 4: Style the dark mode toggle (top-right position)**
+
+```css
+.theme-toggle {
+  position: fixed;
+  top: 1.5rem;
+  right: 1.5rem;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  color: var(--text);
+  transition: background 0.2s, border-color 0.2s;
+  z-index: 100;
+}
+
+.theme-toggle:hover {
+  background: var(--card-bg);
+  border-color: var(--accent);
+}
+```
+
+- [ ] **Step 5: Commit**
+
+```bash
+git add index.html
+git commit -m "feat: add html skeleton and base css variables"
+```
+
+### Task 2: Hero Section
+
+**Files:**
+- Modify: `index.html`
+
+- [ ] **Step 1: Add hero HTML inside `<body>`**
+
+```html
+<main>
+  <section class="hero">
+    <h1 class="hero__name">elevenbeans</h1>
+    <p class="hero__title">software eng</p>
+    <p class="hero__tagline">Building things for the web</p>
+  </section>
+</main>
+```
+
+- [ ] **Step 2: Style the hero section**
+
+```css
+main {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+.hero {
+  padding: 4rem 0 3rem;
+}
+
+.hero__name {
+  font-size: 4rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  margin-bottom: 0.5rem;
+}
+
+.hero__title {
+  font-size: 1.25rem;
+  color: var(--accent);
+  font-weight: 500;
+  margin-bottom: 1rem;
+}
+
+.hero__tagline {
+  font-size: 1.125rem;
+  color: var(--text-muted);
+  max-width: 480px;
+}
+```
+
+- [ ] **Step 3: Commit**
+
+```bash
+git add index.html
+git commit -m "feat: add hero section with name and tagline"
+```
+
+### Task 3: Experience Section
+
+**Files:**
+- Modify: `index.html`
+
+- [ ] **Step 1: Add experience HTML after hero**
+
+```html
+<section class="section" id="experience">
+  <h2 class="section__title">Experience</h2>
+  <div class="timeline">
+    <div class="timeline__entry">
+      <div class="timeline__dot"></div>
+      <div class="timeline__body">
+        <h3 class="timeline__company">Trip.com Group</h3>
+        <p class="timeline__meta">Software Engineer &middot; 2022 – Present</p>
+        <p class="timeline__desc">Building travel booking systems at global scale.</p>
+      </div>
+    </div>
+    <div class="timeline__entry">
+      <div class="timeline__dot"></div>
+      <div class="timeline__body">
+        <h3 class="timeline__company">Travix</h3>
+        <p class="timeline__meta">Software Engineer &middot; 2020 – 2022</p>
+        <p class="timeline__desc">International flight search and booking platform.</p>
+      </div>
+    </div>
+    <div class="timeline__entry">
+      <div class="timeline__dot"></div>
+      <div class="timeline__body">
+        <h3 class="timeline__company">Cheaptickets.nl / Budgetair.com</h3>
+        <p class="timeline__meta">Software Engineer &middot; 2018 – 2020</p>
+        <p class="timeline__desc">OTA price comparison and inventory management.</p>
+      </div>
+    </div>
+  </div>
+</section>
+```
+
+- [ ] **Step 2: Style sections and timeline**
+
+```css
+.section {
+  padding: 3rem 0;
+}
+
+.section__title {
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin-bottom: 2rem;
+  letter-spacing: -0.01em;
+}
+
+.timeline {
+  position: relative;
+  padding-left: 1.5rem;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.6rem;
+  bottom: 0.6rem;
+  width: 1px;
+  background: var(--border);
+}
+
+.timeline__entry {
+  position: relative;
+  padding-bottom: 2rem;
+}
+
+.timeline__entry:last-child {
+  padding-bottom: 0;
+}
+
+.timeline__dot {
+  position: absolute;
+  left: -1.5rem;
+  top: 0.5rem;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--accent);
+  transform: translateX(-50%);
+  border: 2px solid var(--bg);
+}
+
+.timeline__company {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 0.125rem;
+}
+
+.timeline__meta {
+  font-size: 0.875rem;
+  color: var(--accent);
+  font-weight: 500;
+  margin-bottom: 0.375rem;
+}
+
+.timeline__desc {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+}
+```
+
+- [ ] **Step 3: Commit**
+
+```bash
+git add index.html
+git commit -m "feat: add experience timeline section"
+```
+
+### Task 4: Projects + Hobbies Sections
+
+**Files:**
+- Modify: `index.html`
+
+- [ ] **Step 1: Add projects HTML after experience**
+
+```html
+<section class="section" id="projects">
+  <h2 class="section__title">Projects</h2>
+  <div class="project-grid">
+    <a href="https://nas.elevenbeans.me" class="project-card" target="_blank" rel="noopener noreferrer">
+      <h3 class="project-card__title">NAS Portal</h3>
+      <p class="project-card__desc">Self-hosted media & file management dashboard.</p>
+      <span class="project-card__arrow">&rarr;</span>
+    </a>
+    <a href="https://blog.elevenbeans.me" class="project-card" target="_blank" rel="noopener noreferrer">
+      <h3 class="project-card__title">Blog</h3>
+      <p class="project-card__desc">Thoughts on engineering, travel, and side projects.</p>
+      <span class="project-card__arrow">&rarr;</span>
+    </a>
+  </div>
+</section>
+```
+
+- [ ] **Step 2: Add hobbies HTML after projects**
+
+```html
+<section class="section" id="hobbies">
+  <h2 class="section__title">Interests</h2>
+  <div class="tag-list">
+    <span class="tag">Self-hosting</span>
+    <span class="tag">Travel</span>
+    <span class="tag">Coffee</span>
+    <span class="tag">Cat</span>
+    <span class="tag">Music</span>
+    <span class="tag">Whisky</span>
+    <span class="tag">Vibe Coding</span>
+  </div>
+</section>
+```
+
+- [ ] **Step 3: Style project cards and tags**
+
+```css
+.project-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.project-card {
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  text-decoration: none;
+  color: var(--text);
+  transition: border-color 0.2s, transform 0.2s;
+  position: relative;
+}
+
+.project-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+
+.project-card__title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 0.375rem;
+}
+
+.project-card__desc {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.project-card__arrow {
+  position: absolute;
+  right: 1.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.25rem;
+  color: var(--accent);
+  transition: transform 0.2s;
+}
+
+.project-card:hover .project-card__arrow {
+  transform: translateY(-50%) translateX(2px);
+}
+
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.625rem;
+}
+
+.tag {
+  padding: 0.375rem 0.875rem;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.tag:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+```
+
+- [ ] **Step 4: Commit**
+
+```bash
+git add index.html
+git commit -m "feat: add projects and hobbies sections"
+```
+
+### Task 5: Footer + Dark Mode JS
+
+**Files:**
+- Modify: `index.html`
+
+- [ ] **Step 1: Add footer HTML after hobbies**
+
+```html
+  <footer class="footer">
+    <div class="footer__links">
+      <a href="https://github.com/elevenbeans" target="_blank" rel="noopener noreferrer">GitHub</a>
+      <a href="mailto:elevenbeansf2e@gmail.com">Email</a>
+    </div>
+    <p class="footer__copy">&copy; 2026 elevenbeans</p>
+  </footer>
+</main>
+```
+
+- [ ] **Step 2: Style footer**
+
+```css
+.footer {
+  padding: 3rem 0 2rem;
+  border-top: 1px solid var(--border);
+  margin-top: 1rem;
+}
+
+.footer__links {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.footer__links a {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.footer__links a:hover {
+  color: var(--accent);
+}
+
+.footer__copy {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+```
+
+- [ ] **Step 3: Add dark mode toggle HTML (inside `<div class="theme-toggle">`)**
+
+Add inside `<body>`, before `<main>`:
+```html
+<button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+  &#9790;
+</button>
+```
+
+- [ ] **Step 4: Add dark mode JS in the `<script>` block**
+
+```js
+const toggle = document.getElementById('themeToggle');
+const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+
+function applyTheme(dark) {
+  document.body.classList.toggle('dark', dark);
+  toggle.textContent = dark ? '\u2600' : '\u263E';
+}
+
+if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && prefersDark.matches)) {
+  applyTheme(true);
+}
+
+toggle.addEventListener('click', () => {
+  const isDark = !document.body.classList.contains('dark');
+  applyTheme(isDark);
+  localStorage.setItem('theme', isDark ? 'dark' : 'light');
+});
+```
+
+- [ ] **Step 5: Add responsive styles**
+
+```css
+@media (max-width: 600px) {
+  main { padding: 1rem; }
+  .hero__name { font-size: 2.5rem; }
+  .hero { padding: 2.5rem 0 2rem; }
+  .section { padding: 2rem 0; }
+  .section__title { font-size: 1.5rem; }
+  .theme-toggle { top: 1rem; right: 1rem; width: 36px; height: 36px; font-size: 1rem; }
+}
+```
+
+- [ ] **Step 6: Commit**
+
+```bash
+git add index.html
+git commit -m "feat: add footer, dark mode toggle, and responsive styles"
+```
+
+### Task 6: Final Polish
+
+**Files:**
+- Modify: `index.html`
+
+- [ ] **Step 1: Open the file in a browser and verify**
+
+Run: `open index.html`
+
+Check:
+- Hero section renders correctly
+- Dark mode toggle works and persists
+- Experience timeline looks clean
+- Project cards have hover effects
+- Tags are styled
+- Footer links are clickable
+- Mobile layout is clean (resize browser)
+
+- [ ] **Step 2: Fix any visual issues found**
+
+If issues found, fix them inline and verify again.
+
+- [ ] **Step 3: Commit final polish**
+
+```bash
+git add index.html
+git commit -m "chore: final polish and visual verification"
+```
