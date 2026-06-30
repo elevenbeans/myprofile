@@ -45,7 +45,7 @@
         'exp-toggle-less': 'Show less'
       },
       zh: {
-        'hero-title': '\u8F6F\u4EF6\u5DE5\u7A0B\u5E08\uFF08AI \u99F4\u517D\u5E08\uFF09',
+        'hero-title': '\u8F6F\u4EF6\u5DE5\u7A0B\u5E08\uFF08AI \u9A6F\u517D\u5E08\uFF09',
         'hero-tagline': '\u6781\u7B80\u7B2C\u4E00\u3002\n\u601D\u8DEF\uFF0C\u903B\u8F91\uFF0C\u6267\u884C\u529B\u3002',
         'section-experience': '\u5DE5\u4F5C\u7ECF\u5386',
         'section-projects': '\u9879\u76EE',
