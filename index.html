@@ -5,6 +5,12 @@
     <link rel="icon" type="image/x-icon" href="https://images.elevenbeans.me/elevenbeans.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>elevenbeans</title>
+  <meta name="description" content="Elevenbeans — Software Engineer (AI Wrangler). Projects, work experience, and interests.">
+  <meta property="og:title" content="elevenbeans">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://elevenbeans.me/">
+  <meta property="og:description" content="Software Engineer (AI Wrangler). Minimalism first. Thinking, logic, execution.">
+  <link rel="preconnect" href="https://images.elevenbeans.me">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -135,14 +141,14 @@ Thinking, logic, execution.</p>
       <p class="footer__copy">&copy; 2026 elevenbeans</p>
     </footer>
   </main>
-  <div class="terminal-overlay" id="terminal" role="dialog" aria-label="Terminal">
+  <div class="terminal-overlay" id="terminal" role="dialog" aria-modal="true" aria-label="Terminal">
     <div class="terminal-output" id="terminalOutput"></div>
     <div class="terminal-input-line">
       <span class="prompt-char">$</span>
       <input type="text" id="terminalInput" autocomplete="off" spellcheck="false" aria-label="Terminal input">
     </div>
   </div>
-  <div class="agent-overlay" id="codeAgent" role="dialog" aria-label="Code agent">
+  <div class="agent-overlay" id="codeAgent" role="dialog" aria-modal="true" aria-label="Code agent">
     <div class="agent">
       <div class="agent__header">
         <span class="agent__header-session">Session #1</span>
