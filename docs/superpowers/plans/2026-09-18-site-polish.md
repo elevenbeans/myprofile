@@ -1210,8 +1210,19 @@ git commit -m "style: mobile hints, fluid type, safe areas, content-visibility"
 
 ```css
 @media print {
+  :root,
+  body.dark {
+    --bg: #fff;
+    --text: #000;
+    --text-muted: #333;
+    --border: #999;
+    --card-bg: #fff;
+    --accent-text: #6b3f1d;
+    --blue-text: #0b4f9e;
+  }
   .corner-controls,
   .hints-row,
+  .exp-toggle,
   .terminal-overlay,
   .agent-overlay,
   .scroll-progress,
@@ -1222,6 +1233,9 @@ git commit -m "style: mobile hints, fluid type, safe areas, content-visibility"
   body {
     background: #fff;
     color: #000;
+  }
+  #experience {
+    content-visibility: visible;
   }
   .section,
   .project-card,
