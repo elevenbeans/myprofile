@@ -70,10 +70,9 @@ export const storage = {
   get(key, fallback = null) {
     try {
       const value = window.localStorage.getItem(key);
-      return value === null ? fallback : value;
-    } catch (err) {
-      return memory.has(key) ? memory.get(key) : fallback;
-    }
+      if (value !== null) return value;
+    } catch (err) {}
+    return memory.has(key) ? memory.get(key) : fallback;
   },
   set(key, value) {
     try {
