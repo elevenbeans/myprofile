@@ -88,8 +88,10 @@ Validation (parity plus profile):
 
 - Builds a system prompt from `profile-knowledge` in the requested locale, then merges sanitized `profile` lines (name / preferences) so the assistant can greet by name and honor preferences.
 - Calls Ollama `/api/chat` with `stream: true`, `temperature: 0.6`.
-- Exposes exactly one read-only tool, `get_project_doc(project)`, which reads an allowlisted project documentation file from disk (`PROJECT_DOCS_ROOT`, default `/Users/elevenbeans/code`) and returns its text. The system prompt requires the assistant to call it before answering project-specific questions and to answer only from the returned doc; projects without docs (Budgetair.com, Cheaptickets.nl) get only the short description + link. No NAS tools are exposed, and no arbitrary file paths are reachable (fixed key → file map).
-- Runs a bounded tool loop (max 3 rounds); a tool round appends the tool result and requests a final answer.
+- **Deterministic project-doc grounding.** The route scans the last few messages for project keywords; when matched, it injects the project's documentation directly into the system messages (ASCII-art lines stripped, injection capped at ~6k chars) and disables tools for that request. This does not rely on the model choosing to call a tool.
+- Exposes one read-only tool, `get_project_doc(project)`, used when no doc was pre-injected (indirect/pronoun/multi-turn references). It reads an allowlisted project doc from disk (`PROJECT_DOCS_ROOT`, default `/Users/elevenbeans/code`); projects without docs (Budgetair.com, Cheaptickets.nl) get only the short description + link. No NAS tools are exposed, and no arbitrary file paths are reachable (fixed key → file map).
+- **Live-state guard.** If the user asks for NAS live data (storage usage, current files, service status, IP), the route injects a rule telling the assistant to state it has no live access and point to the NAS portal assistant (`https://nas.elevenbeans.me/chat`). It must not invent numbers or listings.
+- Bounded generation: bounded tool loop (max 3 rounds), `temperature: 0.3`, `num_ctx: 8192`, `num_predict: 512` to keep answers concise and latency low.
 - Streams content deltas.
 
 ### Files
