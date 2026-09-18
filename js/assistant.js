@@ -1,7 +1,7 @@
-import { open, close, register } from './overlays.js';
-import { resolveLocalCommand } from './assistant-commands.js';
-import { storage } from './state.js';
-import { t, getLang } from './i18n.js';
+import { open, close, register } from './overlays.js?v=1';
+import { resolveLocalCommand } from './assistant-commands.js?v=1';
+import { storage } from './state.js?v=1';
+import { t, getLang } from './i18n.js?v=1';
 
 const assistantMessages = document.getElementById('assistantMessages');
 const assistantInput = document.getElementById('assistantInput');
