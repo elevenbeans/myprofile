@@ -15,6 +15,14 @@ export const storage = {
       memory.set(key, value);
     }
   },
+  remove(key) {
+    memory.delete(key);
+    try {
+      window.localStorage.removeItem(key);
+    } catch (err) {
+      // ignored
+    }
+  },
 };
 
 let lastFocusedElement = null;

@@ -19,7 +19,7 @@ const CHAT_ENDPOINT =
     : 'https://nas.elevenbeans.me/api/profile-chat';
 
 const CJK_RE = /[\u3400-\u9FFF]/;
-const EN_NAME_RE = /(?:my name is|call me|i am|i'm)\s+([A-Za-z\u4e00-\u9fff][\w\u4e00-\u9fff .-]{0,40})/i;
+const EN_NAME_RE = /(?:my name is|call me)\s+([A-Za-z\u4e00-\u9fff][\w\u4e00-\u9fff .-]{0,40})/i;
 const ZH_NAME_RE = /我叫([\u4e00-\u9fff\w]{1,20})/;
 const OFFLINE_MARKER = '[\u670D\u52A1\u6682\u65F6\u4E0D\u53EF\u7528]';
 const PREF_ZH = 'prefers \u4E2D\u6587';
@@ -37,15 +37,19 @@ function loadMemory() {
     const parsed = JSON.parse(raw);
     if (!parsed || parsed.v !== 1) return defaultMemory();
     const history = Array.isArray(parsed.history)
-      ? parsed.history.filter(
-          (m) => m && (m.role === 'user' || m.role === 'assistant') && typeof m.content === 'string'
-        )
+      ? parsed.history
+          .filter(
+            (m) => m && (m.role === 'user' || m.role === 'assistant') && typeof m.content === 'string'
+          )
+          .slice(-MAX_HISTORY)
       : [];
     return {
       v: 1,
       history,
       name: typeof parsed.name === 'string' ? parsed.name : null,
-      prefs: Array.isArray(parsed.prefs) ? parsed.prefs.filter((p) => typeof p === 'string') : [],
+      prefs: Array.isArray(parsed.prefs)
+        ? parsed.prefs.filter((p) => typeof p === 'string').slice(0, 6)
+        : [],
       firstSeen: typeof parsed.firstSeen === 'number' ? parsed.firstSeen : Date.now(),
       lastSeen: typeof parsed.lastSeen === 'number' ? parsed.lastSeen : Date.now(),
       visits: typeof parsed.visits === 'number' ? parsed.visits : 0,
@@ -68,9 +72,7 @@ function saveMemory() {
 }
 
 function clearStoredMemory() {
-  try {
-    window.localStorage.removeItem(MEMORY_KEY);
-  } catch (err) {}
+  storage.remove(MEMORY_KEY);
 }
 
 function capHistory() {
@@ -166,6 +168,7 @@ function renderError(body, message) {
   body.textContent = message;
   body.classList.add('assistant__msg-error');
   scrollMessages();
+  announce(message);
 }
 
 function addAssistantToolCall(tool) {
@@ -227,6 +230,13 @@ function addAssistantWelcome() {
 
 function addAssistantWelcomeBack() {
   addWelcomeMessage('assistant-welcome-back');
+}
+
+function renderHistory() {
+  memory.history.forEach((m) => {
+    if (m.role === 'user') addAssistantMsg('user', escapeHtml(m.content));
+    else addAssistantMsg('assistant', marked(m.content));
+  });
 }
 
 function setStreaming(active) {
@@ -350,7 +360,8 @@ function submitAssistantInput(raw) {
     return;
   }
   if (command && command.type === 'clear') {
-    clearTranscript();
+    abortStreaming();
+    if (assistantMessages) assistantMessages.innerHTML = '';
     return;
   }
   if (command && command.type === 'forget') {
@@ -370,18 +381,13 @@ function submitAssistantInput(raw) {
     if (command.followup) {
       window.setTimeout(() => addAssistantToolCall(command.followup), 450);
     }
+    memory.history.push({ role: 'assistant', content: command.text });
+    capHistory();
+    saveMemory();
     return;
   }
 
   runBackendReply(locale);
-}
-
-function clearTranscript() {
-  abortStreaming();
-  if (assistantMessages) assistantMessages.innerHTML = '';
-  memory.history = [];
-  saveMemory();
-  addAssistantWelcome();
 }
 
 function handleForget() {
@@ -398,10 +404,13 @@ export function openAssistant(source) {
   if (assistantModelLabel) assistantModelLabel.textContent = MODEL_LABEL;
   if (assistantMessages.children.length === 0) {
     assistantMessages.innerHTML = '';
-    if (memory.history.length > 0 && !greetedThisSession) {
-      addAssistantWelcomeBack();
-      greetedThisSession = true;
-    } else if (memory.history.length === 0) {
+    if (memory.history.length > 0) {
+      if (!greetedThisSession) {
+        addAssistantWelcomeBack();
+        greetedThisSession = true;
+      }
+      renderHistory();
+    } else {
       addAssistantWelcome();
       greetedThisSession = true;
     }
