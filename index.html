@@ -4,6 +4,12 @@
   <meta charset="UTF-8">
     <link rel="icon" type="image/x-icon" href="https://images.elevenbeans.me/elevenbeans.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+    document.documentElement.classList.add('js');
+    window.setTimeout(function () {
+      if (!window.__appReady) document.documentElement.classList.remove('js');
+    }, 1500);
+  </script>
   <title>elevenbeans</title>
   <meta name="description" content="Elevenbeans — Software Engineer (AI Wrangler). Projects, work experience, and interests.">
   <meta property="og:title" content="elevenbeans">
@@ -13,58 +19,73 @@
   <link rel="preconnect" href="https://images.elevenbeans.me">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"></noscript>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <script>document.body.classList.toggle('dark',localStorage.getItem('theme')==='dark'||(!localStorage.getItem('theme')&&matchMedia('(prefers-color-scheme:dark)').matches))</script>
+  <script>
+    (function () {
+      var stored = null;
+      try { stored = localStorage.getItem('theme'); } catch (e) {}
+      var dark = stored === 'dark' || (!stored && window.matchMedia && matchMedia('(prefers-color-scheme:dark)').matches);
+      document.body.classList.toggle('dark', dark);
+    })();
+  </script>
+  <a class="skip-link" href="#main" data-i18n="skip-link">Skip to content</a>
   <div class="corner-controls">
-    <button class="lang-toggle" id="langToggle" aria-label="Switch language" title="There are only 10 kinds of developers...">&#20013;&#25991;</button>
-    <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode" title="Dark mode: because light attracts bugs.">&#9790;</button>
+    <button class="lang-toggle" id="langToggle" data-i18n="lang-toggle-label" data-i18n-aria="lang-label" aria-label="Switch language">中文</button>
+    <button class="theme-toggle" id="themeToggle" aria-pressed="false" data-i18n-aria="theme-label-light" aria-label="Switch to dark mode">&#9790;</button>
   </div>
-  <main>
+  <main id="main">
     <section class="hero">
       <h1 class="hero__name" id="heroName">Elevenbeans</h1>
       <p class="hero__title" data-i18n="hero-title">Software Engineer (AI Wrangler)</p>
       <p class="hero__tagline" data-i18n="hero-tagline">Minimalism first.
 Thinking, logic, execution.</p>
     </section>
-    <section class="section" id="projects">
+    <section class="section reveal" id="projects">
       <h2 class="section__title" data-i18n="section-projects">Projects</h2>
       <div class="project-grid">
         <a href="https://nas.elevenbeans.me" class="project-card" target="_blank" rel="noopener noreferrer">
           <h3 class="project-card__title" data-i18n="project-nas-title">NAS Portal</h3>
           <p class="project-card__desc" data-i18n="project-nas-desc">Self-hosted portal for files, photos &amp; media, with a local AI assistant.</p>
-          <span class="project-card__arrow">&rarr;</span>
+          <span class="project-card__arrow" aria-hidden="true">&rarr;</span>
+          <span class="sr-only" data-i18n="opens-new-tab">(opens in new tab)</span>
         </a>
         <a href="https://blog.elevenbeans.me" class="project-card" target="_blank" rel="noopener noreferrer">
           <h3 class="project-card__title" data-i18n="project-blog-title">Blog</h3>
           <p class="project-card__desc" data-i18n="project-blog-desc">Thoughts on engineering, travel, and side projects.</p>
-          <span class="project-card__arrow">&rarr;</span>
+          <span class="project-card__arrow" aria-hidden="true">&rarr;</span>
+          <span class="sr-only" data-i18n="opens-new-tab">(opens in new tab)</span>
         </a>
         <a href="https://budgetair.com" class="project-card" target="_blank" rel="noopener noreferrer">
           <h3 class="project-card__title">Budgetair.com</h3>
           <p class="project-card__desc">OTA flight booking platform.</p>
-          <span class="project-card__arrow">&rarr;</span>
+          <span class="project-card__arrow" aria-hidden="true">&rarr;</span>
+          <span class="sr-only" data-i18n="opens-new-tab">(opens in new tab)</span>
         </a>
         <a href="https://cheaptickets.nl" class="project-card" target="_blank" rel="noopener noreferrer">
           <h3 class="project-card__title">Cheaptickets.nl</h3>
           <p class="project-card__desc">Flight search and comparison.</p>
-          <span class="project-card__arrow">&rarr;</span>
+          <span class="project-card__arrow" aria-hidden="true">&rarr;</span>
+          <span class="sr-only" data-i18n="opens-new-tab">(opens in new tab)</span>
         </a>
         <a href="https://game.elevenbeans.me" class="project-card" target="_blank" rel="noopener noreferrer">
           <h3 class="project-card__title" data-i18n="project-game-title">Game of Life</h3>
           <p class="project-card__desc" data-i18n="project-game-desc">Conway&rsquo;s Game of Life simulation.</p>
-          <span class="project-card__arrow">&rarr;</span>
+          <span class="project-card__arrow" aria-hidden="true">&rarr;</span>
+          <span class="sr-only" data-i18n="opens-new-tab">(opens in new tab)</span>
         </a>
       </div>
     </section>
 
-    <section class="section" id="experience">
+    <section class="section reveal" id="experience">
       <h2 class="section__title" data-i18n="section-experience">Experience</h2>
       <div class="timeline">
         <div class="timeline__entry">
-          <div class="timeline__dot"></div>
+          <div class="timeline__dot" aria-hidden="true"></div>
           <div>
             <h3 class="timeline__company" data-i18n="exp-2-company">Travix · Cheaptickets.nl · Budgetair.com</h3>
             <p class="timeline__meta"><span data-i18n="exp-2-role">Technical Manager</span> <span class="middot">&middot;</span> <span data-i18n="exp-2-date">2021 – now</span></p>
@@ -72,7 +93,7 @@ Thinking, logic, execution.</p>
           </div>
         </div>
         <div class="timeline__entry">
-          <div class="timeline__dot"></div>
+          <div class="timeline__dot" aria-hidden="true"></div>
           <div>
             <h3 class="timeline__company" data-i18n="exp-1-company">Trip.com Group</h3>
             <p class="timeline__meta"><span data-i18n="exp-1-role">Senior FE Engineer &amp; Team Leader</span> <span class="middot">&middot;</span> <span data-i18n="exp-1-date">2016.07 – 2020.12</span></p>
@@ -80,7 +101,7 @@ Thinking, logic, execution.</p>
           </div>
         </div>
         <div class="timeline__entry">
-          <div class="timeline__dot"></div>
+          <div class="timeline__dot" aria-hidden="true"></div>
           <div>
             <h3 class="timeline__company" data-i18n="exp-3-company">Alibaba</h3>
             <p class="timeline__meta"><span data-i18n="exp-3-role">Software Engineer</span> <span class="middot">&middot;</span> <span data-i18n="exp-3-date">2015 – 2016</span></p>
@@ -88,14 +109,14 @@ Thinking, logic, execution.</p>
           </div>
         </div>
         <div class="timeline__entry">
-          <div class="timeline__dot"></div>
+          <div class="timeline__dot" aria-hidden="true"></div>
           <div>
             <h3 class="timeline__company" data-i18n="exp-4-company">Xi'an Jiaotong University</h3>
             <p class="timeline__meta"><span data-i18n="exp-4-major">Computer Science</span> <span class="middot">&middot;</span> <span data-i18n="exp-4-date">2012 – 2015</span></p>
           </div>
         </div>
         <div class="timeline__entry">
-          <div class="timeline__dot"></div>
+          <div class="timeline__dot" aria-hidden="true"></div>
           <div>
             <h3 class="timeline__company" data-i18n="exp-5-company">Sichuan University</h3>
             <p class="timeline__meta"><span data-i18n="exp-5-major">Computer Science</span> <span class="middot">&middot;</span> <span data-i18n="exp-5-date">2008 – 2012</span></p>
@@ -105,7 +126,7 @@ Thinking, logic, execution.</p>
       <button class="exp-toggle" id="expToggle" data-i18n="exp-toggle-more" hidden>Show more</button>
     </section>
 
-    <section class="section" id="hobbies">
+    <section class="section reveal" id="hobbies">
       <h2 class="section__title" data-i18n="section-hobbies">Interests</h2>
       <div class="tag-list">
         <span class="tag" data-i18n="tag-1">Self-hosting</span>
@@ -119,12 +140,12 @@ Thinking, logic, execution.</p>
     </section>
 
     <div class="hints-row">
-      <div class="term-hint" id="termHint" role="button" tabindex="0" aria-label="Open terminal" title="Ctrl+` or press :">
+      <button type="button" class="term-hint" id="termHint" data-i18n-aria="hint-terminal" aria-label="Open terminal">
         <span class="term-hint__prompt">&gt;</span> terminal<span class="term-hint__cursor"></span>
-      </div>
-      <div class="agent-hint" id="agentHint" role="button" tabindex="0" aria-label="Open code agent" title="Type codex / claude / opencode in terminal">
+      </button>
+      <button type="button" class="agent-hint" id="agentHint" data-i18n-aria="hint-agent" aria-label="Open code agent">
         <span class="agent-hint__prompt">&gt;</span> code agent<span class="agent-hint__cursor"></span>
-      </div>
+      </button>
     </div>
 
     <footer class="footer">
@@ -141,28 +162,32 @@ Thinking, logic, execution.</p>
       <p class="footer__copy">&copy; 2026 elevenbeans</p>
     </footer>
   </main>
-  <div class="terminal-overlay" id="terminal" role="dialog" aria-modal="true" aria-label="Terminal">
-    <div class="terminal-output" id="terminalOutput"></div>
+  <div class="terminal-overlay" id="terminal" role="dialog" aria-modal="true" aria-label="Terminal" aria-hidden="true">
+    <div class="terminal-output" id="terminalOutput" role="log" aria-live="polite" aria-label="Terminal output"></div>
     <div class="terminal-input-line">
       <span class="prompt-char">$</span>
       <input type="text" id="terminalInput" autocomplete="off" spellcheck="false" aria-label="Terminal input">
     </div>
   </div>
-  <div class="agent-overlay" id="codeAgent" role="dialog" aria-modal="true" aria-label="Code agent">
+  <div class="agent-overlay" id="codeAgent" role="dialog" aria-modal="true" aria-label="Code agent" aria-hidden="true">
     <div class="agent">
       <div class="agent__header">
         <span class="agent__header-session">Session #1</span>
         <span class="agent__header-model">opencode/deepseek-v4-flash-free</span>
         <span class="agent__header-spacer"></span>
-        <button class="agent__header-close" id="agentClose" aria-label="Close agent">&times;</button>
+        <button class="agent__header-close" id="agentClose" data-i18n-aria="agent-close" aria-label="Close agent">&times;</button>
       </div>
-      <div class="agent__messages" id="agentMessages"></div>
+      <div class="agent__messages" id="agentMessages" role="log" aria-live="polite" aria-label="Agent messages"></div>
       <div class="agent__input-bar">
         <span class="agent__input-prompt">&gt;</span>
         <input type="text" id="agentInput" autocomplete="off" spellcheck="false" placeholder="Ask the code agent..." aria-label="Code agent input">
       </div>
     </div>
   </div>
+  <div class="scroll-progress" aria-hidden="true"></div>
+  <button type="button" class="back-to-top" aria-label="Back to top" data-i18n-aria="back-to-top">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m18 15-6-6-6 6"/></svg>
+  </button>
   <script type="module" src="js/app.js"></script>
 </body>
 </html>
