@@ -373,7 +373,7 @@ main {
 }
 
 .terminal-overlay {
-  display: none;
+  display: flex;
   position: fixed;
   inset: 0;
   background: rgba(10, 10, 10, 0.95);
@@ -384,10 +384,16 @@ main {
   font-size: 0.95rem;
   line-height: 1.6;
   flex-direction: column;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
 }
 
 .terminal-overlay.open {
-  display: flex;
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
 }
 
 .terminal-output {
@@ -520,7 +526,7 @@ main {
   --agent-code-text: #f0c674;
   --agent-hover-bg: #21262d;
   --agent-placeholder: #484f58;
-  display: none;
+  display: flex;
   position: fixed;
   inset: 0;
   background: rgba(10, 10, 10, 0.92);
@@ -531,8 +537,16 @@ main {
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
 }
-.agent-overlay.open { display: flex; }
+.agent-overlay.open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
 
 .agent {
   position: relative;
@@ -747,4 +761,72 @@ main {
   .corner-controls button,
   .tag,
   .back-to-top { transition: none; }
+}
+
+html.theme-transitioning body,
+html.theme-transitioning .project-card,
+html.theme-transitioning .tag,
+html.theme-transitioning .corner-controls button,
+html.theme-transitioning .exp-toggle,
+html.theme-transitioning .timeline__dot,
+html.theme-transitioning .footer,
+html.theme-transitioning .back-to-top,
+html.theme-transitioning .skip-link {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+.project-card:hover {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+}
+body.dark .project-card:hover {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+}
+
+.corner-controls button:active,
+.tag:active,
+.project-card:active {
+  transform: translateY(1px);
+}
+
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  z-index: 200;
+  pointer-events: none;
+}
+
+.back-to-top {
+  position: fixed;
+  right: calc(1.5rem + env(safe-area-inset-right, 0px));
+  bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(8px);
+  transition: opacity 0.2s, visibility 0.2s, transform 0.2s, color 0.2s, border-color 0.2s;
+  z-index: 150;
+}
+.back-to-top.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+}
+.back-to-top:hover {
+  color: var(--accent-text);
+  border-color: var(--accent);
 }
