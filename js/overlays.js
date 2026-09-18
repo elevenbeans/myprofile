@@ -28,7 +28,11 @@ export function open(name) {
   document.body.style.overflow = 'hidden';
   if (overlay.onOpen) overlay.onOpen();
   const target = overlay.initialFocus ? overlay.initialFocus() : null;
-  if (target && target.focus) target.focus();
+  if (target && target.focus) {
+    window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => target.focus());
+    });
+  }
 }
 
 export function close(name) {

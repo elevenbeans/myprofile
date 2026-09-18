@@ -111,6 +111,7 @@ Copy the existing dictionaries from `script.js:6-87` into this file as `i18n.en`
 | `hint-agent` | `Open code agent` | `打开代码助手` |
 | `terminal-label` | `Terminal` | `终端` |
 | `terminal-log-label` | `Terminal output` | `终端输出` |
+| `terminal-input-label` | `Terminal input` | `终端输入` |
 | `agent-label` | `Code agent` | `代码助手` |
 | `agent-log-label` | `Agent messages` | `助手消息` |
 | `agent-close` | `Close agent` | `关闭代码助手` |
@@ -247,7 +248,11 @@ export function open(name) {
   document.body.style.overflow = 'hidden';
   if (overlay.onOpen) overlay.onOpen();
   const target = overlay.initialFocus ? overlay.initialFocus() : null;
-  if (target && target.focus) target.focus();
+  if (target && target.focus) {
+    window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => target.focus());
+    });
+  }
 }
 
 export function close(name) {
@@ -753,6 +758,10 @@ button:focus-visible {
   outline-offset: 2px;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 .sr-only {
   position: absolute;
   width: 1px;
@@ -792,7 +801,7 @@ html.js .reveal {
   transition: opacity 0.5s ease, transform 0.5s ease;
   transition-delay: var(--reveal-delay, 0ms);
 }
-.reveal.is-visible {
+html.js .reveal.is-visible {
   opacity: 1;
   transform: none;
 }
@@ -928,6 +937,14 @@ Agent messages (index.html:159):
 ```
 Add `aria-hidden="true"` to `.terminal-overlay` and `.agent-overlay`. Add `data-i18n-aria="agent-close"` to `#agentClose` (keep its `aria-label`).
 
+Also add `data-i18n-aria` attributes (keeping the existing `aria-label` fallbacks) to the overlays and their logs/inputs:
+- `.terminal-overlay` (`#terminal`): `data-i18n-aria="terminal-label"`
+- `#terminalOutput`: `data-i18n-aria="terminal-log-label"`
+- `#terminalInput`: `data-i18n-aria="terminal-input-label"`
+- `.agent-overlay` (`#codeAgent`): `data-i18n-aria="agent-label"`
+- `#agentMessages`: `data-i18n-aria="agent-log-label"`
+- `#agentInput`: `data-i18n-aria="agent-input-label"`
+
 - [ ] **Step 7: Add scroll progress + back-to-top, confirm module tag**
 
 Before `  <script type="module" src="js/app.js"></script>` add:
@@ -991,6 +1008,8 @@ For `.terminal-overlay`, replace the final `flex-direction: column;` block endin
 }
 ```
 (Delete the old `display: none;` from `.terminal-overlay` and the old `.terminal-overlay.open { display: flex; }`.)
+
+Note: on the base rules, use `transition: opacity 0.25s ease, visibility 0s linear 0.25s;` so opening flips `visibility` to `visible` immediately while closing delays the hide by 0.25s (preserving the fade-out). On `.terminal-overlay.open` and `.agent-overlay.open`, use `transition: opacity 0.25s ease, visibility 0s;`. A `visibility 0.25s ease` transition would instead keep the overlay computed `hidden` for half the transition, refusing `focus()` on open.
 
 For `.agent-overlay`, change its `display: none;` to `display: flex;`, then replace `.agent-overlay.open { display: flex; }` with:
 ```css
@@ -1147,7 +1166,7 @@ Add to `.term-hint` and `.agent-hint` base rules: `background: none; border: 0; 
 
 - [ ] **Step 3: Fluid type**
 
-Change `.hero__name` font-size to `clamp(2.5rem, 8vw, 4rem);` and `.section__title` font-size to `clamp(1.5rem, 4vw, 1.75rem);`. In the `@media (max-width: 600px)` block, remove the now-redundant `.hero__name { font-size: 2.5rem; }` and `.section__title { font-size: 1.5rem; }` declarations.
+Change `.hero__name` font-size to `clamp(2.5rem, 8vw, 4rem);`, add `cursor: default;` (it's a dblclick easter-egg target), and `.section__title` font-size to `clamp(1.5rem, 4vw, 1.75rem);`. In the `@media (max-width: 600px)` block, remove the now-redundant `.hero__name { font-size: 2.5rem; }` and `.section__title { font-size: 1.5rem; }` declarations.
 
 - [ ] **Step 4: Safe areas and overlays on small screens**
 

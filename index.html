@@ -162,14 +162,14 @@ Thinking, logic, execution.</p>
       <p class="footer__copy">&copy; 2026 elevenbeans</p>
     </footer>
   </main>
-  <div class="terminal-overlay" id="terminal" role="dialog" aria-modal="true" aria-label="Terminal" aria-hidden="true">
-    <div class="terminal-output" id="terminalOutput" role="log" aria-live="polite" aria-label="Terminal output"></div>
+  <div class="terminal-overlay" id="terminal" role="dialog" aria-modal="true" aria-label="Terminal" data-i18n-aria="terminal-label" aria-hidden="true">
+    <div class="terminal-output" id="terminalOutput" role="log" aria-live="polite" aria-label="Terminal output" data-i18n-aria="terminal-log-label"></div>
     <div class="terminal-input-line">
       <span class="prompt-char">$</span>
-      <input type="text" id="terminalInput" autocomplete="off" spellcheck="false" aria-label="Terminal input">
+      <input type="text" id="terminalInput" autocomplete="off" spellcheck="false" aria-label="Terminal input" data-i18n-aria="terminal-input-label">
     </div>
   </div>
-  <div class="agent-overlay" id="codeAgent" role="dialog" aria-modal="true" aria-label="Code agent" aria-hidden="true">
+  <div class="agent-overlay" id="codeAgent" role="dialog" aria-modal="true" aria-label="Code agent" data-i18n-aria="agent-label" aria-hidden="true">
     <div class="agent">
       <div class="agent__header">
         <span class="agent__header-session">Session #1</span>
@@ -177,10 +177,10 @@ Thinking, logic, execution.</p>
         <span class="agent__header-spacer"></span>
         <button class="agent__header-close" id="agentClose" data-i18n-aria="agent-close" aria-label="Close agent">&times;</button>
       </div>
-      <div class="agent__messages" id="agentMessages" role="log" aria-live="polite" aria-label="Agent messages"></div>
+      <div class="agent__messages" id="agentMessages" role="log" aria-live="polite" aria-label="Agent messages" data-i18n-aria="agent-log-label"></div>
       <div class="agent__input-bar">
         <span class="agent__input-prompt">&gt;</span>
-        <input type="text" id="agentInput" autocomplete="off" spellcheck="false" placeholder="Ask the code agent..." aria-label="Code agent input">
+        <input type="text" id="agentInput" autocomplete="off" spellcheck="false" placeholder="Ask the code agent..." aria-label="Code agent input" data-i18n-aria="agent-input-label">
       </div>
     </div>
   </div>

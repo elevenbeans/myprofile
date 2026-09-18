@@ -4,6 +4,10 @@
   box-sizing: border-box;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 :root {
   --bg: #f5f5f5;
   --text: #0a0a0a;
@@ -117,7 +121,7 @@ html.js .reveal {
   transition: opacity 0.5s ease, transform 0.5s ease;
   transition-delay: var(--reveal-delay, 0ms);
 }
-.reveal.is-visible {
+html.js .reveal.is-visible {
   opacity: 1;
   transform: none;
 }
@@ -152,6 +156,7 @@ main {
   letter-spacing: -0.02em;
   line-height: 1.1;
   margin-bottom: 0.5rem;
+  cursor: default;
 }
 
 .hero__title {
@@ -387,13 +392,14 @@ main {
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  transition: opacity 0.25s ease, visibility 0.25s ease;
+  transition: opacity 0.25s ease, visibility 0s linear 0.25s;
 }
 
 .terminal-overlay.open {
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
+  transition: opacity 0.25s ease, visibility 0s;
 }
 
 .terminal-output {
@@ -546,12 +552,13 @@ main {
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  transition: opacity 0.25s ease, visibility 0.25s ease;
+  transition: opacity 0.25s ease, visibility 0s linear 0.25s;
 }
 .agent-overlay.open {
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
+  transition: opacity 0.25s ease, visibility 0s;
 }
 
 .agent {
