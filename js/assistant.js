@@ -1,7 +1,7 @@
-import { open, close, register } from './overlays.js?v=1';
-import { resolveLocalCommand } from './assistant-commands.js?v=1';
-import { storage } from './state.js?v=1';
-import { t, getLang } from './i18n.js?v=1';
+import { open, close, register } from './overlays.js?v=2';
+import { resolveLocalCommand } from './assistant-commands.js?v=2';
+import { storage } from './state.js?v=2';
+import { t, getLang } from './i18n.js?v=2';
 
 const assistantMessages = document.getElementById('assistantMessages');
 const assistantInput = document.getElementById('assistantInput');
@@ -244,7 +244,9 @@ function renderHistory() {
 
 function setStreaming(active) {
   streamState.active = active;
-  if (assistantInput) assistantInput.disabled = active;
+  if (assistantInput) {
+    assistantInput.setAttribute('aria-busy', active ? 'true' : 'false');
+  }
   if (assistantMessages) {
     assistantMessages.setAttribute('aria-busy', active ? 'true' : 'false');
   }
