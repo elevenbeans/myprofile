@@ -18,9 +18,9 @@ Repos:
 
 ## Non-Goals
 
-- No real coding/tool execution on the profile assistant (NAS tools are explicitly excluded).
+- No real coding/tool execution on the profile assistant (no NAS tools; the only tool is the read-only get_project_doc allowlisted reader).
 - No change to the existing `/api/chat` behavior.
-- No auth system; the endpoint is public and protected by rate limit + origin allowlist + absence of tools.
+- No auth system; the endpoint is public and protected by rate limit + origin allowlist + only a read-only project-doc tool.
 - No redesign of the TUI visual language.
 
 ## Locked Decisions
@@ -87,8 +87,10 @@ Validation (parity plus profile):
 ### Behavior
 
 - Builds a system prompt from `profile-knowledge` in the requested locale, then merges sanitized `profile` lines (name / preferences) so the assistant can greet by name and honor preferences.
-- Calls Ollama `/api/chat` with `stream: true`, `temperature: 0.6`, and **no `tools` field**.
-- Streams content deltas; no tool rounds.
+- Calls Ollama `/api/chat` with `stream: true`, `temperature: 0.6`.
+- Exposes exactly one read-only tool, `get_project_doc(project)`, which reads an allowlisted project documentation file from disk (`PROJECT_DOCS_ROOT`, default `/Users/elevenbeans/code`) and returns its text. The system prompt requires the assistant to call it before answering project-specific questions and to answer only from the returned doc; projects without docs (Budgetair.com, Cheaptickets.nl) get only the short description + link. No NAS tools are exposed, and no arbitrary file paths are reachable (fixed key → file map).
+- Runs a bounded tool loop (max 3 rounds); a tool round appends the tool result and requests a final answer.
+- Streams content deltas.
 
 ### Files
 
@@ -110,7 +112,7 @@ Configured in `nas-portal/next.config.ts` `headers()` for `/api/profile-chat`:
 
 The route also exports `OPTIONS` returning `204` with the same headers (defense in depth for environments that don't apply next.config headers to OPTIONS).
 
-Note: Origin allowlisting is **not** a security boundary (forgeable); it only reduces drive-by use. Real constraints are the rate limit and the absence of server tools.
+Note: Origin allowlisting is **not** a security boundary (forgeable); it only reduces drive-by use. Real constraints are the rate limit and the read-only, allowlisted tool surface.
 
 ### Verification (local)
 
@@ -192,7 +194,7 @@ Everything else is sent to `/api/profile-chat`.
 
 ## C. Security & Privacy
 
-- Endpoint is public and unauthenticated; constraints are 10/min/IP, origin allowlist, and no server tools.
+- Endpoint is public and unauthenticated; constraints are 10/min/IP, origin allowlist, and only a read-only project-doc tool.
 - `profile` input is sanitized and length-capped; concatenated into the system prompt, never executed.
 - No secrets in the frontend.
 - No NAS file names, storage, IPs, or paths are exposed through this endpoint.
@@ -200,7 +202,7 @@ Everything else is sent to `/api/profile-chat`.
 
 ## D. Verification Summary
 
-- Backend: curl matrix above; confirm stream, CORS, 429, 400, and absence of tools.
+- Backend: curl matrix above; confirm stream, CORS, 429, 400, and that only the project-doc tool is reachable.
 - Frontend: gstack `browse` at desktop and mobile, dark/light, EN/中文:
   - streaming reply renders progressively
   - easter-egg commands work offline
