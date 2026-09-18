@@ -100,4 +100,5 @@ if (document.readyState === 'loading') {
 
 window.addEventListener('error', () => {
   revealAll();
+  window.__appReady = true;
 });

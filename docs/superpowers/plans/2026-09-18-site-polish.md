@@ -648,6 +648,7 @@ if (document.readyState === 'loading') {
 
 window.addEventListener('error', () => {
   revealAll();
+  window.__appReady = true;
 });
 ```
 
@@ -885,10 +886,10 @@ Immediately after the theme `<script>...</script>` and before `<div class="corne
 ```
 Replace the two control buttons (index.html:22-23) with:
 ```html
-    <button class="lang-toggle" id="langToggle" data-i18n="lang-toggle-label" data-i18n-aria="lang-label" aria-label="Switch language">中文</button>
-    <button class="theme-toggle" id="themeToggle" aria-pressed="false" data-i18n-aria="theme-label-light" aria-label="Switch to dark mode">&#9790;</button>
+    <button class="lang-toggle" id="langToggle" data-i18n="lang-toggle-label" data-i18n-aria="lang-label" aria-label="Switch language" title="There are only 10 kinds of developers...">中文</button>
+    <button class="theme-toggle" id="themeToggle" aria-pressed="false" aria-label="Switch to dark mode" title="Dark mode: because light attracts bugs.">&#9790;</button>
 ```
-Change `<main>` (index.html:25) to `<main id="main">`.
+Change `<main>` (index.html:25) to `<main id="main" tabindex="-1">`.
 Add `reveal` to each section heading container: `<section class="section reveal" id="projects">`, and likewise for `#experience` and `#hobbies` (use `class="section reveal"` on all three).
 
 - [ ] **Step 4: Convert hints to buttons and add new-tab labels**
@@ -896,10 +897,10 @@ Add `reveal` to each section heading container: `<section class="section reveal"
 Replace the hints block (index.html:121-128) with:
 ```html
     <div class="hints-row">
-      <button type="button" class="term-hint" id="termHint" data-i18n-aria="hint-terminal" aria-label="Open terminal">
+      <button type="button" class="term-hint" id="termHint" data-i18n-aria="hint-terminal" aria-label="Open terminal" title="Ctrl+` or press :">
         <span class="term-hint__prompt">&gt;</span> terminal<span class="term-hint__cursor"></span>
       </button>
-      <button type="button" class="agent-hint" id="agentHint" data-i18n-aria="hint-agent" aria-label="Open code agent">
+      <button type="button" class="agent-hint" id="agentHint" data-i18n-aria="hint-agent" aria-label="Open code agent" title="Type codex / claude / opencode in terminal">
         <span class="agent-hint__prompt">&gt;</span> code agent<span class="agent-hint__cursor"></span>
       </button>
     </div>
@@ -949,11 +950,12 @@ sleep 1
 "$B" is enabled "#agentHint"
 "$B" js "document.querySelector('.skip-link').getAttribute('href')"
 "$B" js "Array.from(document.querySelectorAll('[data-i18n-aria]')).every(function(el){return !!el.getAttribute('aria-label')})"
-"$B" fill "#termInput" "ls"
+"$B" js "document.getElementById('themeToggle').getAttribute('aria-label') === (document.body.classList.contains('dark') ? 'Switch to light mode' : 'Switch to dark mode')"
+"$B" fill "#terminalInput" "ls"
 "$B" press Enter
 "$B" is visible ".terminal-output"
 ```
-Expected: no console errors; both hints enabled (`true`); href `#main`; aria check `true`; terminal output visible.
+Expected: no console errors; both hints enabled (`true`); href `#main`; aria check `true`; theme label assertion `true`; terminal output visible.
 Stop the server: `pkill -f "http.server 8080"`
 
 - [ ] **Step 9: Commit**

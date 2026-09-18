@@ -35,10 +35,10 @@
   </script>
   <a class="skip-link" href="#main" data-i18n="skip-link">Skip to content</a>
   <div class="corner-controls">
-    <button class="lang-toggle" id="langToggle" data-i18n="lang-toggle-label" data-i18n-aria="lang-label" aria-label="Switch language">中文</button>
-    <button class="theme-toggle" id="themeToggle" aria-pressed="false" data-i18n-aria="theme-label-light" aria-label="Switch to dark mode">&#9790;</button>
+    <button class="lang-toggle" id="langToggle" data-i18n="lang-toggle-label" data-i18n-aria="lang-label" aria-label="Switch language" title="There are only 10 kinds of developers...">中文</button>
+    <button class="theme-toggle" id="themeToggle" aria-pressed="false" aria-label="Switch to dark mode" title="Dark mode: because light attracts bugs.">&#9790;</button>
   </div>
-  <main id="main">
+  <main id="main" tabindex="-1">
     <section class="hero">
       <h1 class="hero__name" id="heroName">Elevenbeans</h1>
       <p class="hero__title" data-i18n="hero-title">Software Engineer (AI Wrangler)</p>
@@ -140,10 +140,10 @@ Thinking, logic, execution.</p>
     </section>
 
     <div class="hints-row">
-      <button type="button" class="term-hint" id="termHint" data-i18n-aria="hint-terminal" aria-label="Open terminal">
+      <button type="button" class="term-hint" id="termHint" data-i18n-aria="hint-terminal" aria-label="Open terminal" title="Ctrl+` or press :">
         <span class="term-hint__prompt">&gt;</span> terminal<span class="term-hint__cursor"></span>
       </button>
-      <button type="button" class="agent-hint" id="agentHint" data-i18n-aria="hint-agent" aria-label="Open code agent">
+      <button type="button" class="agent-hint" id="agentHint" data-i18n-aria="hint-agent" aria-label="Open code agent" title="Type codex / claude / opencode in terminal">
         <span class="agent-hint__prompt">&gt;</span> code agent<span class="agent-hint__cursor"></span>
       </button>
     </div>
