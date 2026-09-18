@@ -77,7 +77,7 @@ const termCmds = {
     termPrint('Use `cd <dir>` to navigate, `ls` to list contents.', 'dim');
     termPrint('Try: cd Experience, cd Projects, cd ..', 'dim');
     termPrint('', '');
-    termPrint('Type `codex`, `claude`, or `opencode` to open the AI assistant.', 'highlight');
+    termPrint('Type `ai` to open the AI assistant.', 'highlight');
   },
   ls() {
     const node = resolveDir(currentDir);
@@ -145,7 +145,7 @@ function processCommand(cmd) {
   const name = parts[0] && parts[0].toLowerCase();
   const args = parts.slice(1).map((s) => s.replace(/^"|"$/g, ''));
   if (!name) return;
-  const assistantCommands = ['codex', 'claude', 'opencode'];
+  const assistantCommands = ['ai'];
   if (assistantCommands.includes(name)) {
     close('terminal');
     document.dispatchEvent(new CustomEvent('request-assistant', { detail: { source: name } }));

@@ -55,7 +55,16 @@ export const i18n = {
     'assistant-label': 'AI assistant',
     'assistant-log-label': 'Assistant messages',
     'assistant-close': 'Close AI assistant',
-    'assistant-input-label': 'AI assistant input'
+    'assistant-input-label': 'AI assistant input',
+    'assistant-welcome': "Hi! I'm the AI assistant for elevenbeans. Ask me anything, or type `help` for local commands.",
+    'assistant-welcome-back': 'Welcome back! What would you like to talk about?',
+    'assistant-thinking': 'thinking',
+    'assistant-role-user': 'You',
+    'assistant-role-assistant': 'AI assistant',
+    'assistant-placeholder': 'Ask the AI assistant...',
+    'assistant-error': 'Something went wrong. Please try again.',
+    'assistant-offline': 'The assistant is temporarily unavailable. Please try again later.',
+    'assistant-forgotten': "Done \u2014 I've forgotten our conversation and any saved memory."
   },
   zh: {
     'hero-title': '\u8F6F\u4EF6\u5DE5\u7A0B\u5E08\uFF08AI \u9A6F\u5316\u5E08\uFF09',
@@ -111,7 +120,16 @@ export const i18n = {
     'assistant-label': 'AI 助手',
     'assistant-log-label': '助手消息',
     'assistant-close': '关闭 AI 助手',
-    'assistant-input-label': 'AI 助手输入'
+    'assistant-input-label': 'AI 助手输入',
+    'assistant-welcome': '你好！我是 elevenbeans 的 AI 助手。随便问点什么，或输入 `help` 查看本地命令。',
+    'assistant-welcome-back': '欢迎回来！想聊点什么？',
+    'assistant-thinking': '思考中',
+    'assistant-role-user': '你',
+    'assistant-role-assistant': 'AI 助手',
+    'assistant-placeholder': '向 AI 助手提问……',
+    'assistant-error': '出了点问题，请稍后再试。',
+    'assistant-offline': '助手暂时不可用，请稍后再试。',
+    'assistant-forgotten': '已忘记我们的对话和保存的记忆。'
   }
 };
 
@@ -139,6 +157,10 @@ export function applyLang(lang) {
   document.querySelectorAll('[data-i18n-aria]').forEach((el) => {
     const key = el.getAttribute('data-i18n-aria');
     if (dict[key] !== undefined) el.setAttribute('aria-label', dict[key]);
+  });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach((el) => {
+    const key = el.getAttribute('data-i18n-placeholder');
+    if (dict[key] !== undefined) el.setAttribute('placeholder', dict[key]);
   });
   document.documentElement.lang = currentLang;
   storage.set('lang', currentLang);

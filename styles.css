@@ -753,6 +753,24 @@ main {
 }
 .assistant__input-bar input::placeholder { color: var(--assistant-placeholder); }
 
+.assistant__cursor {
+  display: inline-block;
+  width: 0.5em;
+  height: 1em;
+  margin-left: 0.12em;
+  vertical-align: -0.15em;
+  background: var(--assistant-accent);
+  animation: assistantBlink 1s step-end infinite;
+}
+@keyframes assistantBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.assistant__msg-body.assistant__msg-error {
+  color: var(--assistant-red);
+}
+
 .assistant-hints-secondary {
   font-size: 0.75rem;
   color: var(--assistant-placeholder);
@@ -894,6 +912,7 @@ body.dark .project-card:hover {
   .term-hint__cursor,
   .assistant-hint__cursor,
   .assistant__thinking-dot,
+  .assistant__cursor,
   .assistant__msg,
   .assistant__tool-call { animation: none; }
   .terminal-overlay,
