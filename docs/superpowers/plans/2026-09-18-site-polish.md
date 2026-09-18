@@ -1010,6 +1010,8 @@ and add to the `.agent-overlay` base rule:
 
 - [ ] **Step 2: Add the theme-transition and micro-interaction rules**
 
+Change `.project-card`'s existing transition to `transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;` so the hover shadow animates instead of snapping.
+
 Append:
 ```css
 html.theme-transitioning body,
@@ -1020,7 +1022,13 @@ html.theme-transitioning .exp-toggle,
 html.theme-transitioning .timeline__dot,
 html.theme-transitioning .footer,
 html.theme-transitioning .back-to-top,
-html.theme-transitioning .skip-link {
+html.theme-transitioning .skip-link,
+html.theme-transitioning .hero__title,
+html.theme-transitioning .hero__tagline,
+html.theme-transitioning .timeline__meta,
+html.theme-transitioning .timeline__desc,
+html.theme-transitioning .project-card__desc,
+html.theme-transitioning .term-hint__prompt {
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
@@ -1083,6 +1091,9 @@ Append:
 .back-to-top:hover {
   color: var(--accent-text);
   border-color: var(--accent);
+}
+.back-to-top:active {
+  transform: translateY(1px);
 }
 ```
 
