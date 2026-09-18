@@ -143,8 +143,8 @@ Thinking, logic, execution.</p>
       <button type="button" class="term-hint" id="termHint" data-i18n-aria="hint-terminal" aria-label="Open terminal" title="Ctrl+` or press :">
         <span class="term-hint__prompt">&gt;</span> terminal<span class="term-hint__cursor"></span>
       </button>
-      <button type="button" class="agent-hint" id="agentHint" data-i18n-aria="hint-agent" aria-label="Open code agent" title="Type codex / claude / opencode in terminal">
-        <span class="agent-hint__prompt">&gt;</span> code agent<span class="agent-hint__cursor"></span>
+      <button type="button" class="assistant-hint" id="assistantHint" data-i18n-aria="hint-assistant" aria-label="Open AI assistant" title="Type codex / claude / opencode in terminal">
+        <span class="assistant-hint__prompt">&gt;</span> AI assistant<span class="assistant-hint__cursor"></span>
       </button>
     </div>
 
@@ -169,18 +169,18 @@ Thinking, logic, execution.</p>
       <input type="text" id="terminalInput" autocomplete="off" spellcheck="false" aria-label="Terminal input" data-i18n-aria="terminal-input-label">
     </div>
   </div>
-  <div class="agent-overlay" id="codeAgent" role="dialog" aria-modal="true" aria-label="Code agent" data-i18n-aria="agent-label" aria-hidden="true">
-    <div class="agent">
-      <div class="agent__header">
-        <span class="agent__header-session">Session #1</span>
-        <span class="agent__header-model">opencode/deepseek-v4-flash-free</span>
-        <span class="agent__header-spacer"></span>
-        <button class="agent__header-close" id="agentClose" data-i18n-aria="agent-close" aria-label="Close agent">&times;</button>
+  <div class="assistant-overlay" id="assistant" role="dialog" aria-modal="true" aria-label="AI assistant" data-i18n-aria="assistant-label" aria-hidden="true">
+    <div class="assistant">
+      <div class="assistant__header">
+        <span class="assistant__header-session">Session #1</span>
+        <span class="assistant__header-model">opencode/deepseek-v4-flash-free</span>
+        <span class="assistant__header-spacer"></span>
+        <button class="assistant__header-close" id="assistantClose" data-i18n-aria="assistant-close" aria-label="Close AI assistant">&times;</button>
       </div>
-      <div class="agent__messages" id="agentMessages" role="log" aria-live="polite" aria-label="Agent messages" data-i18n-aria="agent-log-label"></div>
-      <div class="agent__input-bar">
-        <span class="agent__input-prompt">&gt;</span>
-        <input type="text" id="agentInput" autocomplete="off" spellcheck="false" placeholder="Ask the code agent..." aria-label="Code agent input" data-i18n-aria="agent-input-label">
+      <div class="assistant__messages" id="assistantMessages" role="log" aria-live="polite" aria-label="Assistant messages" data-i18n-aria="assistant-log-label"></div>
+      <div class="assistant__input-bar">
+        <span class="assistant__input-prompt">&gt;</span>
+        <input type="text" id="assistantInput" autocomplete="off" spellcheck="false" placeholder="Ask the AI assistant..." aria-label="AI assistant input" data-i18n-aria="assistant-input-label">
       </div>
     </div>
   </div>

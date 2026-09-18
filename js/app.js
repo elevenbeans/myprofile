@@ -2,7 +2,7 @@ import { applyLang, getLang, toggleLang, t } from './i18n.js';
 import { initTheme } from './theme.js';
 import { initOverlays, isOpen } from './overlays.js';
 import { initTerminal, openTerminal } from './terminal.js';
-import { initAgent, openAgent, closeAgent } from './agent.js';
+import { initAssistant, openAssistant, closeAssistant } from './assistant.js';
 import { initReveal, revealAll, initScrollProgress, initBackToTop } from './ux.js';
 
 const timeline = document.querySelector('.timeline');
@@ -24,9 +24,9 @@ function initExpToggle() {
 
 function initHints() {
   const termHint = document.getElementById('termHint');
-  const agentHint = document.getElementById('agentHint');
+  const assistantHint = document.getElementById('assistantHint');
   if (termHint) termHint.addEventListener('click', openTerminal);
-  if (agentHint) agentHint.addEventListener('click', () => openAgent());
+  if (assistantHint) assistantHint.addEventListener('click', () => openAssistant());
 }
 
 function initHeader() {
@@ -38,8 +38,8 @@ function initShortcuts() {
   document.addEventListener('keydown', (e) => {
     if (e.ctrlKey && e.shiftKey && e.code === 'Backquote') {
       e.preventDefault();
-      if (document.getElementById('codeAgent')?.classList.contains('open')) closeAgent();
-      else openAgent();
+      if (document.getElementById('assistant')?.classList.contains('open')) closeAssistant();
+      else openAssistant();
       return;
     }
     if (e.ctrlKey && e.code === 'Backquote' && !e.shiftKey) {
@@ -48,7 +48,7 @@ function initShortcuts() {
       return;
     }
     if (e.shiftKey && e.code === 'Semicolon' && !e.ctrlKey && !e.metaKey) {
-      if (isOpen('terminal') || isOpen('agent')) return;
+      if (isOpen('terminal') || isOpen('assistant')) return;
       e.preventDefault();
       openTerminal();
       return;
@@ -56,24 +56,24 @@ function initShortcuts() {
   });
 }
 
-function initAgentRequestBridge() {
-  document.addEventListener('request-agent', (e) => {
+function initAssistantRequestBridge() {
+  document.addEventListener('request-assistant', (e) => {
     const source = e.detail && e.detail.source;
-    window.setTimeout(() => openAgent(source), 260);
+    window.setTimeout(() => openAssistant(source), 260);
   });
 }
 
 function boot() {
   try {
     initTheme();
-    initAgent();
+    initAssistant();
     initTerminal();
     initOverlays();
     initExpToggle();
     initHints();
     initHeader();
     initShortcuts();
-    initAgentRequestBridge();
+    initAssistantRequestBridge();
     if (heroName) {
       heroName.addEventListener('dblclick', (e) => {
         e.preventDefault();

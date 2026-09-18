@@ -48,14 +48,14 @@ export const i18n = {
     'lang-label': 'Switch language',
     'back-to-top': 'Back to top',
     'hint-terminal': 'Open terminal',
-    'hint-agent': 'Open code agent',
+    'hint-assistant': 'Open AI assistant',
     'terminal-label': 'Terminal',
     'terminal-log-label': 'Terminal output',
     'terminal-input-label': 'Terminal input',
-    'agent-label': 'Code agent',
-    'agent-log-label': 'Agent messages',
-    'agent-close': 'Close agent',
-    'agent-input-label': 'Code agent input'
+    'assistant-label': 'AI assistant',
+    'assistant-log-label': 'Assistant messages',
+    'assistant-close': 'Close AI assistant',
+    'assistant-input-label': 'AI assistant input'
   },
   zh: {
     'hero-title': '\u8F6F\u4EF6\u5DE5\u7A0B\u5E08\uFF08AI \u9A6F\u5316\u5E08\uFF09',
@@ -104,14 +104,14 @@ export const i18n = {
     'lang-label': '切换语言',
     'back-to-top': '回到顶部',
     'hint-terminal': '打开终端',
-    'hint-agent': '打开代码助手',
+    'hint-assistant': '打开 AI 助手',
     'terminal-label': '终端',
     'terminal-log-label': '终端输出',
     'terminal-input-label': '终端输入',
-    'agent-label': '代码助手',
-    'agent-log-label': '助手消息',
-    'agent-close': '关闭代码助手',
-    'agent-input-label': '代码助手输入'
+    'assistant-label': 'AI 助手',
+    'assistant-log-label': '助手消息',
+    'assistant-close': '关闭 AI 助手',
+    'assistant-input-label': 'AI 助手输入'
   }
 };
 

@@ -1,29 +1,29 @@
 import { open, close, register } from './overlays.js';
 
-const agentMessages = document.getElementById('agentMessages');
-const agentInput = document.getElementById('agentInput');
-const agentOverlay = document.getElementById('codeAgent');
-const agentModelLabel = document.querySelector('.agent__header-model');
-const agentClose = document.getElementById('agentClose');
-let agentSource = 'opencode';
-const agentModels = {
+const assistantMessages = document.getElementById('assistantMessages');
+const assistantInput = document.getElementById('assistantInput');
+const assistantOverlay = document.getElementById('assistant');
+const assistantModelLabel = document.querySelector('.assistant__header-model');
+const assistantClose = document.getElementById('assistantClose');
+let assistantSource = 'opencode';
+const assistantModels = {
   opencode: 'deepseek-v4-flash-free',
   claude: 'claude-sonnet-4-20250514',
   codex: 'gpt-4o-2025-01-22',
 };
 
-const agentResponses = [
+const assistantResponses = [
   {
     keywords: ['hello', 'hi', 'hey', '你好', 'yo', 'hiya'],
     tools: [],
-    respond: () => "Hey there! I'm your code agent, running right inside this static page.\n\nI can simulate tool calls, answer questions about this site, or just chat. Try:\n- `who are you`\n- `what can you do`\n- `explain this page`\n- `run tests`\n- `fix something`\n- `write code`\n- `browse files`\n- `deploy`",
+    respond: () => "Hey there! I'm your AI assistant, running right inside this static page.\n\nI can simulate tool calls, answer questions about this site, or just chat. Try:\n- `who are you`\n- `what can you do`\n- `explain this page`\n- `run tests`\n- `fix something`\n- `write code`\n- `browse files`\n- `deploy`",
   },
   {
     keywords: ['who are you', 'who', 'what are you', '你是谁', 'what is this'],
     tools: [
-      { type: 'bash', cmd: 'whoami', output: 'opencode (simulated AI code agent)\nModel: deepseek-v4-flash-free\nRuntime: static HTML page\nUptime: since you opened me' },
+      { type: 'bash', cmd: 'whoami', output: 'opencode (simulated AI assistant)\nModel: deepseek-v4-flash-free\nRuntime: static HTML page\nUptime: since you opened me' },
     ],
-    respond: () => "I'm a simulated AI code agent — think of me as opencode running in your browser.\n\nI'm not connected to any real LLM, but I can put on a convincing show. Here's my system info:",
+    respond: () => "I'm a simulated AI assistant — think of me as opencode running in your browser.\n\nI'm not connected to any real LLM, but I can put on a convincing show. Here's my system info:",
   },
   {
     keywords: ['can you do', 'help', 'commands', '能力', 'what'],
@@ -45,7 +45,7 @@ const agentResponses = [
   {
     keywords: ['run test', 'test', '测试', 'npm test'],
     tools: [
-      { type: 'bash', cmd: 'npm test', output: 'PASS  src/__tests__/app.test.tsx\n  ✓ renders without crashing (12ms)\n  ✓ handles dark mode toggle (8ms)\n  ✓ switches language (6ms)\n  ✓ opens terminal on dblclick (15ms)\n  ✓ agent overlay opens on "ai" command (10ms)\n\nTests: 5 passed, 5 total\nTime: 0.3s' },
+      { type: 'bash', cmd: 'npm test', output: 'PASS  src/__tests__/app.test.tsx\n  ✓ renders without crashing (12ms)\n  ✓ handles dark mode toggle (8ms)\n  ✓ switches language (6ms)\n  ✓ opens terminal on dblclick (15ms)\n  ✓ assistant overlay opens on "ai" command (10ms)\n\nTests: 5 passed, 5 total\nTime: 0.3s' },
     ],
     respond: () => "Running the test suite...",
   },
@@ -66,13 +66,13 @@ const agentResponses = [
     tools: [
       { type: 'bash', cmd: 'cat index.html | head -50', output: '<!DOCTYPE html>\n<html lang="en">\n<head>\n  <meta charset="UTF-8">\n  <title>elevenbeans</title>\n  ...' },
     ],
-    respond: () => "This is a single-file personal profile page for **elevenbeans** — a software engineer from Amsterdam.\n\nIt contains:\n- Hero section\n- Work timeline (Trip.com, Travix, Alibaba)\n- Projects (NAS Portal, Blog, Budgetair, Cheaptickets, Game of Life)\n- Interests tags (7 of them)\n- A hidden **retro terminal** easter egg (Ctrl+`)\n- And **me** — the hidden code agent easter egg!\n\n100% static HTML/CSS/JS, zero dependencies.",
+    respond: () => "This is a single-file personal profile page for **elevenbeans** — a software engineer from Amsterdam.\n\nIt contains:\n- Hero section\n- Work timeline (Trip.com, Travix, Alibaba)\n- Projects (NAS Portal, Blog, Budgetair, Cheaptickets, Game of Life)\n- Interests tags (7 of them)\n- A hidden **retro terminal** easter egg (Ctrl+`)\n- And **me** — the hidden AI assistant easter egg!\n\n100% static HTML/CSS/JS, zero dependencies.",
   },
   {
     keywords: ['deploy', '发布', 'ship', 'publish'],
     tools: [
       { type: 'bash', cmd: 'npm run build', output: '✓ Building...\n✓ Static files generated\n✓ Assets optimized\n✓ Bundle size: 14.2 KB' },
-      { type: 'bash', cmd: 'gh pr create --title "feat: add hidden code agent"', output: '✓ Creating pull request...\n→ https://github.com/elevenbeans/elevenbeans.me/pull/42' },
+      { type: 'bash', cmd: 'gh pr create --title "feat: add hidden AI assistant"', output: '✓ Creating pull request...\n→ https://github.com/elevenbeans/elevenbeans.me/pull/42' },
     ],
     respond: () => "Let me ship this to production...",
     afterTools: () => ({
@@ -109,10 +109,10 @@ const agentResponses = [
   },
 ];
 
-function findAgentResponse(input) {
+function findAssistantResponse(input) {
   const lower = input.toLowerCase().trim();
   if (lower === 'exit' || lower === 'quit' || lower === 'close') return null;
-  for (const entry of agentResponses) {
+  for (const entry of assistantResponses) {
     if (entry.keywords.some(k => lower.includes(k))) return entry;
   }
   return {
@@ -130,83 +130,83 @@ function findAgentResponse(input) {
   };
 }
 
-function addAgentMsg(type, content, cls) {
+function addAssistantMsg(type, content, cls) {
   const div = document.createElement('div');
-  div.className = 'agent__msg';
+  div.className = 'assistant__msg';
   const header = document.createElement('div');
-  header.className = 'agent__msg-header ' + (type === 'user' ? 'u' : 'a');
-  header.textContent = type === 'user' ? 'You' : 'Agent';
+  header.className = 'assistant__msg-header ' + (type === 'user' ? 'u' : 'a');
+  header.textContent = type === 'user' ? 'You' : 'Assistant';
   div.appendChild(header);
   const body = document.createElement('div');
-  body.className = 'agent__msg-body';
+  body.className = 'assistant__msg-body';
   if (cls) body.className += ' ' + cls;
   body.innerHTML = content;
   div.appendChild(body);
-  agentMessages.appendChild(div);
-  agentMessages.scrollTop = agentMessages.scrollHeight;
+  assistantMessages.appendChild(div);
+  assistantMessages.scrollTop = assistantMessages.scrollHeight;
 }
 
-function addAgentToolCall(tool) {
+function addAssistantToolCall(tool) {
   const tc = document.createElement('div');
-  tc.className = 'agent__tool-call';
+  tc.className = 'assistant__tool-call';
   const hdr = document.createElement('div');
-  hdr.className = 'agent__tool-header ' + tool.type;
+  hdr.className = 'assistant__tool-header ' + tool.type;
   const icons = { bash: '\u25CB', edit: '\u270E', read: '\u25C1' };
-  hdr.innerHTML = '<span class="agent__tool-icon">' + (icons[tool.type] || '\u25CB') + '</span>'
-    + '<span class="agent__tool-title">' + (tool.title || ({ bash: 'Run bash', edit: 'Edit file', read: 'Read file' }[tool.type] || 'Tool')) + '</span>'
-    + '<span class="agent__tool-arrow">\u2193</span>';
+  hdr.innerHTML = '<span class="assistant__tool-icon">' + (icons[tool.type] || '\u25CB') + '</span>'
+    + '<span class="assistant__tool-title">' + (tool.title || ({ bash: 'Run bash', edit: 'Edit file', read: 'Read file' }[tool.type] || 'Tool')) + '</span>'
+    + '<span class="assistant__tool-arrow">\u2193</span>';
   tc.appendChild(hdr);
   if (tool.cmd) {
     const cmdEl = document.createElement('div');
-    cmdEl.className = 'agent__tool-output';
+    cmdEl.className = 'assistant__tool-output';
     cmdEl.textContent = '$ ' + tool.cmd;
     tc.appendChild(cmdEl);
   }
   if (tool.output) {
     const outEl = document.createElement('div');
-    outEl.className = 'agent__tool-output';
+    outEl.className = 'assistant__tool-output';
     outEl.textContent = tool.output;
     tc.appendChild(outEl);
   }
-  agentMessages.appendChild(tc);
-  agentMessages.scrollTop = agentMessages.scrollHeight;
+  assistantMessages.appendChild(tc);
+  assistantMessages.scrollTop = assistantMessages.scrollHeight;
 }
 
-function showAgentThinking() {
+function showAssistantThinking() {
   const div = document.createElement('div');
-  div.className = 'agent__thinking';
-  div.id = 'agentThinking';
+  div.className = 'assistant__thinking';
+  div.id = 'assistantThinking';
   div.innerHTML = 'thinking'
-    + '<span class="agent__thinking-dot">.</span>'
-    + '<span class="agent__thinking-dot">.</span>'
-    + '<span class="agent__thinking-dot">.</span>';
-  agentMessages.appendChild(div);
-  agentMessages.scrollTop = agentMessages.scrollHeight;
+    + '<span class="assistant__thinking-dot">.</span>'
+    + '<span class="assistant__thinking-dot">.</span>'
+    + '<span class="assistant__thinking-dot">.</span>';
+  assistantMessages.appendChild(div);
+  assistantMessages.scrollTop = assistantMessages.scrollHeight;
   return div;
 }
 
-function simulateAgentResponse(input) {
-  addAgentMsg('user', escapeHtml(input));
+function simulateAssistantResponse(input) {
+  addAssistantMsg('user', escapeHtml(input));
 
   if (['exit', 'quit', 'close'].includes(input.toLowerCase().trim())) {
-    setTimeout(closeAgent, 500);
+    setTimeout(closeAssistant, 500);
     return;
   }
 
-  const thinking = showAgentThinking();
-  const entry = findAgentResponse(input);
+  const thinking = showAssistantThinking();
+  const entry = findAssistantResponse(input);
   const delay = 600 + Math.random() * 500;
 
   setTimeout(() => {
     thinking.remove();
     const resp = entry.respond();
-    addAgentMsg('agent', marked(resp));
+    addAssistantMsg('assistant', marked(resp));
 
     let totalDelay = 0;
     if (entry.tools && entry.tools.length > 0) {
       entry.tools.forEach((tool, i) => {
         totalDelay = (i + 1) * (500 + Math.random() * 400);
-        setTimeout(() => addAgentToolCall(tool), totalDelay);
+        setTimeout(() => addAssistantToolCall(tool), totalDelay);
       });
     }
 
@@ -214,7 +214,7 @@ function simulateAgentResponse(input) {
       const finalDelay = totalDelay + 700;
       setTimeout(() => {
         const extra = entry.afterTools();
-        addAgentToolCall(extra);
+        addAssistantToolCall(extra);
       }, finalDelay);
     }
   }, delay);
@@ -247,45 +247,45 @@ function marked(s) {
     .replace(/\u0001(\d+)\u0001/g, (m, i) => '<code>' + inline[+i] + '</code>');
 }
 
-    function addAgentWelcome() {
+    function addAssistantWelcome() {
       const div = document.createElement('div');
-      div.className = 'agent__msg agent__welcome';
+      div.className = 'assistant__msg assistant__welcome';
       const body = document.createElement('div');
-      body.className = 'agent__msg-body';
+      body.className = 'assistant__msg-body';
       body.innerHTML = marked('Simulating the opencode experience. Try `help`, `explain this page`, `run tests`, `write code`, `about elevenbeans`.');
       div.appendChild(body);
-      agentMessages.appendChild(div);
+      assistantMessages.appendChild(div);
     }
 
-export function openAgent(source) {
-  if (!agentOverlay) return;
-  if (source) agentSource = source;
-  if (agentModelLabel) {
-    agentModelLabel.textContent = agentSource + '/' + (agentModels[agentSource] || 'deepseek-v4-flash-free');
+export function openAssistant(source) {
+  if (!assistantOverlay) return;
+  if (source) assistantSource = source;
+  if (assistantModelLabel) {
+    assistantModelLabel.textContent = assistantSource + '/' + (assistantModels[assistantSource] || 'deepseek-v4-flash-free');
   }
-  if (agentMessages.children.length === 0) {
-    agentMessages.innerHTML = '';
-    addAgentWelcome();
+  if (assistantMessages.children.length === 0) {
+    assistantMessages.innerHTML = '';
+    addAssistantWelcome();
   }
-  open('agent');
+  open('assistant');
 }
 
-export function closeAgent() {
-  close('agent');
+export function closeAssistant() {
+  close('assistant');
 }
 
-export function initAgent() {
-  if (!agentOverlay) return;
-  register('agent', { el: agentOverlay, initialFocus: () => agentInput });
-  if (agentInput) {
-    agentInput.addEventListener('keydown', (e) => {
+export function initAssistant() {
+  if (!assistantOverlay) return;
+  register('assistant', { el: assistantOverlay, initialFocus: () => assistantInput });
+  if (assistantInput) {
+    assistantInput.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
-        const val = agentInput.value.trim();
+        const val = assistantInput.value.trim();
         if (!val) return;
-        agentInput.value = '';
-        simulateAgentResponse(val);
+        assistantInput.value = '';
+        simulateAssistantResponse(val);
       }
     });
   }
-  if (agentClose) agentClose.addEventListener('click', closeAgent);
+  if (assistantClose) assistantClose.addEventListener('click', closeAssistant);
 }
