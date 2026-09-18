@@ -752,23 +752,6 @@ main {
   font-family: 'Courier New', monospace;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-  html.js .reveal { opacity: 1; transform: none; transition: none; }
-  .term-hint__cursor,
-  .agent-hint__cursor,
-  .agent__thinking-dot,
-  .agent__msg,
-  .agent__tool-call { animation: none; }
-  .terminal-overlay,
-  .agent-overlay,
-  .project-card,
-  .project-card__arrow,
-  .corner-controls button,
-  .tag,
-  .back-to-top { transition: none; }
-}
-
 html.theme-transitioning body,
 html.theme-transitioning .project-card,
 html.theme-transitioning .tag,
@@ -849,4 +832,54 @@ body.dark .project-card:hover {
 #experience {
   content-visibility: auto;
   contain-intrinsic-size: auto 640px;
+}
+
+@media print {
+  .corner-controls,
+  .hints-row,
+  .terminal-overlay,
+  .agent-overlay,
+  .scroll-progress,
+  .back-to-top,
+  .skip-link {
+    display: none !important;
+  }
+  body {
+    background: #fff;
+    color: #000;
+  }
+  .section,
+  .project-card,
+  .tag,
+  .timeline__entry {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .timeline__entry:nth-child(n+4) {
+    display: block !important;
+  }
+  .project-card,
+  .timeline__entry {
+    break-inside: avoid;
+  }
+  .footer {
+    border-top-color: #000;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  html.js .reveal { opacity: 1; transform: none; transition: none; }
+  .term-hint__cursor,
+  .agent-hint__cursor,
+  .agent__thinking-dot,
+  .agent__msg,
+  .agent__tool-call { animation: none; }
+  .terminal-overlay,
+  .agent-overlay,
+  .project-card,
+  .project-card__arrow,
+  .corner-controls button,
+  .tag,
+  .back-to-top { transition: none; }
 }
