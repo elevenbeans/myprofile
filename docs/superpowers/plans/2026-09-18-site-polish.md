@@ -541,7 +541,7 @@ Important: in `simulateAgentResponse`, the existing exit branch calls `closeCode
 ```js
 import { applyLang, getLang, toggleLang, t } from './i18n.js';
 import { initTheme } from './theme.js';
-import { initOverlays } from './overlays.js';
+import { initOverlays, isOpen } from './overlays.js';
 import { initTerminal, openTerminal } from './terminal.js';
 import { initAgent, openAgent, closeAgent } from './agent.js';
 import { initReveal, revealAll, initScrollProgress, initBackToTop } from './ux.js';
@@ -589,6 +589,7 @@ function initShortcuts() {
       return;
     }
     if (e.shiftKey && e.code === 'Semicolon' && !e.ctrlKey && !e.metaKey) {
+      if (isOpen('terminal') || isOpen('agent')) return;
       e.preventDefault();
       openTerminal();
     }
@@ -623,9 +624,11 @@ function boot() {
     initReveal();
     initScrollProgress();
     initBackToTop();
+    window.__appReady = true;
   } catch (err) {
     console.error('[app] init failed', err);
     revealAll();
+    window.__appReady = true;
   }
 }
 
@@ -838,7 +841,12 @@ Replace the font `<link>` at index.html:16 with:
 ```
 Immediately after `<meta name="viewport" ...>` add:
 ```html
-  <script>document.documentElement.classList.add('js');</script>
+  <script>
+    document.documentElement.classList.add('js');
+    window.setTimeout(function () {
+      if (!window.__appReady) document.documentElement.classList.remove('js');
+    }, 1500);
+  </script>
 ```
 
 - [ ] **Step 2: Make the pre-paint theme script crash-safe**

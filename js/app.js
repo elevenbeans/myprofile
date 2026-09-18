@@ -1,6 +1,6 @@
 import { applyLang, getLang, toggleLang, t } from './i18n.js';
 import { initTheme } from './theme.js';
-import { initOverlays } from './overlays.js';
+import { initOverlays, isOpen } from './overlays.js';
 import { initTerminal, openTerminal } from './terminal.js';
 import { initAgent, openAgent, closeAgent } from './agent.js';
 import { initReveal, revealAll, initScrollProgress, initBackToTop } from './ux.js';
@@ -48,6 +48,7 @@ function initShortcuts() {
       return;
     }
     if (e.shiftKey && e.code === 'Semicolon' && !e.ctrlKey && !e.metaKey) {
+      if (isOpen('terminal') || isOpen('agent')) return;
       e.preventDefault();
       openTerminal();
       return;
@@ -83,9 +84,11 @@ function boot() {
     initReveal();
     initScrollProgress();
     initBackToTop();
+    window.__appReady = true;
   } catch (err) {
     console.error('[app] init failed', err);
     revealAll();
+    window.__appReady = true;
   }
 }
 
