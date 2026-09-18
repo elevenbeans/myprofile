@@ -771,12 +771,6 @@ main {
   color: var(--assistant-red);
 }
 
-.assistant-hints-secondary {
-  font-size: 0.75rem;
-  color: var(--assistant-placeholder);
-  font-family: 'Courier New', monospace;
-}
-
 html.theme-transitioning body,
 html.theme-transitioning .project-card,
 html.theme-transitioning .tag,

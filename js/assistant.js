@@ -7,11 +7,13 @@ const assistantMessages = document.getElementById('assistantMessages');
 const assistantInput = document.getElementById('assistantInput');
 const assistantOverlay = document.getElementById('assistant');
 const assistantModelLabel = document.querySelector('.assistant__header-model');
+const assistantSessionLabel = document.querySelector('.assistant__header-session');
 const assistantClose = document.getElementById('assistantClose');
 const assistantStatus = document.getElementById('assistantStatus');
 
 const MEMORY_KEY = 'assistant.memory.v1';
 const MAX_HISTORY = 50;
+const STREAM_TIMEOUT_MS = 90000;
 const MODEL_LABEL = 'elevenbeans \u00B7 qwen3:4b (local)';
 const CHAT_ENDPOINT =
   location.hostname === 'localhost' || location.hostname === '127.0.0.1'
@@ -109,7 +111,8 @@ function captureName(input) {
 
 function rememberPrefs(locale) {
   const pref = locale === 'zh' ? PREF_ZH : PREF_EN;
-  memory.prefs = Array.from(new Set([...memory.prefs, pref])).slice(-6);
+  const other = locale === 'zh' ? PREF_EN : PREF_ZH;
+  memory.prefs = Array.from(new Set([...memory.prefs.filter((p) => p !== other), pref])).slice(-6);
 }
 
 function scrollMessages() {
@@ -244,12 +247,17 @@ function setStreaming(active) {
   if (assistantInput) assistantInput.disabled = active;
   if (assistantMessages) {
     assistantMessages.setAttribute('aria-busy', active ? 'true' : 'false');
-    assistantMessages.setAttribute('aria-live', active ? 'off' : 'polite');
   }
 }
 
 function announce(text) {
   if (assistantStatus) assistantStatus.textContent = text;
+}
+
+function updateSessionLabel() {
+  if (assistantSessionLabel) {
+    assistantSessionLabel.textContent = t('assistant-session') + ' #' + Math.max(1, memory.visits || 1);
+  }
 }
 
 function abortStreaming() {
@@ -269,11 +277,19 @@ async function runBackendReply(locale) {
   let full = '';
   let started = false;
   let finalReply = '';
+  let timedOut = false;
+  let timeoutId = 0;
   const outbound = memory.history.map((m) => ({ role: m.role, content: m.content }));
 
   try {
     const controller = new AbortController();
     streamState.controller = controller;
+    timeoutId = window.setTimeout(() => {
+      timedOut = true;
+      try {
+        controller.abort();
+      } catch (err) {}
+    }, STREAM_TIMEOUT_MS);
 
     const res = await fetch(CHAT_ENDPOINT, {
       method: 'POST',
@@ -317,7 +333,7 @@ async function runBackendReply(locale) {
     }
 
     const trimmed = full.trim();
-    if (trimmed === OFFLINE_MARKER || trimmed.includes(OFFLINE_MARKER)) {
+    if (!trimmed || trimmed === OFFLINE_MARKER || trimmed.includes(OFFLINE_MARKER)) {
       renderError(body, t('assistant-offline'));
     } else {
       body.innerHTML = marked(full);
@@ -332,12 +348,18 @@ async function runBackendReply(locale) {
   } catch (err) {
     thinking.remove();
     if (err && err.name === 'AbortError') {
-      if (started) body.innerHTML = marked(full);
-      else div.remove();
+      if (timedOut) {
+        renderError(body, t('assistant-offline'));
+      } else if (started) {
+        body.innerHTML = marked(full);
+      } else {
+        div.remove();
+      }
     } else {
       renderError(body, t('assistant-error'));
     }
   } finally {
+    window.clearTimeout(timeoutId);
     thinking.remove();
     setStreaming(false);
     streamState.controller = null;
@@ -432,6 +454,8 @@ export function initAssistant() {
     saveMemory();
   }
   if (assistantModelLabel) assistantModelLabel.textContent = MODEL_LABEL;
+  updateSessionLabel();
+  document.addEventListener('langchange', updateSessionLabel);
   register('assistant', {
     el: assistantOverlay,
     initialFocus: () => assistantInput,
@@ -440,6 +464,7 @@ export function initAssistant() {
   if (assistantInput) {
     assistantInput.addEventListener('keydown', (e) => {
       if (e.key !== 'Enter') return;
+      if (e.isComposing || e.keyCode === 229) return;
       if (streamState.active) return;
       const val = assistantInput.value.trim();
       if (!val) return;

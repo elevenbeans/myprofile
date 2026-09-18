@@ -183,6 +183,7 @@ export function initTerminal() {
   if (!termInput) return;
   termInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
+      if (e.isComposing || e.keyCode === 229) return;
       const cmd = termInput.value;
       termHistory.push(cmd);
       histIdx = termHistory.length;
