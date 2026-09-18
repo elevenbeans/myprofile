@@ -9,7 +9,7 @@ Repos:
 ## Goals
 
 - Conversation-first AI assistant that behaves as a site avatar for **elevenbeans**, and can also chit-chat.
-- Real model (NAS Ollama `qwen3:4b`) via a profile-specific endpoint; no NAS internals/tools exposed.
+- Real model (NAS Ollama `qwen2.5:3b`) via a profile-specific endpoint; no NAS internals/tools exposed.
 - Keep the existing TUI shell, open/close behavior, keyboard access, i18n, reduced-motion and print behavior.
 - Conversation abilities: context/pronoun resolution, multi-turn depth, active clarification, task guidance, preference memory (provided by the LLM plus client-sent history/profile).
 - Bilingual: reply in the language the user writes; default to the site language.
@@ -27,11 +27,11 @@ Repos:
 
 - Endpoint path: `POST https://nas.elevenbeans.me/api/profile-chat`.
 - Rate limit: 10 requests/min per IP.
-- Model: reuse `qwen3:4b` (`OLLAMA_MODEL`).
+- Model: reuse `qwen2.5:3b` (`OLLAMA_MODEL`).
 - NAS production deploy is performed by the user via `npm run sync`; implementation only prepares code and verifies locally with `npm run dev`.
 - Frontend gets a **full rename** `agent → assistant` (file, symbols, DOM ids/classes, i18n keys, docs).
 - Open command becomes `ai`; `codex`/`claude`/`opencode` aliases are removed.
-- Header model label: `elevenbeans · qwen3:4b (local)`.
+- Header model label: `elevenbeans · qwen2.5:3b (local)`.
 
 ## Site Facts (knowledge base)
 

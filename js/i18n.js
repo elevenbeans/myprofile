@@ -1,4 +1,4 @@
-import { storage } from './state.js?v=2';
+import { storage } from './state.js?v=3';
 
 export const i18n = {
   en: {

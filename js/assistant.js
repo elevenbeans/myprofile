@@ -1,7 +1,7 @@
-import { open, close, register } from './overlays.js?v=2';
-import { resolveLocalCommand } from './assistant-commands.js?v=2';
-import { storage } from './state.js?v=2';
-import { t, getLang } from './i18n.js?v=2';
+import { open, close, register } from './overlays.js?v=3';
+import { resolveLocalCommand } from './assistant-commands.js?v=3';
+import { storage } from './state.js?v=3';
+import { t, getLang } from './i18n.js?v=3';
 
 const assistantMessages = document.getElementById('assistantMessages');
 const assistantInput = document.getElementById('assistantInput');
@@ -14,7 +14,7 @@ const assistantStatus = document.getElementById('assistantStatus');
 const MEMORY_KEY = 'assistant.memory.v1';
 const MAX_HISTORY = 50;
 const STREAM_TIMEOUT_MS = 90000;
-const MODEL_LABEL = 'elevenbeans \u00B7 qwen3:4b (local)';
+const MODEL_LABEL = 'elevenbeans \u00B7 qwen2.5:3b (local)';
 const CHAT_ENDPOINT =
   location.hostname === 'localhost' || location.hostname === '127.0.0.1'
     ? 'http://localhost:3001/api/profile-chat'
