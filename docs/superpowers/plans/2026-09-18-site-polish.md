@@ -182,7 +182,15 @@ export function applyTheme(dark) {
 
 let transitionTimer = null;
 
+function prefersReducedMotion() {
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+
 function withTransition(fn) {
+  if (prefersReducedMotion()) {
+    fn();
+    return;
+  }
   document.documentElement.classList.add('theme-transitioning');
   fn();
   window.clearTimeout(transitionTimer);
@@ -727,15 +735,20 @@ Change these declarations:
 - `.term-hint__prompt` color: `var(--accent)` -> `var(--accent-text)`
 - `.corner-controls button:hover` color: `var(--accent)` -> `var(--accent-text)`
 - `.footer__links a:hover` color: `var(--accent)` -> `var(--accent-text)`
+- `.tag:hover` color: `var(--accent)` -> `var(--accent-text)`
+- `.term-hint:hover` color: `var(--accent)` -> `var(--accent-text)`
 - `.agent-hint` color: keep `var(--text-muted)`; `.agent-hint:hover` color: `#58a6ff` -> `var(--blue-text)`
 - `.agent-hint__prompt` color: `#58a6ff` -> `var(--blue-text)`
+- `.agent-hint:hover .agent-hint__cursor` background: `#58a6ff` -> `var(--blue-text)`
 
 - [ ] **Step 3: Add generic focus, sr-only, skip-link, reveal rules**
+
+Also change the existing `.corner-controls button:focus-visible, a:focus-visible` rule's `outline` from `var(--accent)` to `var(--accent-text)`.
 
 Append near the existing `:focus-visible` rule:
 ```css
 button:focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--accent-text);
   outline-offset: 2px;
 }
 
@@ -747,6 +760,7 @@ button:focus-visible {
   margin: -1px;
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
   white-space: nowrap;
   border: 0;
 }
@@ -1229,7 +1243,11 @@ ls -l /tmp/myprofile-print.pdf
 Expected: PDF created with non-zero size. Open it (Read tool) and confirm the corner controls, hints, and progress bar are absent and all 5 experience entries are present.
 Stop the server: `pkill -f "http.server 8080"`
 
-- [ ] **Step 3: Commit**
+- [ ] **Step 3: Relocate the reduced-motion block to the end**
+
+CSS appended by Tasks 5 and 6 currently sits after the `@media (prefers-reduced-motion: reduce)` block and would override its `transition: none` by source order. Move the entire `@media (prefers-reduced-motion: reduce)` block so it is the final block in `styles.css` (after the print block), and renumber the Commit step to Step 4. Do not change the block's contents.
+
+- [ ] **Step 4: Commit**
 
 ```bash
 cd /Users/elevenbeans/code/myprofile

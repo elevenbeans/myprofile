@@ -19,7 +19,15 @@ export function applyTheme(dark) {
 
 let transitionTimer = null;
 
+function prefersReducedMotion() {
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+
 function withTransition(fn) {
+  if (prefersReducedMotion()) {
+    fn();
+    return;
+  }
   document.documentElement.classList.add('theme-transitioning');
   fn();
   window.clearTimeout(transitionTimer);
