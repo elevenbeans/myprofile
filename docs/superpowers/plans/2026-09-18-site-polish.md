@@ -854,7 +854,7 @@ Replace the font `<link>` at index.html:16 with:
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"></noscript>
 ```
-Immediately after `<meta name="viewport" ...>` add:
+Update `<meta name="viewport" ...>` to `width=device-width, initial-scale=1.0, viewport-fit=cover` so `env(safe-area-inset-*)` resolves on iOS. Immediately after it, add:
 ```html
   <script>
     document.documentElement.classList.add('js');
@@ -1151,8 +1151,9 @@ Change `.hero__name` font-size to `clamp(2.5rem, 8vw, 4rem);` and `.section__tit
 
 - [ ] **Step 4: Safe areas and overlays on small screens**
 
-Add to `.corner-controls` base: `right: calc(1.5rem + env(safe-area-inset-right, 0px));`. In the `@media (max-width: 600px)` block add:
+Add to `.corner-controls` base: `right: calc(1.5rem + env(safe-area-inset-right, 0px));`. In the `@media (max-width: 600px)` block change `.corner-controls` to `right: calc(1rem + env(safe-area-inset-right, 0px));` and add:
 ```css
+  .lang-toggle { min-height: 44px; min-width: 44px; }
   .terminal-overlay { padding: calc(1rem + env(safe-area-inset-top, 0px)) 1rem calc(1rem + env(safe-area-inset-bottom, 0px)); }
   .agent-overlay { padding: calc(0.75rem + env(safe-area-inset-top, 0px)) 0.75rem calc(0.75rem + env(safe-area-inset-bottom, 0px)); }
   .agent { height: 90vh; height: 90dvh; }
@@ -1160,15 +1161,14 @@ Add to `.corner-controls` base: `right: calc(1.5rem + env(safe-area-inset-right,
 
 - [ ] **Step 5: Content-visibility for below-the-fold sections**
 
-Append:
+Limit the optimization to the large `#experience` section; drop `#hobbies` and `.footer` (their uniform 600px estimate overstates them and collapses the document on first load). Measure `#experience`'s rendered height at 375 width first, then round to the nearest 20px and append:
 ```css
-#experience,
-#hobbies,
-.footer {
+#experience {
   content-visibility: auto;
-  contain-intrinsic-size: auto 600px;
+  contain-intrinsic-size: auto <MEASURED>px;
 }
 ```
+(The measured value at 375 width is 640px.)
 
 - [ ] **Step 6: Body safety**
 

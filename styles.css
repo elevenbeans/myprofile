@@ -472,9 +472,9 @@ main {
   main { padding: 1rem; }
   .hero { padding: 2.5rem 0 2rem; }
   .section { padding: 1.5rem 0; }
-  .corner-controls { right: 1rem; gap: 0.5rem; }
+  .corner-controls { right: calc(1rem + env(safe-area-inset-right, 0px)); gap: 0.5rem; }
   .theme-toggle { width: 48px; height: 48px; font-size: 1.4rem; }
-  .lang-toggle { font-size: 1rem; }
+  .lang-toggle { font-size: 1rem; min-height: 44px; min-width: 44px; }
 
   .terminal-overlay { padding: calc(1rem + env(safe-area-inset-top, 0px)) 1rem calc(1rem + env(safe-area-inset-bottom, 0px)); }
   .agent-overlay { padding: calc(0.75rem + env(safe-area-inset-top, 0px)) 0.75rem calc(0.75rem + env(safe-area-inset-bottom, 0px)); }
@@ -846,9 +846,7 @@ body.dark .project-card:hover {
   transform: translateY(1px);
 }
 
-#experience,
-#hobbies,
-.footer {
+#experience {
   content-visibility: auto;
-  contain-intrinsic-size: auto 600px;
+  contain-intrinsic-size: auto 640px;
 }
