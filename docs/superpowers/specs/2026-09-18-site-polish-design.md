@@ -50,7 +50,7 @@ This is **not** a redesign. All visible content, copy, layout intent, and the hi
    ```
    Keep existing `preconnect` hints (incl. `crossorigin` for gstatic). `&display=swap` stays.
 2. **Font weights unchanged** (400/500/600/700) — no visual change.
-3. **`content-visibility: auto`** on `#experience`, `#hobbies`, and `.footer`, with `contain-intrinsic-size` set to a conservative estimate to prevent scrollbar jumping.
+3. **`content-visibility: auto`** on `#experience` only, with a measured `contain-intrinsic-size` (auto 640px). It was originally planned for `#hobbies` and `.footer` too, but the small sections caused a scroll jump, so it now applies to `#experience` alone.
    - Must **not** be applied to `#projects` (likely in initial viewport) or to any scroll-reveal target in a way that breaks `IntersectionObserver` observation. Reveal observation is done on children, not the `content-visibility` box.
 4. **`defer` on the module entry** — modules are deferred by default; keep a single `<script type="module" src="js/app.js">`. Remove the old `<script src="script.js">`.
 5. **localStorage guard.** All storage reads/writes go through a `storage` helper (in `js/state.js`) that wraps `localStorage` in try/catch and falls back to an in-memory map on failure (Safari private mode throws).
@@ -130,7 +130,7 @@ This is **not** a redesign. All visible content, copy, layout intent, and the hi
 ### Changes
 1. **Discoverability bug fix.** Remove the `display:none`-below-601px rule for `.term-hint`/`.agent-hint`; show a compact hints row at all sizes. Touch users can now open both easter eggs. (Keyboard shortcuts remain desktop-only extras.)
 2. **Touch targets.** Hint buttons and corner controls get ≥44px effective hit area on small screens.
-3. **Safe areas.** Corner controls, overlays, and back-to-top use `env(safe-area-inset-*)`.
+3. **Safe areas.** The viewport meta now includes `viewport-fit=cover` so `env(safe-area-inset-*)` resolves on iOS; corner controls, overlays, and back-to-top use those insets.
 4. **Fluid type.** `.hero__name` and `.section__title` use `clamp()` instead of hard breakpoint jumps. Keep existing `@media (max-width:600px)` for spacing.
 5. **Overlay padding** reduced on small screens; agent panel height respects `dvh`.
 6. `text-size-adjust: 100%`; guard against horizontal overflow (`overflow-x: hidden` on `body` as a safety net).
