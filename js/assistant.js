@@ -1,7 +1,8 @@
-import { open, close, register } from './overlays.js?v=4';
-import { resolveLocalCommand } from './assistant-commands.js?v=4';
-import { storage } from './state.js?v=4';
-import { t, getLang } from './i18n.js?v=4';
+import { open, close, register } from './overlays.js?v=5';
+import { resolveLocalCommand } from './assistant-commands.js?v=5';
+import { storage } from './state.js?v=5';
+import { t, getLang } from './i18n.js?v=5';
+import { isEmbeddedBrowser } from './embedded-browser.js?v=5';
 
 const assistantMessages = document.getElementById('assistantMessages');
 const assistantInput = document.getElementById('assistantInput');
@@ -65,6 +66,7 @@ let memory = loadMemory();
 const streamState = { active: false, controller: null };
 let visitCounted = false;
 let greetedThisSession = false;
+let embeddedNoticeShown = false;
 
 function saveMemory() {
   memory.lastSeen = Date.now();
@@ -358,7 +360,7 @@ async function runBackendReply(locale) {
         div.remove();
       }
     } else {
-      renderError(body, t('assistant-error'));
+      renderError(body, t(isEmbeddedBrowser(navigator.userAgent) ? 'assistant-embedded-browser' : 'assistant-error'));
     }
   } finally {
     window.clearTimeout(timeoutId);
@@ -438,6 +440,10 @@ export function openAssistant(source) {
       addAssistantWelcome();
       greetedThisSession = true;
     }
+  }
+  if (!embeddedNoticeShown && isEmbeddedBrowser(navigator.userAgent)) {
+    addAssistantMsg('assistant', escapeHtml(t('assistant-embedded-browser')));
+    embeddedNoticeShown = true;
   }
   open('assistant');
 }

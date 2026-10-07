@@ -9,6 +9,7 @@ Personal profile page. Vanilla HTML/CSS/JS with native ES modules — no framewo
 - i18n (EN / 中文)
 - Hidden retro terminal (double-click the name, `Ctrl+\``, or the hints row)
 - Hidden AI assistant (`ai` in the terminal, the hint button, or `Ctrl+Shift+\``) — streams real replies from the NAS `profile-chat` endpoint, grounded in the projects' own docs, with localStorage memory and offline easter-egg commands
+- The API allowlists `*.elevenbeans.me` origins, so in-app browsers (e.g. WeChat) are blocked; the assistant shows a "use a standard browser" hint and the offline commands still work
 - Keyboard accessible (skip link, focus management, ARIA, live regions)
 - Respects `prefers-reduced-motion`; core content works without JavaScript
 - Non-blocking font loading, scroll reveal, scroll progress, back-to-top, print styles
@@ -17,8 +18,9 @@ Personal profile page. Vanilla HTML/CSS/JS with native ES modules — no framewo
 
 - `index.html` — markup; i18n via `data-i18n` / `data-i18n-aria` / `data-i18n-placeholder`
 - `styles.css` — styling, themes, reduced-motion and print rules
-- `js/` — ES modules: `app.js` (entry) plus `state`, `i18n`, `theme`, `overlays`, `ux`, `terminal`, `assistant`, `assistant-commands`
+- `js/` — ES modules: `app.js` (entry) plus `state`, `i18n`, `theme`, `overlays`, `ux`, `terminal`, `assistant`, `assistant-commands`, `embedded-browser`
 - `tests/assistant-commands.test.js` — zero-dependency Node tests for the local command layer
+- `tests/embedded-browser.test.js` — zero-dependency Node tests for in-app browser detection
 
 ## Local development
 

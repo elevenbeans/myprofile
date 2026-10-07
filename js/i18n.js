@@ -1,4 +1,4 @@
-import { storage } from './state.js?v=4';
+import { storage } from './state.js?v=5';
 
 export const i18n = {
   en: {
@@ -65,6 +65,7 @@ export const i18n = {
     'assistant-placeholder': 'Ask the AI assistant...',
     'assistant-error': 'Something went wrong. Please try again.',
     'assistant-offline': 'The assistant is temporarily unavailable. Please try again later.',
+    'assistant-embedded-browser': "This AI assistant needs a standard browser. In-app browsers (such as WeChat) don't send a valid Origin/Referer, so the request is blocked. Please open elevenbeans.me in Safari or Chrome.",
     'assistant-forgotten': "Done \u2014 I've forgotten our conversation and any saved memory."
   },
   zh: {
@@ -131,6 +132,7 @@ export const i18n = {
     'assistant-placeholder': '向 AI 助手提问……',
     'assistant-error': '出了点问题，请稍后再试。',
     'assistant-offline': '助手暂时不可用，请稍后再试。',
+    'assistant-embedded-browser': 'AI 助手需要在标准浏览器中使用。微信等应用内置浏览器不会发送合法的 Origin/Referer，请求会被拦截。请用 Safari 或 Chrome 打开 elevenbeans.me。',
     'assistant-forgotten': '已忘记我们的对话和保存的记忆。'
   }
 };
