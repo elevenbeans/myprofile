@@ -22,7 +22,7 @@
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"></noscript>
-  <link rel="stylesheet" href="styles.css?v=3">
+  <link rel="stylesheet" href="styles.css?v=4">
 </head>
 <body>
   <script>
@@ -45,6 +45,14 @@
       <p class="hero__tagline" data-i18n="hero-tagline">Minimalism first.
 Thinking, logic, execution.</p>
     </section>
+    <div class="hints-row">
+      <button type="button" class="term-hint" id="termHint" data-i18n-aria="hint-terminal" aria-label="Open terminal" title="Ctrl+` or press :">
+        <span class="term-hint__prompt">&gt;</span> terminal<span class="term-hint__cursor"></span>
+      </button>
+      <button type="button" class="assistant-hint" id="assistantHint" data-i18n-aria="hint-assistant" aria-label="Open AI assistant" title="Type ai in terminal">
+        <span class="assistant-hint__prompt">&gt;</span> AI assistant<span class="assistant-hint__cursor"></span>
+      </button>
+    </div>
     <section class="section reveal" id="projects">
       <h2 class="section__title" data-i18n="section-projects">Projects</h2>
       <div class="project-grid">
@@ -112,14 +120,14 @@ Thinking, logic, execution.</p>
           <div class="timeline__dot" aria-hidden="true"></div>
           <div>
             <h3 class="timeline__company" data-i18n="exp-4-company">Xi'an Jiaotong University</h3>
-            <p class="timeline__meta"><span data-i18n="exp-4-major">Computer Science</span> <span class="middot">&middot;</span> <span data-i18n="exp-4-date">2012 – 2015</span></p>
+            <p class="timeline__meta"><span data-i18n="exp-4-major">MSc, Computer Science</span> <span class="middot">&middot;</span> <span data-i18n="exp-4-date">2012 – 2015</span></p>
           </div>
         </div>
         <div class="timeline__entry">
           <div class="timeline__dot" aria-hidden="true"></div>
           <div>
             <h3 class="timeline__company" data-i18n="exp-5-company">Sichuan University</h3>
-            <p class="timeline__meta"><span data-i18n="exp-5-major">Computer Science</span> <span class="middot">&middot;</span> <span data-i18n="exp-5-date">2008 – 2012</span></p>
+            <p class="timeline__meta"><span data-i18n="exp-5-major">BSc, Computer Science</span> <span class="middot">&middot;</span> <span data-i18n="exp-5-date">2008 – 2012</span></p>
           </div>
         </div>
       </div>
@@ -138,15 +146,6 @@ Thinking, logic, execution.</p>
         <span class="tag" data-i18n="tag-7">Vibe Coding</span>
       </div>
     </section>
-
-    <div class="hints-row">
-      <button type="button" class="term-hint" id="termHint" data-i18n-aria="hint-terminal" aria-label="Open terminal" title="Ctrl+` or press :">
-        <span class="term-hint__prompt">&gt;</span> terminal<span class="term-hint__cursor"></span>
-      </button>
-      <button type="button" class="assistant-hint" id="assistantHint" data-i18n-aria="hint-assistant" aria-label="Open AI assistant" title="Type ai in terminal">
-        <span class="assistant-hint__prompt">&gt;</span> AI assistant<span class="assistant-hint__cursor"></span>
-      </button>
-    </div>
 
     <footer class="footer">
       <div class="footer__links">
@@ -189,6 +188,6 @@ Thinking, logic, execution.</p>
   <button type="button" class="back-to-top" aria-label="Back to top" data-i18n-aria="back-to-top">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m18 15-6-6-6 6"/></svg>
   </button>
-  <script type="module" src="js/app.js?v=3"></script>
+  <script type="module" src="js/app.js?v=4"></script>
 </body>
 </html>

@@ -1,5 +1,5 @@
-import { storage } from './state.js?v=3';
-import { t } from './i18n.js?v=3';
+import { storage } from './state.js?v=4';
+import { t } from './i18n.js?v=4';
 
 const toggle = document.getElementById('themeToggle');
 const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');

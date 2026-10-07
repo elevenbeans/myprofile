@@ -1,4 +1,4 @@
-import { storage } from './state.js?v=3';
+import { storage } from './state.js?v=4';
 
 export const i18n = {
   en: {
@@ -20,10 +20,10 @@ export const i18n = {
     'exp-3-date': '2015 \u2013 2016',
     'exp-3-desc': 'E-commerce platform development.',
     'exp-4-company': "Xi'an Jiaotong University",
-    'exp-4-major': 'Computer Science',
+    'exp-4-major': 'MSc, Computer Science',
     'exp-4-date': '2012 \u2013 2015',
     'exp-5-company': 'Sichuan University',
-    'exp-5-major': 'Computer Science',
+    'exp-5-major': 'BSc, Computer Science',
     'exp-5-date': '2008 \u2013 2012',
     'project-nas-title': 'NAS Portal',
     'project-nas-desc': 'Self-hosted portal for files, photos & media, with a local AI assistant.',
@@ -86,10 +86,10 @@ export const i18n = {
     'exp-3-date': '2015 \u2013 2016',
     'exp-3-desc': '\u7535\u5546\u5E73\u53F0\u5F00\u53D1\u3002',
     'exp-4-company': '\u897F\u5B89\u4EA4\u901A\u5927\u5B66',
-    'exp-4-major': '\u8BA1\u7B97\u673A\u79D1\u5B66\u4E0E\u6280\u672F',
+    'exp-4-major': '\u8BA1\u7B97\u673A\u79D1\u5B66\u4E0E\u6280\u672F \u00B7 \u7855\u58EB',
     'exp-4-date': '2012 \u2013 2015',
     'exp-5-company': '\u56DB\u5DDD\u5927\u5B66',
-    'exp-5-major': '\u8BA1\u7B97\u673A\u79D1\u5B66\u4E0E\u6280\u672F',
+    'exp-5-major': '\u8BA1\u7B97\u673A\u79D1\u5B66\u4E0E\u6280\u672F \u00B7 \u5B66\u58EB',
     'exp-5-date': '2008 \u2013 2012',
     'project-nas-title': 'NAS \u95E8\u6237',
     'project-nas-desc': '\u81EA\u6258\u7BA1\u95E8\u6237\uFF0C\u7BA1\u7406\u6587\u4EF6\u3001\u7167\u7247\u4E0E\u5A92\u4F53\uFF0C\u5185\u7F6E\u672C\u5730 AI \u52A9\u624B\u3002',
