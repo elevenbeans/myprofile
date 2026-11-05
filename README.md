@@ -36,7 +36,7 @@ The assistant calls the NAS endpoint. On `localhost` it uses `http://localhost:3
 ## Tests
 
 ```bash
-npm test        # runs tests/assistant-commands.test.js
+npm test        # runs tests/assistant-commands.test.js and tests/embedded-browser.test.js
 ```
 
 ## Asset versioning

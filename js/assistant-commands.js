@@ -49,7 +49,7 @@ function helpText(locale) {
       '- `browse files` —— 查看项目文件',
       '- `run tests` —— 模拟运行测试',
       '- `write code` —— 生成一个小文件',
-      '- `clear` —— 清空当前对话',
+      '- `clear` —— 清空对话与历史记录',
       '- `forget me` —— 清除已保存的记忆',
       '- `exit` —— 关闭此面板',
     ].join('\n');
@@ -62,7 +62,7 @@ function helpText(locale) {
     '- `browse files` — list the project files',
     '- `run tests` — simulate the test suite',
     '- `write code` — generate a small file',
-    '- `clear` — clear the transcript',
+    '- `clear` — clear the transcript and saved history',
     '- `forget me` — wipe saved memory',
     '- `exit` — close this overlay',
   ].join('\n');

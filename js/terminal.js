@@ -1,4 +1,4 @@
-import { open, close, register } from './overlays.js?v=5';
+import { open, close, register } from './overlays.js?v=7';
 
 const termInput = document.getElementById('terminalInput');
 const termOutput = document.getElementById('terminalOutput');
@@ -50,6 +50,22 @@ function listDir(node) {
   return Object.keys(node).filter(k => k !== '.tag');
 }
 
+function resolveFile(target) {
+  const parts = target.split('/').filter(Boolean);
+  const dir = [...currentDir];
+  for (let i = 0; i < parts.length; i++) {
+    const part = parts[i];
+    if (part === '..') { if (dir.length > 2) dir.pop(); continue; }
+    if (part === '.' || part === '~') continue;
+    const node = resolveDir(dir);
+    if (!node || !(part in node)) return null;
+    if (i === parts.length - 1) return node[part];
+    if (typeof node[part] !== 'object' || node[part] === null) return null;
+    dir.push(part);
+  }
+  return null;
+}
+
 function termPrint(text, className) {
   const line = document.createElement('div');
   if (className) line.className = className;
@@ -74,8 +90,8 @@ const termCmds = {
     termPrint('Available commands:');
     Object.keys(termCmds).forEach(c => termPrint('  ' + c));
     termPrint('', '');
-    termPrint('Use `cd <dir>` to navigate, `ls` to list contents.', 'dim');
-    termPrint('Try: cd Experience, cd Projects, cd ..', 'dim');
+    termPrint('Use `cd <dir>` to navigate, `ls` to list, `cat <file>` to read.', 'dim');
+    termPrint('Try: cd Experience, cat frontend-dev.md, cd ..', 'dim');
     termPrint('', '');
     termPrint('Type `ai` to open the AI assistant.', 'highlight');
   },
@@ -120,6 +136,22 @@ const termCmds = {
     }
     currentDir = testDir;
   },
+  cat(args) {
+    if (!args || args.length === 0) {
+      termPrint('cat: missing operand', 'error');
+      return;
+    }
+    args.forEach((target) => {
+      const node = resolveFile(target);
+      if (node === null || node === undefined) {
+        termPrint('cat: ' + target + ': No such file or directory', 'error');
+      } else if (typeof node === 'object') {
+        termPrint('cat: ' + target + ': Is a directory', 'error');
+      } else {
+        termPrint(node.replace(/^\.tag: file\n?/, ''), '');
+      }
+    });
+  },
   clear() { termOutput.innerHTML = ''; },
   exit() { closeTerminal(); },
   neofetch() {
@@ -152,7 +184,7 @@ function processCommand(cmd) {
     return;
   }
   if (termCmds[name]) {
-    if (name === 'echo' || name === 'cd') termCmds[name](args);
+    if (name === 'echo' || name === 'cd' || name === 'cat') termCmds[name](args);
     else if (name === 'uname') termCmds.uname();
     else termCmds[name]();
   } else {
@@ -185,8 +217,10 @@ export function initTerminal() {
     if (e.key === 'Enter') {
       if (e.isComposing || e.keyCode === 229) return;
       const cmd = termInput.value;
-      termHistory.push(cmd);
-      histIdx = termHistory.length;
+      if (cmd.trim()) {
+        termHistory.push(cmd);
+        histIdx = termHistory.length;
+      }
       processCommand(cmd);
       termInput.value = '';
     } else if (e.key === 'ArrowUp') {

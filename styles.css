@@ -478,7 +478,7 @@ main {
   main { padding: 1rem; }
   .hero { padding: 2.5rem 0 2rem; }
   .section { padding: 1.5rem 0; }
-  .corner-controls { right: calc(1rem + env(safe-area-inset-right, 0px)); gap: 0.5rem; }
+  .corner-controls { gap: 0.5rem; }
   .theme-toggle { width: 48px; height: 48px; font-size: 1.4rem; }
   .lang-toggle { font-size: 1rem; min-height: 44px; min-width: 44px; }
 
@@ -486,9 +486,25 @@ main {
   .assistant-overlay { padding: calc(0.75rem + env(safe-area-inset-top, 0px)) 0.75rem calc(0.75rem + env(safe-area-inset-bottom, 0px)); }
   .assistant { height: 90vh; height: 90dvh; }
 
-  .timeline__entry:nth-child(n+4) { display: none; }
-  .timeline.expanded .timeline__entry:nth-child(n+4) { display: block; }
-  .exp-toggle { display: inline-block; }
+  html.js .timeline__entry:nth-child(n+4) { display: none; }
+  html.js .timeline.expanded .timeline__entry:nth-child(n+4) { display: block; }
+  html.js .exp-toggle { display: inline-block; }
+}
+
+/* Below ~900px the desktop's vertically-centred controls would sit on top of
+   the content column (at 768px they cover a project card's arrow). Pin them
+   to the top-right instead and reserve a strip above the hero for them. */
+@media (max-width: 900px) {
+  .corner-controls {
+    top: calc(1rem + env(safe-area-inset-top, 0px));
+    right: calc(1rem + env(safe-area-inset-right, 0px));
+    transform: none;
+    flex-direction: row;
+    align-items: center;
+  }
+  main {
+    padding-top: calc(4.5rem + env(safe-area-inset-top, 0px));
+  }
 }
 
 .hints-row {

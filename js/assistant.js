@@ -1,8 +1,8 @@
-import { open, close, register } from './overlays.js?v=5';
-import { resolveLocalCommand } from './assistant-commands.js?v=5';
-import { storage } from './state.js?v=5';
-import { t, getLang } from './i18n.js?v=5';
-import { isEmbeddedBrowser } from './embedded-browser.js?v=5';
+import { open, close, register } from './overlays.js?v=7';
+import { resolveLocalCommand } from './assistant-commands.js?v=7';
+import { storage } from './state.js?v=7';
+import { t, getLang } from './i18n.js?v=7';
+import { isEmbeddedBrowser } from './embedded-browser.js?v=7';
 
 const assistantMessages = document.getElementById('assistantMessages');
 const assistantInput = document.getElementById('assistantInput');
@@ -360,7 +360,11 @@ async function runBackendReply(locale) {
         div.remove();
       }
     } else {
-      renderError(body, t(isEmbeddedBrowser(navigator.userAgent) ? 'assistant-embedded-browser' : 'assistant-error'));
+      const key =
+        !(err && err.status) && isEmbeddedBrowser(navigator.userAgent)
+          ? 'assistant-embedded-browser'
+          : 'assistant-error';
+      renderError(body, t(key));
     }
   } finally {
     window.clearTimeout(timeoutId);
@@ -388,6 +392,8 @@ function submitAssistantInput(raw) {
   if (command && command.type === 'clear') {
     abortStreaming();
     if (assistantMessages) assistantMessages.innerHTML = '';
+    memory.history = [];
+    saveMemory();
     return;
   }
   if (command && command.type === 'forget') {
