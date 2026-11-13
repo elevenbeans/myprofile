@@ -11,6 +11,7 @@ A real-time, shareable Earth for [elevenbeans.me](https://elevenbeans.me) — NA
 - **Focus a city — +5.** Click or tap a marker dot **or its label**. The camera flies in, the weather panel opens, and the shared city score increments.
 - **Enter the city — +10.** The panel's **进入城市 · +10** button opens a full-screen Orbital Blueprint map of the city's signature district, with OSM building footprints/heights, a wireframe landmark, and local labels. Repeatable: come back and enter again for another +10.
 - **Shared city score.** The left board lists all 34 cities, highest first, with the total shared across every visitor. On mobile the same board opens from the **▤** button in the top bar.
+- **First-visit continent intro.** The globe infers the visitor's continent from the browser timezone (no location permission prompt), centers on it, and shows a small continent chip. A `?city=` deep link skips the intro.
 - **No economy.** There are no credits, contracts, levels, combos, ranks, stability or demolition/rebuild. The visit itself is the score.
 
 ## Scores and anti-abuse

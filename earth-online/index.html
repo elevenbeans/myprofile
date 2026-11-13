@@ -174,6 +174,10 @@
   .chip:hover{color:var(--ink);border-color:var(--line-strong);background:rgba(255,255,255,.055)}
   .chip[aria-pressed="true"]{color:var(--accent);border-color:rgba(212,163,115,.45);background:var(--accent-soft)}
   .chip--static{cursor:default;color:var(--accent);border-color:rgba(212,163,115,.3);font-size:9px;letter-spacing:.12em}
+  .continent-chip{display:inline-flex;align-items:center;gap:5px;padding:4px 7px;border:1px solid rgba(125,211,252,.25);border-radius:4px;background:rgba(125,211,252,.06);color:var(--cyan);font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+  .continent-chip i{width:4px;height:4px;border-radius:50%;background:var(--cyan);box-shadow:0 0 8px var(--cyan);flex:none}
+  .continent-chip[hidden]{display:none}
+  @media(max-width:560px){.continent-chip{font-size:8px;padding:3px 5px;max-width:86px;overflow:hidden;text-overflow:ellipsis}}
   .chip--static:hover{color:var(--accent);border-color:rgba(212,163,115,.3);background:rgba(10,15,24,.5)}
   #soundBtn.is-on{color:var(--accent);border-color:rgba(212,163,115,.45);background:var(--accent-soft)}
   .chip--icon{font-size:15px}
@@ -889,6 +893,7 @@
       </span>
     </a>
     <div class="topbar__right">
+      <span class="continent-chip" id="continentChip" hidden><i aria-hidden="true"></i><span id="continentChipText"></span></span>
       <span class="live" title="Live demo"><i aria-hidden="true"></i><span>LIVE</span></span>
       <span class="chip chip--static" id="modeBadge" hidden>PROCEDURAL</span>
       <button type="button" class="chip chip--icon board-btn" id="boardBtn" data-i18n-title="board-label" data-i18n-aria="board-label" aria-label="CITY SCORE">▤</button>
@@ -1082,6 +1087,8 @@ if (hudCitiesEl) hudCitiesEl.textContent = CITIES.length + ' CITIES';
 const I18N = {
   zh: {
     'brand-sub':'实时地球 · 城市天气',
+    'continent-detected':'你的大洲',
+    'continent-toast':'已定位到{name} · 点击城市查看天气',
     'score-label':'改造积分',
     'score-best':'最高',
     'hint-desk':'拖拽旋转 · 滚轮缩放 · 点击城市',
@@ -1210,6 +1217,8 @@ const I18N = {
   },
   en: {
     'brand-sub':'Real-time planet · city weather',
+    'continent-detected':'Your continent',
+    'continent-toast':'Centered on {name} · tap a city for weather',
     'score-label':'City score',
     'score-best':'Best',
     'hint-desk':'Drag to orbit · Scroll to zoom · Click a city',
@@ -5645,6 +5654,16 @@ function applyI18n(){
     if (I18N[lang][key] !== undefined) el.title = tr(key);
   });
   document.title = lang === 'zh' ? 'Earth Online · mini — 地球 Online' : 'Earth Online · mini — real-time planet';
+  if (detectedContinent){
+    const chip = $('#continentChip');
+    const chipText = $('#continentChipText');
+    const name = CONTINENTS[detectedContinent][lang];
+    if (chipText) chipText.textContent = name;
+    if (chip) {
+      chip.title = tr('continent-detected') + ' · ' + name;
+      chip.setAttribute('aria-label', tr('continent-detected') + ': ' + name);
+    }
+  }
   const langBtn = $('#langBtn');
   if (langBtn){
     langBtn.textContent = lang === 'zh' ? 'EN' : '中文';
@@ -5803,7 +5822,9 @@ async function start(){
   initScores();
   applySun();
 
+  const deepId = params.get('city') || decodeURIComponent((location.hash || '').replace(/^#/, ''));
   initInitialView();
+  if (!deepId && !SHOT) applyContinentView(detectContinent());
   lastFrame = performance.now();
   updateOrbit(0.016, lastFrame);
   updateMarkerPositions();
@@ -5811,16 +5832,83 @@ async function start(){
   renderer.setAnimationLoop(frame);
 
   finishBoot();
+  if (!deepId && !SHOT) showContinentIntro();
   prefetchTemps();
 
   // deep link / screenshot state
-  const deepId = params.get('city') || decodeURIComponent((location.hash || '').replace(/^#/, ''));
   if (deepId){
     const city = CITIES.find((c) => c.id === deepId);
     if (city) setTimeout(() => selectCity(city, { instant: true }), 480);
   }
 
   console.info('[earth] ready', CITIES.length + ' cities');
+}
+
+const CONTINENTS = {
+  asia: { lat: 34, lon: 100, zh: '亚洲', en: 'Asia' },
+  europe: { lat: 50, lon: 15, zh: '欧洲', en: 'Europe' },
+  africa: { lat: 5, lon: 20, zh: '非洲', en: 'Africa' },
+  'north-america': { lat: 45, lon: -100, zh: '北美洲', en: 'North America' },
+  'south-america': { lat: -15, lon: -60, zh: '南美洲', en: 'South America' },
+  oceania: { lat: -25, lon: 140, zh: '大洋洲', en: 'Oceania' },
+  antarctica: { lat: -75, lon: 0, zh: '南极洲', en: 'Antarctica' }
+};
+
+function detectContinent(){
+  let tz = '';
+  try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch (err) {}
+  const southAmerica = /^America\/(Argentina\/|Sao_Paulo|Santiago|Lima|Bogota|Caracas|La_Paz|Asuncion|Montevideo|Guayaquil|Manaus|Cuiaba|Porto_Velho|Rio_Branco|Noronha|Fortaleza|Recife|Bahia|Belem|Araguaina|Maceio|Santarem|Campo_Grande|Eirunepe|Porto_Acre|Boa_Vista|Cayenne|Paramaribo|Guyana)/;
+  if (/^Asia\//.test(tz)) return /Istanbul|Nicosia/.test(tz) ? 'europe' : 'asia';
+  if (/^Europe\//.test(tz)) return 'europe';
+  if (/^Africa\//.test(tz)) return 'africa';
+  if (/^America\//.test(tz)) return southAmerica.test(tz) ? 'south-america' : (tz === 'Pacific/Honolulu' ? 'north-america' : 'north-america');
+  if (/^Australia\//.test(tz) || /^Pacific\//.test(tz)) return /Honolulu|Pago_Pago/.test(tz) ? 'north-america' : 'oceania';
+  if (/^Antarctica\//.test(tz)) return 'antarctica';
+  if (/^Atlantic\//.test(tz)) return /Cape_Verde/.test(tz) ? 'africa' : 'europe';
+  if (/^Indian\//.test(tz)) return /Maldives|Mahe|Reunion|Mayotte|Antananarivo|Mauritius/.test(tz) ? 'africa' : 'asia';
+
+  const locale = (navigator.languages && navigator.languages[0]) || navigator.language || '';
+  const l = locale.toLowerCase();
+  if (/^(zh|ja|ko|th|vi|id|ms|hi|bn|ta|ur|fa|ar)/.test(l)) return 'asia';
+  if (/^(en-us|en-ca|es-mx|fr-ca)/.test(l)) return 'north-america';
+  if (/^(pt-br|es-ar|es-cl|es-co|es-pe)/.test(l)) return 'south-america';
+  if (/^(en-au|en-nz)/.test(l)) return 'oceania';
+  if (/^(en-gb|fr|de|es|it|nl|ru|pl|sv|no|da|fi|el|tr|uk)/.test(l)) return 'europe';
+  return null;
+}
+
+let detectedContinent = null;
+
+function applyContinentView(continent){
+  if (!continent || !CONTINENTS[continent]) return;
+  detectedContinent = continent;
+  const c = CONTINENTS[continent];
+  const v = latLonToVec3(c.lat, c.lon);
+  orbit.theta = Math.atan2(v.z, v.x);
+  orbit.phi = Math.acos(clamp(v.y, -1, 1));
+  orbit.tTheta = orbit.theta;
+  orbit.tPhi = orbit.phi;
+  orbit.tDist = 3.35;
+  if (SHOT || REDUCED) orbit.dist = 3.35;
+  autoPauseUntil = performance.now() + 8000;
+}
+
+function showContinentIntro(){
+  if (!detectedContinent) return;
+  const c = CONTINENTS[detectedContinent];
+  const name = c[lang];
+  const chip = $('#continentChip');
+  const chipText = $('#continentChipText');
+  if (chip && chipText){
+    chipText.textContent = name;
+    chip.title = tr('continent-detected') + ' · ' + name;
+    chip.setAttribute('aria-label', tr('continent-detected') + ': ' + name);
+    chip.hidden = false;
+    setTimeout(() => { chip.hidden = true; }, 12000);
+  }
+  setTimeout(() => {
+    if (!world.selected) toast(tr('continent-toast', { name }), 'build');
+  }, 900);
 }
 
 function initInitialView(){
