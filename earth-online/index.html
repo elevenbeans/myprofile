@@ -4,10 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Earth Online · mini — 地球 Online</title>
-<meta name="description" content="A real-time Earth with live weather, shared city scores, a MapLibre/OSM 3D Shanghai pilot, and procedural city visits. Focus +5, enter a city +10.">
+<meta name="description" content="A real-time 3D Earth with 34 cities, live weather, shared city scores, and MapLibre/OSM Orbital Blueprint city views. Focus +5, enter a city +10.">
 <meta name="theme-color" content="#04060b">
 <meta property="og:title" content="Earth Online · mini">
-<meta property="og:description" content="A real-time globe. Live weather. Shared scores. A real 3D Shanghai map, with procedural cities beyond.">
+<meta property="og:description" content="A real-time 3D Earth with 34 cities, live weather, shared scores, and Orbital Blueprint city maps.">
 <meta property="og:type" content="website">
 <meta property="og:image" content="https://elevenbeans.me/earth-online/preview/home.webp">
 <meta name="twitter:card" content="summary_large_image">
@@ -916,7 +916,7 @@
       <div class="hud__row"><span>UTC</span><b id="hudUtc">--:--:--</b></div>
       <div class="hud__row"><span>CAM</span><b id="hudCam">—</b></div>
     </div>
-    <div class="hud__meta"><span id="hudCities">18 CITIES</span><span>NASA · OPEN-METEO</span></div>
+    <div class="hud__meta"><span id="hudCities">34 CITIES</span><span>NASA · OPEN-METEO</span></div>
   </aside>
 
   <div class="hint" id="hint">
@@ -1075,6 +1075,9 @@ const CITIES = [
   { id:'rome',         name:{zh:'罗马',en:'Rome'},          country:{zh:'意大利',en:'Italy'},     lat:41.9028,  lon:12.4964,   tz:'Europe/Rome' },
   { id:'melbourne',    name:{zh:'墨尔本',en:'Melbourne'},   country:{zh:'澳大利亚',en:'Australia'},lat:-37.8136, lon:144.9631,  tz:'Australia/Melbourne' }
 ];
+
+const hudCitiesEl = document.getElementById('hudCities');
+if (hudCitiesEl) hudCitiesEl.textContent = CITIES.length + ' CITIES';
 
 const I18N = {
   zh: {
@@ -2228,7 +2231,7 @@ function initRenderer(){
 
 let TEX = { day: null, night: null, clouds: null };
 
-function textureLoader(loader, url, timeout = 12000){
+function textureLoader(loader, url, timeout = 25000){
   return new Promise((resolve) => {
     let done = false;
     const timer = setTimeout(() => { if (!done){ done = true; resolve(null); } }, timeout);
@@ -2246,7 +2249,7 @@ async function loadTexture(name, cdnName){
   const loader = new THREE.TextureLoader();
   loader.setCrossOrigin('anonymous');
   const urls = [
-    './textures/' + name,
+    './textures/' + name + '?v=4',
     'https://threejs.org/examples/textures/planets/' + cdnName
   ];
   for (const url of urls){
@@ -2272,8 +2275,8 @@ async function loadTextures(){
   setBootStatus('boot-textures');
   const [day, night, clouds] = await Promise.all([
     loadTexture('earth-day.jpg', 'earth_atmos_2048.jpg'),
-    loadTexture('earth-night.png', 'earth_lights_2048.png'),
-    loadTexture('earth-clouds.png', 'earth_clouds_1024.png')
+    loadTexture('earth-night.jpg', 'earth_lights_2048.png'),
+    loadTexture('earth-clouds.webp', 'earth_clouds_1024.png')
   ]);
   TEX.day = day || proceduralTexture('day');
   TEX.night = night || proceduralTexture('night');
