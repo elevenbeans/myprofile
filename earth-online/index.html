@@ -851,6 +851,60 @@
     *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
     .float-score{animation:none!important;opacity:1}
   }
+
+  /* ---------- game guide ---------- */
+  .guide-entry{
+    position:fixed;right:calc(20px + env(safe-area-inset-right,0px));bottom:calc(22px + env(safe-area-inset-bottom,0px));
+    z-index:45;display:inline-flex;align-items:center;gap:7px;height:34px;padding:0 10px 0 5px;
+    border:1px solid rgba(125,211,252,.24);border-radius:999px;background:rgba(5,12,20,.74);
+    -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);color:#9fefff;font-family:var(--mono);
+    font-size:8px;letter-spacing:.14em;cursor:pointer;box-shadow:0 10px 30px rgba(0,0,0,.28);
+    transition:border-color .2s,background .2s,transform .2s;
+  }
+  .guide-entry:hover{border-color:rgba(125,211,252,.55);background:rgba(9,24,34,.9);transform:translateY(-1px)}
+  .guide-entry__mark{display:grid;place-items:center;width:23px;height:23px;border:1px solid rgba(125,211,252,.42);border-radius:50%;color:var(--cyan);font-size:12px;letter-spacing:0;box-shadow:0 0 12px rgba(125,211,252,.12)}
+  .guide-entry__label{color:var(--muted);text-transform:uppercase}
+  body.city-mode .guide-entry{z-index:80;bottom:calc(150px + env(safe-area-inset-bottom,0px))}
+  body.guide-open{overflow:hidden}
+  .guide-modal{position:fixed;inset:0;z-index:200;display:grid;place-items:center;padding:24px;opacity:0;visibility:hidden;transition:opacity .25s var(--ease),visibility .25s}
+  .guide-modal[hidden]{display:none}
+  .guide-modal.is-open{opacity:1;visibility:visible}
+  .guide-backdrop{position:absolute;inset:0;background:rgba(2,6,10,.8);-webkit-backdrop-filter:blur(15px);backdrop-filter:blur(15px)}
+  .guide-card{position:relative;width:min(980px,100%);max-height:min(88dvh,920px);display:flex;flex-direction:column;border:1px solid rgba(125,211,252,.22);border-radius:16px;background:linear-gradient(180deg,rgba(10,23,34,.98),rgba(3,9,15,.98));box-shadow:0 40px 120px rgba(0,0,0,.65);overflow:hidden;transform:translateY(14px);transition:transform .3s var(--ease)}
+  .guide-modal.is-open .guide-card{transform:none}
+  .guide-head{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;padding:24px 24px 18px;border-bottom:1px solid var(--line)}
+  .guide-eyebrow{font-family:var(--mono);font-size:8px;letter-spacing:.2em;color:var(--amber);text-transform:uppercase}
+  .guide-head h2{margin:8px 0 0;font-size:clamp(24px,3.2vw,34px);font-weight:600;letter-spacing:-.02em;line-height:1.1}
+  .guide-intro{margin:9px 0 0;max-width:690px;font-size:12.5px;line-height:1.75;color:var(--muted)}
+  .guide-close{flex:none;width:32px;height:32px;padding:0;border:1px solid var(--line);border-radius:50%;background:rgba(255,255,255,.025);color:var(--muted);font-size:20px;line-height:1;cursor:pointer;transition:.2s}
+  .guide-close:hover{color:#fff;border-color:rgba(125,211,252,.5);background:rgba(125,211,252,.08)}
+  .guide-body{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:18px 24px 22px;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:rgba(125,211,252,.2) transparent}
+  .guide-body::-webkit-scrollbar{width:4px}
+  .guide-body::-webkit-scrollbar-thumb{background:rgba(125,211,252,.2);border-radius:4px}
+  .guide-item{position:relative;padding:14px 15px 13px;border:1px solid rgba(125,211,252,.11);border-radius:10px;background:rgba(7,17,26,.52);transition:border-color .2s,background .2s}
+  .guide-item:hover{border-color:rgba(125,211,252,.25);background:rgba(8,22,32,.7)}
+  .guide-item__num{font-family:var(--mono);font-size:8px;letter-spacing:.16em;color:var(--dim);margin-bottom:7px}
+  .guide-item h3{margin:0;font-size:13.5px;font-weight:600;letter-spacing:-.01em;color:var(--ink);line-height:1.35}
+  .guide-item p{margin:6px 0 10px;font-size:11.5px;line-height:1.7;color:var(--muted)}
+  .guide-tech{display:inline-flex;align-items:center;gap:5px;font-family:var(--mono);font-size:8px;line-height:1.3;letter-spacing:.03em;color:var(--cyan);padding:4px 7px;border:1px solid rgba(125,211,252,.18);border-radius:4px;background:rgba(125,211,252,.045);white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+  .guide-tech::before{content:'TECH';font-size:6.5px;letter-spacing:.12em;color:var(--dim)}
+  .guide-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 24px 14px;border-top:1px solid var(--line);font-family:var(--mono);font-size:8px;letter-spacing:.12em;color:var(--dim);text-transform:uppercase}
+  @media(max-width:760px){
+    .guide-entry{right:calc(14px + env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px))}
+    .guide-entry__label{display:none}
+    .guide-entry{padding:0;width:38px;height:38px;justify-content:center}
+    .guide-entry__mark{width:24px;height:24px}
+    body.city-mode .guide-entry{bottom:calc(140px + env(safe-area-inset-bottom,0px))}
+    .guide-modal{padding:10px}
+    .guide-card{max-height:92dvh;border-radius:13px}
+    .guide-head{padding:18px 16px 14px}
+    .guide-head h2{font-size:24px}
+    .guide-intro{font-size:11.5px}
+    .guide-body{grid-template-columns:1fr;padding:12px 14px 16px;gap:8px}
+    .guide-item{padding:12px 12px 11px}
+    .guide-item p{font-size:11px}
+    .guide-foot{padding:9px 14px 11px;font-size:7px;flex-wrap:wrap}
+  }
 </style>
 </head>
 <body>
@@ -1028,6 +1082,27 @@
 
   <noscript><div class="noscript">这个地球需要一个支持 JavaScript 的浏览器。<br>请启用 JavaScript 后刷新页面。</div></noscript>
 
+
+  <button type="button" class="guide-entry" id="guideBtn" aria-label="游戏说明">
+    <span class="guide-entry__mark" aria-hidden="true">?</span>
+    <span class="guide-entry__label">GUIDE</span>
+  </button>
+
+  <div class="guide-modal" id="guideModal" hidden>
+    <div class="guide-backdrop" data-guide-close></div>
+    <section class="guide-card" role="dialog" aria-modal="true" aria-labelledby="guideTitle">
+      <header class="guide-head">
+        <div>
+          <div class="guide-eyebrow" id="guideEyebrow">EARTH ONLINE / SYSTEM</div>
+          <h2 id="guideTitle">游戏说明</h2>
+          <p class="guide-intro" id="guideIntro"></p>
+        </div>
+        <button type="button" class="guide-close" id="guideClose" aria-label="关闭说明">×</button>
+      </header>
+      <div class="guide-body" id="guideBody"></div>
+      <footer class="guide-foot" id="guideFoot"></footer>
+    </section>
+  </div>
 <script type="module">
 /* ------------------------------------------------------------------
    Earth Online · mini
@@ -5878,7 +5953,162 @@ function resetView(){
   autoPauseUntil = performance.now() + 2500;
 }
 
+
+/* ---------------- game guide ---------------- */
+
+const GUIDE_COPY = {
+  zh: {
+    eyebrow: 'EARTH ONLINE / 系统说明',
+    title: '游戏说明',
+    intro: '一个实时共享的 3D 地球：34 座城市、实时天气、共享分数与城市详情。下面按功能说明，并给出每条的实现要点。',
+    close: '关闭说明',
+    foot: '无需账号 · 无需 API Key · 纯静态站点'
+  },
+  en: {
+    eyebrow: 'EARTH ONLINE / SYSTEM',
+    title: 'Game Guide',
+    intro: 'A real-time, shared 3D Earth: 34 cities, live weather, shared scores and city detail. Each feature includes a short implementation note.',
+    close: 'Close guide',
+    foot: 'NO ACCOUNT · NO API KEY · STATIC SITE'
+  }
+};
+
+const GUIDE_ITEMS = [
+  {
+    zh: { title: '3D 地球', desc: 'NASA 昼夜贴图、云层、星空、晨昏线和城市弧线组成可旋转的 3D 地球，拖拽/滚轮/双指缩放。', tech: '昼夜 shader + 菲涅尔' },
+    en: { title: '3D globe', desc: 'NASA day/night textures, clouds, stars, a real terminator and city arcs; drag, wheel and pinch to explore.', tech: 'Day/night shader + Fresnel' }
+  },
+  {
+    zh: { title: '城市交互', desc: '城市点是 HTML 按钮，点击 dot 或标签即可聚焦；标签按高度和缩放偏移，避免遮挡。', tech: '球面投影 + 深度判定' },
+    en: { title: 'City interaction', desc: 'City dots are HTML buttons; click the dot or label to focus. Labels offset by height and zoom to avoid overlap.', tech: 'Sphere projection + depth test' }
+  },
+  {
+    zh: { title: '实时天气', desc: 'Open-Meteo 提供当前天气、体感、湿度、风速、日出日落和三日预报，并按城市时区显示本地时间。', tech: 'Open-Meteo + 10min 缓存' },
+    en: { title: 'Live weather', desc: 'Open-Meteo supplies current conditions, feels-like, humidity, wind, sunrise/sunset and a 3-day forecast, shown in local time.', tech: 'Open-Meteo + 10-min cache' }
+  },
+  {
+    zh: { title: '34 座城市', desc: '每城包含经纬度、时区、地标、标签和详情相机；地球、榜单和城市页共用 CITIES 数据源。', tech: '单一 CITIES 数据源' },
+    en: { title: '34 cities', desc: 'Each city has coordinates, timezone, landmark, labels and a detail camera; globe, board and city view share one CITIES source.', tech: 'Single CITIES source' }
+  },
+  {
+    zh: { title: '共享城市分数', desc: '点击城市 +5，进入城市详情 +10；分数全局共享、可重复，左侧榜单按分数实时排序。', tech: 'NAS 会话 + 幂等事件' },
+    en: { title: 'Shared city score', desc: 'Focus a city +5, enter its detail +10; scores are global, repeatable and sorted live on the left board.', tech: 'NAS session + idempotent event' }
+  },
+  {
+    zh: { title: '防刷与限流', desc: '每个计分事件带幂等 eventId；服务端按 token/城市/动作冷却，并限制 IP 请求频率。', tech: '冷却 + IP 限流' },
+    en: { title: 'Anti-abuse', desc: 'Every score has an idempotent eventId; the server applies per-token/city/action cooldowns and an IP rate limit.', tech: 'Cooldown + IP rate limit' }
+  },
+  {
+    zh: { title: '城市详情地图', desc: 'MapLibre 加载 OSM 建筑并拉伸为 3D；每城独立相机、地标标签和可点击地图 marker。', tech: 'MapLibre 建筑拉伸' },
+    en: { title: 'City detail map', desc: 'MapLibre loads OSM buildings and extrudes them into 3D; each city has its own camera, labels and clickable map markers.', tech: 'MapLibre + fill-extrusion' }
+  },
+  {
+    zh: { title: '底图兜底', desc: '矢量瓦片不可用时自动使用 Esri 深灰底图，城市、标签和地标仍然可读。', tech: 'OSM 矢量 + Esri 栅格' },
+    en: { title: 'Basemap fallback', desc: 'When vector tiles are unavailable, an Esri dark-gray raster base keeps the city, labels and landmarks readable.', tech: 'OSM vector + Esri raster' }
+  },
+  {
+    zh: { title: '线框地标', desc: '每城程序化地标转换为青色线框，叠加在 MapLibre 上；上海东方明珠为专用线框模型。', tech: 'Three.js 自定义层' },
+    en: { title: 'Wireframe landmarks', desc: 'Procedural landmarks become cyan wireframes on a Three.js custom layer; Shanghai has a bespoke Oriental Pearl model.', tech: 'Three.js custom layer' }
+  },
+  {
+    zh: { title: '大洲引导', desc: '首次进入按浏览器时区推断大洲，自动把地球转到该大洲并显示 chip；不使用定位权限。', tech: '时区推断 + 相机定位' },
+    en: { title: 'Continent intro', desc: 'First visit infers a continent from the browser timezone, centers the globe and shows a chip; no location permission is requested.', tech: 'Timezone + camera target' }
+  },
+  {
+    zh: { title: '城市音乐', desc: 'Web Audio 合成环境 pad 与 34 城主题；进入城市交叉淡化，退出恢复 ambient，城市头部可静音。', tech: 'Web Audio + 交叉淡化' },
+    en: { title: 'City music', desc: 'Web Audio synthesizes the ambient pad and 34 city themes; entering crossfades in, exiting returns to ambient, with a mute control.', tech: 'Web Audio + crossfade' }
+  },
+  {
+    zh: { title: 'HUD 与移动端', desc: 'Orbital Blueprint 网格、扫描线、雷达和目标括号；桌面、平板与手机布局自适应。', tech: 'CSS HUD + 响应式' },
+    en: { title: 'HUD & mobile', desc: 'Orbital Blueprint grid, scanlines, radar and target brackets; responsive layouts for desktop, tablet and phone.', tech: 'CSS HUD + responsive' }
+  },
+  {
+    zh: { title: '深链与快捷键', desc: '支持 ?city=、?lang=、?api=、?shot= 等 URL 参数；Esc 返回，键盘可操作。', tech: 'URL 参数 + History' },
+    en: { title: 'Deep links & keys', desc: 'Supports ?city=, ?lang=, ?api= and ?shot= URL flags; Esc returns and keyboard controls work.', tech: 'URLSearchParams + History' }
+  },
+  {
+    zh: { title: '技术栈', desc: '单页原生 HTML/CSS/ES Module；Three.js 与 MapLibre 使用本地 vendor；无构建，GitHub Pages 静态托管。', tech: '原生 ESM + 静态托管' },
+    en: { title: 'Tech stack', desc: 'A single-page native HTML/CSS/ES module app; local Three.js and MapLibre vendors; no build, hosted statically on GitHub Pages.', tech: 'Native ESM + static hosting' }
+  },
+  {
+    zh: { title: '隐私', desc: '无需账号或精确定位；只用本地时区推断大洲，分数使用短期 token 写入 NAS。', tech: '时区推断 + 短期 token' },
+    en: { title: 'Privacy', desc: 'No account or precise location; only the local timezone infers a continent, and scores use a short-lived NAS token.', tech: 'Timezone + short token' }
+  },
+  {
+    zh: { title: '无经济系统', desc: '没有拆除、重建、合约、等级或货币；只保留共享城市分数和探索。', tech: '纯共享分数模型' },
+    en: { title: 'No economy', desc: 'No demolition, rebuild, contracts, levels or currency; only the shared city score and exploration remain.', tech: 'Shared-score model' }
+  }
+];
+
+let guideOpen = false;
+let guideReturnFocus = null;
+
+function renderGuide(){
+  const copy = GUIDE_COPY[lang] || GUIDE_COPY.zh;
+  const title = document.getElementById('guideTitle');
+  const eyebrow = document.getElementById('guideEyebrow');
+  const intro = document.getElementById('guideIntro');
+  const foot = document.getElementById('guideFoot');
+  const close = document.getElementById('guideClose');
+  if (title) title.textContent = copy.title;
+  if (eyebrow) eyebrow.textContent = copy.eyebrow;
+  if (intro) intro.textContent = copy.intro;
+  if (foot) foot.textContent = copy.foot;
+  if (close) close.setAttribute('aria-label', copy.close);
+  const body = document.getElementById('guideBody');
+  if (!body) return;
+  body.innerHTML = GUIDE_ITEMS.map((item, i) => {
+    const d = item[lang] || item.zh;
+    return '<article class="guide-item">' +
+      '<div class="guide-item__num">' + String(i + 1).padStart(2, '0') + ' / ' + GUIDE_ITEMS.length + '</div>' +
+      '<h3>' + d.title + '</h3>' +
+      '<p>' + d.desc + '</p>' +
+      '<span class="guide-tech">' + d.tech + '</span>' +
+      '</article>';
+  }).join('');
+}
+
+function openGuide(){
+  const modal = document.getElementById('guideModal');
+  if (!modal) return;
+  guideReturnFocus = document.activeElement;
+  renderGuide();
+  modal.hidden = false;
+  modal.setAttribute('aria-hidden', 'false');
+  guideOpen = true;
+  document.body.classList.add('guide-open');
+  requestAnimationFrame(() => modal.classList.add('is-open'));
+  setTimeout(() => { const close = document.getElementById('guideClose'); if (close) close.focus(); }, 60);
+}
+
+function closeGuide(){
+  if (!guideOpen) return;
+  guideOpen = false;
+  const modal = document.getElementById('guideModal');
+  if (modal){
+    modal.classList.remove('is-open');
+    modal.setAttribute('aria-hidden', 'true');
+    setTimeout(() => { modal.hidden = true; }, 240);
+  }
+  document.body.classList.remove('guide-open');
+  if (guideReturnFocus && typeof guideReturnFocus.focus === 'function') guideReturnFocus.focus();
+}
+
 function bindUI(){
+  const guideBtn = document.getElementById('guideBtn');
+  const guideClose = document.getElementById('guideClose');
+  const guideModal = document.getElementById('guideModal');
+  if (guideBtn) guideBtn.addEventListener('click', openGuide);
+  if (guideClose) guideClose.addEventListener('click', closeGuide);
+  if (guideModal){
+    guideModal.querySelectorAll('[data-guide-close]').forEach((el) => el.addEventListener('click', closeGuide));
+  }
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && guideOpen){
+      event.preventDefault();
+      closeGuide();
+    }
+  });
   $('#langBtn').addEventListener('click', () => {
     lang = lang === 'zh' ? 'en' : 'zh';
     store.set('lang', lang);
@@ -5983,6 +6213,13 @@ function applyI18n(){
       chip.setAttribute('aria-label', tr('continent-detected') + ': ' + name);
     }
   }
+  const guideBtnEl = document.getElementById('guideBtn');
+  if (guideBtnEl){
+    const copy = GUIDE_COPY[lang] || GUIDE_COPY.zh;
+    guideBtnEl.title = copy.title;
+    guideBtnEl.setAttribute('aria-label', copy.title);
+  }
+  if (guideOpen) renderGuide();
   const langBtn = $('#langBtn');
   if (langBtn){
     langBtn.textContent = lang === 'zh' ? 'EN' : '中文';

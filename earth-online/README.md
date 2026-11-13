@@ -13,6 +13,7 @@ A real-time, shareable Earth for [elevenbeans.me](https://elevenbeans.me) — NA
 - **Shared city score.** The left board lists all 34 cities, highest first, with the total shared across every visitor. On mobile the same board opens from the **▤** button in the top bar.
 - **First-visit continent intro.** The globe infers the visitor's continent from the browser timezone (no location permission prompt), centers on it, and shows a small continent chip. A `?city=` deep link skips the intro.
 - **No economy.** There are no credits, contracts, levels, combos, ranks, stability or demolition/rebuild. The visit itself is the score.
+- **Technical game guide.** A bottom-right **? / GUIDE** entry opens a complete, bilingual feature list; each feature includes a one-line implementation note capped at 20 characters.
 
 ## Scores and anti-abuse
 
@@ -154,6 +155,7 @@ Entering a city detail crossfades the globe ambient pad into a short, original W
 | City score board | Left board on desktop; **▤** in the top bar on mobile. Rows are clickable and open that city's panel. |
 | Language | **EN / 中文** |
 | Sound | Speaker button (on by default; unlocks on the first gesture) |
+| Game guide | **? / GUIDE** at the bottom-right; scrollable technical feature list |
 | Keyboard orbit | Arrow keys while the globe is focused |
 
 ## URL flags
