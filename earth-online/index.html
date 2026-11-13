@@ -2127,6 +2127,7 @@ async function flushScores(){
   if (scoreState.pending.length) scheduleScoreRetry();
 }
 function awardScore(city, action){
+  if (SHOT) return; // screenshot/test mode must not pollute the shared board
   const points = action === 'focus' ? 5 : 10;
   const evt = { eventId: newEventId(), cityId: city.id, action, points, ts: Date.now() };
   scoreState.pending.push(evt);
