@@ -2,7 +2,7 @@
 
 A real-time, shareable Earth for [elevenbeans.me](https://elevenbeans.me) — NASA globe, live weather, a shared city score board, and a MapLibre/OSM **Orbital Blueprint** 3D city view for **all 34 cities**.
 
-> Self-contained under `earth-online/`. No build step and no framework. The shared score API lives on the NAS in `nas/nas-portal`.
+> Homepage project: https://elevenbeans.me/earth-online/. Self-contained under `earth-online/`. No build step and no framework. The shared score API lives on the NAS in `nas/nas-portal`; this README is also the `earth-online` project doc read by the NAS profile-chat assistant.
 
 ![Earth Online — shared city score, live weather and the day/night globe](preview/home.webp)
 

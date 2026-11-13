@@ -19,6 +19,7 @@ Personal profile page. Vanilla HTML/CSS/JS with native ES modules — no framewo
 - `index.html` — markup; i18n via `data-i18n` / `data-i18n-aria` / `data-i18n-placeholder`
 - `styles.css` — styling, themes, reduced-motion and print rules
 - `js/` — ES modules: `app.js` (entry) plus `state`, `i18n`, `theme`, `overlays`, `ux`, `terminal`, `assistant`, `assistant-commands`, `embedded-browser`
+- `earth-online/` — standalone interactive 3D Earth (34 cities, live weather, shared scores, MapLibre/OSM Orbital Blueprint city views); served at `/earth-online/` with no build step
 - `tests/assistant-commands.test.js` — zero-dependency Node tests for the local command layer
 - `tests/embedded-browser.test.js` — zero-dependency Node tests for in-app browser detection
 
@@ -32,6 +33,10 @@ python3 -m http.server 8080
 ```
 
 The assistant calls the NAS endpoint. On `localhost` it uses `http://localhost:3001/api/profile-chat` (the NAS portal dev server); everywhere else it uses `https://nas.elevenbeans.me/api/profile-chat`. If the endpoint is unreachable, the offline easter-egg commands still work.
+
+## Earth Online
+
+The project showcase links to [`/earth-online/`](./earth-online/), a self-contained static app: NASA globe, live Open-Meteo weather, a shared 34-city score board, and MapLibre/OSM Orbital Blueprint city views with wireframe landmarks. Its README is the project doc used by the NAS profile-chat assistant. There is no build step; GitHub Pages serves the folder directly.
 
 ## Tests
 
