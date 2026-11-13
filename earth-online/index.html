@@ -2249,7 +2249,7 @@ async function loadTexture(name, cdnName){
   const loader = new THREE.TextureLoader();
   loader.setCrossOrigin('anonymous');
   const urls = [
-    './textures/' + name + '?v=4',
+    './textures/' + name + '?v=5',
     'https://threejs.org/examples/textures/planets/' + cdnName
   ];
   for (const url of urls){
@@ -2274,9 +2274,9 @@ async function loadTextures(){
   }
   setBootStatus('boot-textures');
   const [day, night, clouds] = await Promise.all([
-    loadTexture('earth-day.jpg', 'earth_atmos_2048.jpg'),
-    loadTexture('earth-night.jpg', 'earth_lights_2048.png'),
-    loadTexture('earth-clouds.webp', 'earth_clouds_1024.png')
+    loadTexture('earth-day-v2.jpg', 'earth_atmos_2048.jpg'),
+    loadTexture('earth-night-v2.jpg', 'earth_lights_2048.png'),
+    loadTexture('earth-clouds-v2.webp', 'earth_clouds_1024.png')
   ]);
   TEX.day = day || proceduralTexture('day');
   TEX.night = night || proceduralTexture('night');
