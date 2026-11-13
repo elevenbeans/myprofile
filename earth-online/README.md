@@ -132,6 +132,15 @@ npm run sync
 
 The page itself is static; publish `myprofile/earth-online/` as usual.
 
+## City themes
+
+Entering a city detail crossfades the globe ambient pad into a short, original Web Audio theme for that city, and fades back on exit:
+
+- 34 compact `CITY_MUSIC_THEMES` configs: root, scale/mode, 4-chord progression, tempo, 7-note motif, and a style preset (jazz, city-pop, pentatonic, electronic, techno, ambient, strings, world, bossa, indie, flamenco, march).
+- The synth engine renders pluck, pulse arp, bass, pad, muted trumpet/flute/bell, brush/kick/hat/clap/frame drums, and occasional risers. No audio files, samples, or extra network requests.
+- Each theme is original; **no 《夜上海》 melody** or other copyrighted tune is used.
+- The **♪** button in the city header (and the globe top bar) mutes/unmutes both the theme and UI effects.
+
 ## Controls
 
 | Action | Input |
@@ -167,7 +176,7 @@ The page itself is static; publish `myprofile/earth-online/` as usual.
 - City markers are HTML buttons projected from 3D positions each frame, so they stay crisp and keyboard accessible.
 - Weather comes from [Open-Meteo](https://open-meteo.com/) with a 10-minute `sessionStorage` cache; the panel shows local clock, current conditions, feels-like, humidity, wind, sunrise/sunset and a three-day forecast.
 - The 3D detail scene is built from `BoxGeometry`, `CylinderGeometry`, `ConeGeometry`, `SphereGeometry`, `ExtrudeGeometry` and `Line` primitives; no external models. A seeded PRNG keeps each district deterministic.
-- Web Audio synthesises the UI cues plus a low-volume ambient music pad. Audio defaults to on, but browsers block audible autoplay before a gesture, so the first pointer/key starts it; the **♪** button mutes/unmutes both music and effects.
+- Web Audio synthesises the UI cues, the globe ambient pad, and 34 per-city themes. The first pointer/key creates/resumes the AudioContext; entering a city crossfades ambient to that city's theme, and exiting crossfades back. The **♪** button in the city header or top bar mutes/unmutes everything; no audio files are loaded.
 - The score API is implemented in `nas-portal/app/api/earth-score/route.ts` and `session/route.ts`, with shared state in `lib/earth-score.ts`.
 
 ## Known limitations
@@ -179,7 +188,7 @@ The page itself is static; publish `myprofile/earth-online/` as usual.
 - Weather is current conditions at roughly 15-minute resolution; if Open-Meteo is unavailable the panel shows a retry state and the 3D scene falls back to the city's local day/night.
 - The "online" count is simulated.
 - Very rapid repeated clicks can be dropped by the score cooldown; this is intentional anti-abuse behaviour.
-- Audio defaults on, but browsers require one user gesture before sound can play; the first click/key starts the ambient music and effects. The **♪** button mutes/unmutes both, and the preference is remembered.
+- Audio defaults on, but browsers require one user gesture before sound can play; the first click/key starts ambient audio, then a city detail crossfades to its theme. The **♪** button mutes/unmutes everything, and the preference is remembered. All themes are original Web Audio synthesis; no copyrighted melody or recording is used.
 
 ## Credits
 
