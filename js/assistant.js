@@ -1,8 +1,8 @@
-import { open, close, register } from './overlays.js?v=7';
-import { resolveLocalCommand } from './assistant-commands.js?v=7';
-import { storage } from './state.js?v=7';
-import { t, getLang } from './i18n.js?v=7';
-import { isEmbeddedBrowser } from './embedded-browser.js?v=7';
+import { open, close, register } from './overlays.js?v=8';
+import { resolveLocalCommand } from './assistant-commands.js?v=8';
+import { storage } from './state.js?v=8';
+import { t, getLang } from './i18n.js?v=8';
+import { isEmbeddedBrowser } from './embedded-browser.js?v=8';
 
 const assistantMessages = document.getElementById('assistantMessages');
 const assistantInput = document.getElementById('assistantInput');

@@ -1,4 +1,4 @@
-import { open, close, register } from './overlays.js?v=7';
+import { open, close, register } from './overlays.js?v=8';
 
 const termInput = document.getElementById('terminalInput');
 const termOutput = document.getElementById('terminalOutput');
@@ -20,7 +20,7 @@ const fileSystem = {
         'Blog': '.tag: dir\nThoughts on engineering, travel, and side projects.',
         'Budgetair.com': '.tag: dir\nOTA flight booking platform.',
         'Cheaptickets.nl': '.tag: dir\nFlight search and comparison.',
-        'Game of Life': '.tag: dir\nConway\'s Game of Life simulation.',
+        'Earth Online': '.tag: dir\nInteractive 3D Earth: 34 cities, live weather, shared scores.',
       },
       'Interests': {
         '.tag': 'dir',

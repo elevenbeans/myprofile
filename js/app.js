@@ -1,9 +1,9 @@
-import { applyLang, getLang, toggleLang, t } from './i18n.js?v=7';
-import { initTheme } from './theme.js?v=7';
-import { initOverlays, isOpen } from './overlays.js?v=7';
-import { initTerminal, openTerminal } from './terminal.js?v=7';
-import { initAssistant, openAssistant, closeAssistant } from './assistant.js?v=7';
-import { initReveal, revealAll, initScrollProgress, initBackToTop } from './ux.js?v=7';
+import { applyLang, getLang, toggleLang, t } from './i18n.js?v=8';
+import { initTheme } from './theme.js?v=8';
+import { initOverlays, isOpen } from './overlays.js?v=8';
+import { initTerminal, openTerminal } from './terminal.js?v=8';
+import { initAssistant, openAssistant, closeAssistant } from './assistant.js?v=8';
+import { initReveal, revealAll, initScrollProgress, initBackToTop } from './ux.js?v=8';
 
 const timeline = document.querySelector('.timeline');
 const expToggle = document.getElementById('expToggle');

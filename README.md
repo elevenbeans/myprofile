@@ -4,7 +4,7 @@ Personal profile page. Vanilla HTML/CSS/JS with native ES modules — no framewo
 
 ## Features
 
-- Work timeline, project showcase, and interests
+- Work timeline, project showcase, and interests, including [Earth Online](https://elevenbeans.me/earth-online/) — an interactive 3D Earth with 34 cities, live weather and shared scores
 - Dark/light theme with system preference detection (no first-paint flash)
 - i18n (EN / 中文)
 - Hidden retro terminal (double-click the name, `Ctrl+\``, or the hints row)
@@ -49,5 +49,6 @@ Push to `main` — GitHub Pages auto-deploys to elevenbeans.me.
 
 ## Related
 
+- Earth Online: https://elevenbeans.me/earth-online/
 - NAS portal + assistant: https://nas.elevenbeans.me
 - Blog: https://blog.elevenbeans.me

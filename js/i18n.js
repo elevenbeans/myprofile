@@ -1,4 +1,4 @@
-import { storage } from './state.js?v=7';
+import { storage } from './state.js?v=8';
 
 export const i18n = {
   en: {
@@ -29,8 +29,8 @@ export const i18n = {
     'project-nas-desc': 'Self-hosted portal for files, photos & media, with a local AI assistant.',
     'project-blog-title': 'Blog',
     'project-blog-desc': 'Thoughts on engineering, travel, and side projects.',
-    'project-game-title': 'Game of Life',
-    'project-game-desc': "Conway's Game of Life simulation.",
+    'project-earth-title': 'Earth Online',
+    'project-earth-desc': 'An interactive 3D Earth with 34 cities, live weather and shared scores.',
     'tag-1': 'Self-hosting',
     'tag-2': 'Travel',
     'tag-3': 'Coffee',
@@ -96,8 +96,8 @@ export const i18n = {
     'project-nas-desc': '\u81EA\u6258\u7BA1\u95E8\u6237\uFF0C\u7BA1\u7406\u6587\u4EF6\u3001\u7167\u7247\u4E0E\u5A92\u4F53\uFF0C\u5185\u7F6E\u672C\u5730 AI \u52A9\u624B\u3002',
     'project-blog-title': '\u535A\u5BA2',
     'project-blog-desc': '\u5173\u4E8E\u5DE5\u7A0B\u3001\u65C5\u884C\u548C\u526F\u4E1A\u7684\u601D\u8003\u3002',
-    'project-game-title': '\u751F\u547D\u6E38\u620F',
-    'project-game-desc': '\u5EB7\u5A01\u751F\u547D\u6E38\u620F\u6A21\u62DF\u3002',
+    'project-earth-title': '\u5730\u7403 Online',
+    'project-earth-desc': '\u53EF\u4EA4\u4E92\u7684 3D \u5730\u7403\uFF1A34 \u5EA7\u57CE\u5E02\u3001\u5B9E\u65F6\u5929\u6C14\u4E0E\u5171\u4EAB\u5206\u6570\u3002',
     'tag-1': '\u81EA\u6258\u7BA1',
     'tag-2': '\u65C5\u884C',
     'tag-3': '\u5496\u5561',

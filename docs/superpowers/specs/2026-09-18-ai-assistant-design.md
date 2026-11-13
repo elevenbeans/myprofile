@@ -47,7 +47,7 @@ English and Chinese variants:
   - Alibaba — Software Engineer (2015 – 2016): e-commerce platform
   - Xi'an Jiaotong University — Computer Science (2012 – 2015)
   - Sichuan University — Computer Science (2008 – 2012)
-- Projects: NAS Portal (self-hosted portal for files/photos/media, with a local AI assistant), Blog, Budgetair.com, Cheaptickets.nl, Game of Life
+- Projects: NAS Portal (self-hosted portal for files/photos/media, with a local AI assistant), Blog, Budgetair.com, Cheaptickets.nl, Earth Online
 - Interests: Self-hosting, Travel, Coffee, Cat, Music, Whisky, Vibe Coding
 - Contact: GitHub `github.com/elevenbeans`, Email `elevenbeansf2e@gmail.com`
 - Site easter eggs: Ctrl+\` opens a hidden terminal; typing `ai` opens this assistant
