@@ -176,7 +176,7 @@ The home page uses an original slow piano piece in A minor: broken chords, a low
 - `vendor/three.module.min.js` is Three.js r160 (MIT), loaded locally with a CDN fallback.
 - `vendor/maplibre-gl.js` + CSS are MapLibre GL JS 4.7 (BSD-3), loaded locally for every city view.
 - Each city's 3D layer is a MapLibre `fill-extrusion` of the `building` source-layer from OpenFreeMap, combined with water/road layers, an Esri dark-gray raster fallback, a blueprint HUD overlay and HTML landmark labels. No building data file is bundled; tiles are fetched at runtime.
-- Each landmark is a separate Three.js custom layer on the MapLibre canvas. The five OSM-readable landmarks get a lock-on frame tied to the map's `building:part` massing and a real `ALT` readout; the rest get structural edges (`EdgesGeometry`, not a triangulated wireframe) over a dim volume, scaled to the city's visual landmark height. Both use a ground survey ring and an amber beacon; Shanghai keeps its bespoke Oriental Pearl geometry in the same edge language.
+- Each landmark is a separate Three.js custom layer on the MapLibre canvas. The five OSM-readable landmarks get a lock-on frame tied to the map's `building:part` massing and a real `ALT` readout; the rest get structural edges (`EdgesGeometry`, not a triangulated wireframe) over a dim volume, scaled to its real height. Both use a ground survey ring and an amber beacon; Shanghai keeps its bespoke Oriental Pearl geometry in the same edge language.
 - `textures/` holds NASA day (2048×1024 WebP), night-lights (2048×1024 WebP) and cloud (1024×512 WebP) maps, with the previous 1K files as a local fallback and the Three.js CDN as a second fallback. Textures use `?v=6` and anisotropy 16.
 - The globe uses a custom shader to blend day/night maps at the real subsolar point, with a warm terminator band, atmospheric rim, stars, clouds and great-circle arcs.
 - City markers are HTML buttons projected from 3D positions each frame, so they stay crisp and keyboard accessible.
@@ -188,7 +188,7 @@ The home page uses an original slow piano piece in A minor: broken chords, a low
 
 ## Known limitations
 
-- All city maps are stylised Orbital Blueprint views, not photo-real. Non-supertall landmarks are deliberately exaggerated where the real structure is low so they read at map scale; the five lock-on cities use the real OSM massing and altitude. Photo-real Google/Amap/Baidu detail would require their platform keys and 3D tiles.
+- All city maps are stylised Orbital Blueprint views, not photo-real. Landmarks use their real structural height and altitude; low landmarks get a closer default zoom rather than an exaggerated scale, so very low monuments (MASP, the Brandenburg Gate, Amsterdam canal houses) can still be small at district scale. Photo-real Google/Amap/Baidu detail would require their platform keys and 3D tiles.
 - OSM building coverage and OpenFreeMap tile availability vary by city. The Esri dark-gray raster base keeps the district readable when 3D building tiles are missing; a city may temporarily show a 2D base plus the blueprint landmark.
 - The view needs network access for raster/vector tiles. If MapLibre fails entirely, the procedural Three.js district is used as a fallback.
 - Shared scores require the NAS API. Without it the board shows offline, keeps optimistic points, and retries queued events when the connection returns.
