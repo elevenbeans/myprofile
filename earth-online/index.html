@@ -4262,11 +4262,9 @@ const LANDMARKS = {
 };
 
 const LANDMARK_HEIGHTS = {
-  eiffel: 33, empire: 36, burj: 64, bigben: 26, temple: 15, pearl: 30, bank: 28, marina: 27,
-  opera: 14, stbasil: 20, pyramid: 13, table: 14, masp: 18, goldengate: 24, seoul: 34, gate: 16, coveredbridge: 11,
-  pagoda: 24, chongqing: 22, pingan: 50, canton: 42, potala: 20, taipei101: 48,
-  canalhouse: 12, brandenburg: 14, ryugyong: 40, hagia: 18, bitexco: 36, watarun: 26,
-  cntower: 50, royalpalace: 16, colosseum: 14, flinders: 14, ifs: 24, tiananmen: 16, raffles: 30, citic: 52, shanghaitower: 63, arc: 15, salesforce: 40, highroller: 56, bazaar: 32, sapphire: 28, mahanakhon: 31, portside: 14, italia: 17, sydneytower: 31, westerkerk: 8, eureka: 30, datang: 10
+  eiffel: 33, empire: 36, burj: 64, bigben: 26, bank: 28, marina: 27,
+  stbasil: 20, pyramid: 13, seoul: 34, gate: 16, pingan: 50, canton: 42, potala: 20, taipei101: 48,
+  brandenburg: 14, ryugyong: 40, bitexco: 36, cntower: 50, royalpalace: 16, colosseum: 14, ifs: 24, raffles: 30, citic: 52, shanghaitower: 63, arc: 15, salesforce: 40, highroller: 56, bazaar: 32, sapphire: 28, mahanakhon: 31, portside: 14, italia: 17, sydneytower: 31, westerkerk: 8, eureka: 30, datang: 10
 };
 
 const detail = {
@@ -4409,64 +4407,6 @@ function buildBigBen(cfg){
   lbox(g, 15, 0.7, 7.4, cfg.accent, 7, 6.5, 0);
   return g;
 }
-function buildTemple(cfg){
-  const g = new THREE.Group();
-  const marble = 0xcfc6b0, blue = 0x2e5a7a, red = 0x8c3a32, gold = 0xd9b26f;
-  // Three circular marble terraces with balustrades.
-  const terraces = [[10.5, 0.8], [9.0, 0.8], [7.5, 0.8]];
-  let y = 0;
-  for (const [r, h] of terraces){
-    lcyl(g, r, r * 1.02, h, marble, 0, y, 0, 48);
-    for (let i = 0; i < 24; i++){
-      const a = (i / 24) * Math.PI * 2;
-      lbox(g, 0.1, 0.45, 0.1, marble, Math.cos(a) * (r - 0.25), y + h, Math.sin(a) * (r - 0.25), -a);
-    }
-    lcyl(g, r - 0.25, r - 0.25, 0.1, marble, 0, y + h + 0.32, 0, 32);
-    for (const [dx, dz, rot] of [[1,0,0],[-1,0,Math.PI],[0,1,Math.PI/2],[0,-1,-Math.PI/2]]){
-      lbox(g, 2.2, 0.25, 1.4, marble, dx * (r + 0.6), y + h * 0.35, dz * (r + 0.6), rot);
-    }
-    y += h;
-  }
-  const levels = [
-    { r: 7.0, wh: 2.4, rh: 1.7, roofR: 8.4 },
-    { r: 5.1, wh: 2.0, rh: 1.4, roofR: 6.3 },
-    { r: 3.2, wh: 1.8, rh: 1.8, roofR: 4.2 }
-  ];
-  for (const L of levels){
-    lcyl(g, L.r, L.r, L.wh, red, 0, y, 0, 12);
-    for (let i = 0; i < 12; i++){
-      const a = (i / 12) * Math.PI * 2;
-      lcyl(g, 0.13, 0.13, L.wh + 0.15, red, Math.cos(a) * L.r, y, Math.sin(a) * L.r, 6);
-    }
-    for (let i = 0; i < 4; i++){
-      const a = (i / 4) * Math.PI * 2 + Math.PI / 4;
-      lbox(g, 0.9, L.wh * 0.65, 0.12, gold, Math.cos(a) * L.r, y + L.wh * 0.15, Math.sin(a) * L.r, -a + Math.PI / 2);
-    }
-    for (let i = 0; i < 12; i++){
-      const a = (i / 12) * Math.PI * 2;
-      lbox(g, 0.42, 0.2, 0.28, gold, Math.cos(a) * (L.r + 0.18), y + L.wh, Math.sin(a) * (L.r + 0.18), -a);
-    }
-    lcyl(g, L.roofR, L.roofR, 0.16, gold, 0, y + L.wh + 0.08, 0, 24);
-    lcone(g, L.roofR, L.rh, blue, 0, y + L.wh + 0.18, 0, 24);
-    y += L.wh + L.rh * 0.82;
-  }
-  lcyl(g, 0.1, 0.28, 2.0, gold, 0, y, 0, 8);
-  lsph(g, 0.42, gold, 0, y + 1.9, 0, 10);
-  lsph(g, 0.24, gold, 0, y + 2.55, 0, 8);
-  return g;
-}
-
-function buildPearl(cfg){
-  const g = new THREE.Group();
-  lcyl(g, 0.9, 1.2, 28, cfg.color, 0, 0, 0, 10);
-  lsph(g, 3.5, cfg.color, 0, 8, 0, 16);
-  lsph(g, 2.8, cfg.color, 0, 15, 0, 16);
-  lsph(g, 1.4, cfg.accent, 0, 21.5, 0, 12);
-  for (const [x, z] of [[-2.4, 0], [2.4, 0], [0, -2.4], [0, 2.4]]) lcyl(g, 0.28, 0.42, 12, cfg.accent, x, 4, z, 8);
-  lcyl(g, 0.08, 0.2, 7, cfg.accent, 0, 21.5, 0, 6);
-  lsph(g, 0.3, 0xff4a4a, 0, 28.6, 0, 6);
-  return g;
-}
 function buildBank(cfg){
   const g = new THREE.Group();
   const tower = new THREE.Mesh(new THREE.CylinderGeometry(2.7, 3.5, 28, 3), lmMat(cfg.color, { metalness: .35, roughness: .35 }));
@@ -4493,34 +4433,6 @@ function buildMarina(cfg){
   lbox(g, 7, 0.8, 5.2, 0xd9dde0, 12, 26.4, 0);
   for (let i = 0; i < 7; i++){
     lbox(g, 1.5, 0.5, 1.2, 0x3f6b4a, -8 + i * 3, 27.8, -1.2);
-  }
-  return g;
-}
-function buildOpera(cfg){
-  const g = new THREE.Group();
-  lbox(g, 21, 2, 13, 0x8a8578, 0, 0, 0);
-  const shape = new THREE.Shape();
-  shape.moveTo(-4.8, 0.2);
-  shape.quadraticCurveTo(-4.4, 5.6, -0.8, 8.9);
-  shape.quadraticCurveTo(0.1, 9.7, 0.8, 10.2);
-  shape.quadraticCurveTo(1.5, 5.2, 4.8, 0.2);
-  shape.quadraticCurveTo(0, 1.5, -4.8, 0.2);
-  const geo = new THREE.ExtrudeGeometry(shape, { depth: 0.55, bevelEnabled: true, bevelSize: 0.1, bevelThickness: 0.1, bevelSegments: 1, steps: 1 });
-  geo.translate(0, 0, -0.275);
-  const mat = lmMat(cfg.color, { roughness: .5, metalness: .03 });
-  const spots = [
-    [-5.6, 0.4, -2.2, 0.38, 0.95],
-    [0.0, 0.5, 0.2, 0.05, 1.06],
-    [5.6, 0.4, 2.0, -0.34, 0.9],
-    [-2.4, 0.3, -4.2, 0.2, 0.68],
-    [3.0, 0.3, -4.0, -0.16, 0.72]
-  ];
-  for (const [x, y, z, ry, sc] of spots){
-    const sail = new THREE.Mesh(geo, mat);
-    sail.position.set(x, 2 + y, z);
-    sail.rotation.y = ry;
-    sail.scale.setScalar(sc);
-    g.add(sail);
   }
   return g;
 }
@@ -4551,58 +4463,6 @@ function buildPyramid(cfg){
   lbox(g, 1.8, 0.8, 1.2, 0xc9a46a, -3.2, 0.2, 13.2);
   return g;
 }
-function buildTable(cfg){
-  const g = new THREE.Group();
-  const rock = new THREE.Mesh(new THREE.CylinderGeometry(9, 13.5, 13, 7), lmMat(cfg.color, { roughness: 1 }));
-  rock.position.y = 6.5; g.add(rock);
-  lbox(g, 15, 0.9, 7, cfg.accent, 0, 13, 0);
-  for (let i = 0; i < 7; i++) lbox(g, 0.3, 8 + (i % 3) * 2, 1.2, cfg.accent, -5 + i * 1.7, 3, 5.8);
-  lcyl(g, 0.1, 0.1, 18, 0x2a2a2a, 2, 4, -2, 4);
-  return g;
-}
-function buildMasp(cfg){
-  const g = new THREE.Group();
-  for (const x of [-6.4, 6.4]) lbox(g, 1.2, 18, 1.4, cfg.color, x, 0, 0);
-  lbox(g, 14, 1.2, 1.4, cfg.color, 0, 8, 0);
-  lbox(g, 14, 1.2, 1.4, cfg.color, 0, 14.5, 0);
-  lbox(g, 11, 5.6, 8, cfg.accent, 0, 8.6, 0);
-  lbox(g, 3, 0.5, 5, 0x8a8a86, 0, 7.8, 5.8);
-  return g;
-}
-function buildGoldenGate(cfg){
-  const g = new THREE.Group();
-  lbox(g, 40, 0.7, 5.4, cfg.color, 0, 5, 0);
-  for (const x of [-10, 10]){
-    lbox(g, 1.4, 19, 1.4, cfg.color, x, 5, -2.2);
-    lbox(g, 1.4, 19, 1.4, cfg.color, x, 5, 2.2);
-    lbox(g, 4, 0.7, 0.7, cfg.color, x, 15, 0);
-    lbox(g, 4, 0.7, 0.7, cfg.color, x, 20, 0);
-  }
-  const cableMat = new THREE.LineBasicMaterial({ color: cfg.accent, transparent: true, opacity: .95 });
-  const cableY = (x) => {
-    const a = Math.abs(x);
-    if (a <= 10) return 12 + 7 * Math.pow(a / 10, 2);
-    return 19 - (a - 10) * 0.62;
-  };
-  for (const z of [-1.6, 1.6]){
-    const pts = [];
-    for (let i = 0; i <= 64; i++){
-      const x = -26 + (52 * i) / 64;
-      pts.push(new THREE.Vector3(x, cableY(x), z));
-    }
-    g.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), cableMat));
-    for (let x = -18; x <= 18; x += 2.4){
-      const y = cableY(x);
-      if (y <= 5.4) continue;
-      const hanger = new THREE.Line(
-        new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(x, 5.4, z), new THREE.Vector3(x, y, z)]),
-        cableMat
-      );
-      g.add(hanger);
-    }
-  }
-  return g;
-}
 function buildSeoul(cfg){
   const g = new THREE.Group();
   const hill = new THREE.Mesh(new THREE.ConeGeometry(13, 8, 18), lmMat(0x35553a, { roughness: 1 }));
@@ -4624,94 +4484,6 @@ function buildGate(cfg){
   lbox(g, 16, 0.6, 1.2, cfg.accent, 0, 4, 4.2);
   return g;
 }
-function buildCoveredBridge(cfg){
-  const g = new THREE.Group();
-  lbox(g, 28, 0.8, 5.2, cfg.color, 0, 4, 0);
-  for (const x of [-12, -6, 0, 6, 12]) lbox(g, 1.1, 4, 5.2, cfg.accent, x, 0, 0);
-  for (const x of [-6, 6]){
-    lbox(g, 7, 0.8, 6.4, cfg.color, x, 4.8, 0);
-    for (const [px, pz] of [[-2.6, -2.4], [2.6, -2.4], [-2.6, 2.4], [2.6, 2.4]]) lcyl(g, 0.18, 0.18, 4, cfg.accent, x + px, 4.8, pz, 6);
-    lcone(g, 4.4, 2.4, 0x3a2a22, x, 9, 0, 6);
-  }
-  lbox(g, 31, 0.4, 0.8, cfg.color, 0, 3.4, 2.5);
-  lbox(g, 31, 0.4, 0.8, cfg.color, 0, 3.4, -2.5);
-  return g;
-}
-function buildPagoda(cfg){
-  const g = new THREE.Group();
-  const brick = cfg.color, eave = cfg.accent, dark = 0x5a4a3a, stone = 0x8c7a5e;
-  lbox(g, 9.6, 1.2, 9.6, stone, 0, 0, 0);
-  lbox(g, 8.8, 0.35, 8.8, eave, 0, 1.2, 0);
-  lbox(g, 2.2, 0.5, 1.4, stone, 0, 0.25, 5.6);
-  let y = 1.55;
-  for (let i = 0; i < 7; i++){
-    const w = 6.6 - i * 0.5;
-    const h = 2.15;
-    lbox(g, w, h, w, brick, 0, y, 0);
-    for (const [sx, sz] of [[1,1],[1,-1],[-1,1],[-1,-1]]){
-      lbox(g, 0.28, h, 0.28, dark, sx * (w / 2 - 0.16), y, sz * (w / 2 - 0.16));
-    }
-    for (let face = 0; face < 4; face++){
-      const rot = face * Math.PI / 2;
-      const nx = Math.sin(rot), nz = Math.cos(rot);
-      const arch = new THREE.Mesh(new THREE.ExtrudeGeometry((() => {
-        const s = new THREE.Shape();
-        const aw = 0.66, ah = 1.05;
-        s.moveTo(-aw / 2, 0); s.lineTo(-aw / 2, ah - aw / 2);
-        s.absarc(0, ah - aw / 2, aw / 2, Math.PI, 0, true);
-        s.lineTo(aw / 2, 0); s.lineTo(-aw / 2, 0);
-        return s;
-      })(), { depth: 0.1, bevelEnabled: false }), lmMat(dark));
-      arch.position.set(nx * (w / 2 + 0.02), y + 0.55, nz * (w / 2 + 0.02));
-      arch.rotation.y = rot;
-      g.add(arch);
-    }
-    lbox(g, w + 1.2, 0.28, w + 1.2, eave, 0, y + h, 0);
-    lbox(g, w + 0.9, 0.18, w + 0.9, dark, 0, y + h + 0.28, 0);
-    for (let k = 0; k < 4; k++){
-      const a = k * Math.PI / 2;
-      lbox(g, 0.08, 0.5, 0.08, dark, Math.cos(a) * (w / 2 + 0.35), y + h + 0.3, Math.sin(a) * (w / 2 + 0.35));
-    }
-    for (const [sx, sz] of [[1,1],[1,-1],[-1,1],[-1,-1]]){
-      beam(g, new THREE.Vector3(sx * (w / 2 + 0.55), y + h + 0.15, sz * (w / 2 + 0.55)),
-        new THREE.Vector3(sx * (w / 2 + 0.85), y + h + 0.5, sz * (w / 2 + 0.85)), 0.07, eave);
-    }
-    y += h + 0.46;
-  }
-  lcyl(g, 0.16, 0.42, 2.4, eave, 0, y, 0, 8);
-  for (let i = 0; i < 5; i++){
-    lcyl(g, 0.42 - i * 0.05, 0.42 - i * 0.05, 0.12, eave, 0, y + 0.55 + i * 0.38, 0, 12);
-  }
-  lsph(g, 0.34, eave, 0, y + 2.6, 0, 8);
-  return g;
-}
-
-function buildChongqing(cfg){
-  const g = new THREE.Group();
-  const cliff = 0x3a4a4a, wood = cfg.color, roof = 0x2a2620, stone = 0x8c7a5e, light = 0xffb347;
-  lbox(g, 28, 9, 10, cliff, 0, 0, -3);
-  for (let t = 0; t < 3; t++) lbox(g, 26 - t * 3, 0.6, 9 - t * 2, 0x4a5a5a, 0, 3 + t * 2, -3 + t * 0.5);
-  for (let l = 0; l < 5; l++){
-    const y = 3 + l * 3.1, z = 0.5 + l * 0.55;
-    for (let i = 0; i < 5; i++){
-      const x = -8 + i * 4;
-      const h = 3.2 + (i % 2) * 0.9;
-      lbox(g, 3.4, h, 3.6, i % 2 ? wood : 0x8a6a4a, x, y, z);
-      for (const sx of [-1, 1]) lcyl(g, 0.1, 0.12, y, wood, x + sx * 1.3, 0, z, 6);
-      lbox(g, 4.0, 0.18, 1.3, wood, x, y + h * 0.55, z + 1.9);
-      for (let k = 0; k < 4; k++) lbox(g, 0.08, 0.6, 0.08, wood, x - 1.6 + k * 1.07, y + h * 0.55 + 0.18, z + 2.5);
-      for (let k = 0; k < 2; k++) lbox(g, 0.5, 0.7, 0.08, light, x - 0.7 + k * 1.4, y + 1.1, z + 1.82);
-      const r = new THREE.Mesh(new THREE.ConeGeometry(2.8, 1.3, 4), lmMat(roof));
-      r.rotation.y = Math.PI / 4; r.position.set(x, y + h + 0.65, z); g.add(r);
-      lbox(g, 3.9, 0.1, 0.12, cfg.accent, x, y + h + 0.1, z + 1.8);
-    }
-  }
-  lbox(g, 32, 0.7, 4, cfg.accent, 0, 9, 7);
-  for (let i = 0; i < 16; i++) lbox(g, 0.08, 0.8, 0.08, wood, -14 + i * 1.9, 9.7, 8.8);
-  for (let i = 0; i < 10; i++) lbox(g, 1.4, 0.28, 1.6, stone, -11, 1 + i * 0.85, 1 + i * 0.4);
-  return g;
-}
-
 function buildPingan(cfg){
   const g = new THREE.Group();
   lcyl(g, 3.4, 5.6, 44, cfg.color, 0, 22, 0, 8);
@@ -4773,18 +4545,6 @@ function buildTaipei101(cfg){
   lsph(g, 0.5, cfg.accent, 0, 46, 0, 8);
   return g;
 }
-function buildCanalHouse(cfg){
-  const g = new THREE.Group();
-  lbox(g, 22, 1, 10, 0x8c7a5e, 0, 0, 0);
-  for (let i = 0; i < 5; i++){
-    const x = -8 + i * 4;
-    const h = 7 + (i % 3) * 1.8;
-    lbox(g, 3, h, 6, i % 2 ? cfg.accent : cfg.color, x, 1 + h / 2, 0);
-    lcone(g, 2.4, 2.6, cfg.color, x, 1 + h + 1.3, 0, 4);
-    lbox(g, 0.9, 1.2, 0.1, 0x2a2a2a, x, 2.2, 3.05);
-  }
-  return g;
-}
 function buildBrandenburg(cfg){
   const g = new THREE.Group();
   lbox(g, 22, 1, 6, 0x8c7a5e, 0, 0, 0);
@@ -4803,31 +4563,11 @@ function buildRyugyong(cfg){
   lcyl(g, 0.5, 1.5, 8, cfg.accent, 0, 42, 0, 8);
   return g;
 }
-function buildHagia(cfg){
-  const g = new THREE.Group();
-  lbox(g, 20, 5, 14, cfg.color, 0, 0, 0);
-  const dome = new THREE.Mesh(new THREE.SphereGeometry(6.5, 16, 10, 0, Math.PI * 2, 0, Math.PI / 2), lmMat(cfg.accent, { roughness: .5 }));
-  dome.position.y = 5; dome.scale.y = 0.55; g.add(dome);
-  for (const [x, z] of [[-8, -5], [8, -5], [-8, 5], [8, 5]]){
-    lcyl(g, 0.7, 0.9, 14, cfg.color, x, 7, z, 8);
-    lcone(g, 0.9, 3, cfg.accent, x, 15.5, z, 8);
-  }
-  lbox(g, 7, 3, 7, cfg.color, 0, 7, 0);
-  return g;
-}
 function buildBitexco(cfg){
   const g = new THREE.Group();
   lcyl(g, 2.8, 4.4, 30, cfg.color, 0, 15, 0, 8);
   lcyl(g, 4.8, 4.8, 0.8, cfg.accent, 0, 30.2, 0, 8);
   lcyl(g, 0.25, 0.7, 5, cfg.accent, 0, 33, 0, 8);
-  return g;
-}
-function buildWatArun(cfg){
-  const g = new THREE.Group();
-  lbox(g, 12, 3, 12, 0x8c7a5e, 0, 0, 0);
-  lcone(g, 4.2, 22, cfg.color, 0, 3, 0, 8);
-  for (const [x, z] of [[-5, -5], [5, -5], [-5, 5], [5, 5]]) lcone(g, 2.2, 10, cfg.color, x, 3, z, 8);
-  lcyl(g, 0.15, 0.4, 4, cfg.accent, 0, 24, 0, 8);
   return g;
 }
 function buildCnTower(cfg){
@@ -4857,18 +4597,6 @@ function buildColosseum(cfg){
   floor.position.y = 12.2; floor.scale.z = 0.72; g.add(floor);
   return g;
 }
-function buildFlinders(cfg){
-  const g = new THREE.Group();
-  lbox(g, 24, 1, 12, 0x8c7a5e, 0, 0, 0);
-  lbox(g, 22, 6, 10, cfg.color, 0, 3.5, 0);
-  lbox(g, 24, 1, 12, cfg.accent, 0, 6.8, 0);
-  lbox(g, 7, 12, 7, cfg.color, 7, 7, 0);
-  lcone(g, 4.5, 5, cfg.accent, 7, 15.5, 0, 4);
-  const dome = new THREE.Mesh(new THREE.SphereGeometry(3.5, 12, 8, 0, Math.PI * 2, 0, Math.PI / 2), lmMat(cfg.accent, { roughness: .5 }));
-  dome.position.set(-7, 7, 0); g.add(dome);
-  return g;
-}
-
 function buildIfs(cfg){
   const g = new THREE.Group();
   const glass = cfg.color, accent = cfg.accent, dark = 0x3a3f45;
@@ -4888,55 +4616,6 @@ function buildIfs(cfg){
     for (let yy = 8; yy < 4.5 + h; yy += 4) lbox(g, w + 0.12, 0.1, 0.12, accent, x, yy, z + w / 2);
   }
   lbox(g, 8, 1.2, 2, accent, 0.5, 16, 3.5);
-  return g;
-}
-
-function buildTiananmen(cfg){
-  const g = new THREE.Group();
-  const red = 0x9b3b32, gold = 0xd9b26f, stone = 0xd8d0c0, dark = 0x3a1e1a;
-  const arch = (w, h) => {
-    const s = new THREE.Shape();
-    s.moveTo(-w / 2, 0); s.lineTo(-w / 2, h - w / 2);
-    s.absarc(0, h - w / 2, w / 2, Math.PI, 0, true);
-    s.lineTo(w / 2, 0); s.lineTo(-w / 2, 0);
-    return new THREE.ExtrudeGeometry(s, { depth: 0.12, bevelEnabled: false });
-  };
-  lbox(g, 26, 5, 8, red, 0, 0, 0);
-  for (const z of [4.03, -4.03]){
-    for (let i = 0; i < 5; i++){
-      const w = i === 2 ? 2.6 : 2.0, h = i === 2 ? 4.2 : 3.5;
-      const m = new THREE.Mesh(arch(w, h), lmMat(dark));
-      m.position.set(-8 + i * 4, 0.35, z);
-      m.rotation.y = z > 0 ? 0 : Math.PI;
-      g.add(m);
-    }
-  }
-  lbox(g, 22, 0.8, 10, stone, 0, 5, 0);
-  for (let i = 0; i < 20; i++){
-    const x = -10 + i * 1.05;
-    lbox(g, 0.1, 0.5, 0.1, stone, x, 5.8, 4.8);
-    lbox(g, 0.1, 0.5, 0.1, stone, x, 5.8, -4.8);
-  }
-  lbox(g, 18, 3.5, 6, red, 0, 5.8, 0);
-  for (let i = 0; i < 10; i++){
-    lbox(g, 0.28, 3.5, 0.28, dark, -8.1 + i * 1.8, 5.8, 3.05);
-    lbox(g, 0.28, 3.5, 0.28, dark, -8.1 + i * 1.8, 5.8, -3.05);
-  }
-  for (let i = 0; i < 9; i++) lbox(g, 1.2, 2.2, 0.08, dark, -7.2 + i * 1.8, 6.4, 3.12);
-  lbox(g, 10, 0.6, 6.4, gold, 0, 9.3, 0);
-  const lower = new THREE.Mesh(new THREE.ConeGeometry(12, 1.8, 4), lmMat(gold));
-  lower.rotation.y = Math.PI / 4; lower.scale.z = 0.55; lower.position.set(0, 10.5, 0); g.add(lower);
-  lbox(g, 12, 2.5, 5, red, 0, 10.4, 0);
-  for (let i = 0; i < 7; i++) lbox(g, 0.24, 2.5, 0.24, dark, -5.4 + i * 1.8, 10.4, 2.55);
-  const upper = new THREE.Mesh(new THREE.ConeGeometry(9, 2.0, 4), lmMat(gold));
-  upper.rotation.y = Math.PI / 4; upper.scale.z = 0.6; upper.position.set(0, 13.5, 0); g.add(upper);
-  lbox(g, 8, 0.25, 0.3, gold, 0, 14.45, 0);
-  for (const [sx, sz] of [[1,1],[1,-1],[-1,1],[-1,-1]]){
-    const x = sx * 8.4, z = sz * 5.2;
-    beam(g, new THREE.Vector3(x, 13.3, z), new THREE.Vector3(x + sx * 1.2, 14.2, z + sz * 0.7), 0.12, gold);
-  }
-  lbox(g, 3.4, 0.25, 1.6, stone, 0, 0.1, 4.9);
-  lbox(g, 3.4, 0.25, 1.6, stone, 0, 0.1, -4.9);
   return g;
 }
 
@@ -5152,8 +4831,6 @@ function buildLandmark(cfg){
     case 'empire': return buildEmpire(cfg);
     case 'burj': return buildBurj(cfg);
     case 'bigben': return buildBigBen(cfg);
-    case 'temple': return buildTemple(cfg);
-    case 'tiananmen': return buildTiananmen(cfg);
     case 'raffles': return buildRaffles(cfg);
     case 'arc': return buildArc(cfg);
     case 'salesforce': return buildSalesforce(cfg);
@@ -5168,36 +4845,24 @@ function buildLandmark(cfg){
     case 'eureka': return buildEureka(cfg);
     case 'citic': return buildCitic(cfg);
     case 'shanghaitower': return buildShanghaiTower(cfg);
-    case 'pearl': return buildPearl(cfg);
     case 'bank': return buildBank(cfg);
     case 'marina': return buildMarina(cfg);
-    case 'opera': return buildOpera(cfg);
     case 'stbasil': return buildStBasil(cfg);
     case 'pyramid': return buildPyramid(cfg);
-    case 'table': return buildTable(cfg);
-    case 'masp': return buildMasp(cfg);
-    case 'goldengate': return buildGoldenGate(cfg);
     case 'seoul': return buildSeoul(cfg);
     case 'gate': return buildGate(cfg);
-    case 'coveredbridge': return buildCoveredBridge(cfg);
     case 'ifs': return buildIfs(cfg);
-    case 'pagoda': return buildPagoda(cfg);
     case 'datang': return buildDatang(cfg);
-    case 'chongqing': return buildChongqing(cfg);
     case 'pingan': return buildPingan(cfg);
     case 'canton': return buildCanton(cfg);
     case 'potala': return buildPotala(cfg);
     case 'taipei101': return buildTaipei101(cfg);
-    case 'canalhouse': return buildCanalHouse(cfg);
     case 'brandenburg': return buildBrandenburg(cfg);
     case 'ryugyong': return buildRyugyong(cfg);
-    case 'hagia': return buildHagia(cfg);
     case 'bitexco': return buildBitexco(cfg);
-    case 'watarun': return buildWatArun(cfg);
     case 'cntower': return buildCnTower(cfg);
     case 'royalpalace': return buildRoyalPalace(cfg);
     case 'colosseum': return buildColosseum(cfg);
-    case 'flinders': return buildFlinders(cfg);
     default: return buildEmpire(cfg);
   }
 }
@@ -5436,7 +5101,7 @@ function buildCityDetail(city){
 
   const camera = new THREE.PerspectiveCamera(44, window.innerWidth / window.innerHeight, 0.1, 360);
   const landmarkHeight = (LANDMARK_HEIGHTS[cfg.type] || 24) * cfg.scale;
-  const wide = ['pyramid', 'opera', 'marina', 'goldengate', 'coveredbridge', 'gate', 'temple'].includes(cfg.type);
+  const wide = ['pyramid', 'marina', 'gate'].includes(cfg.type);
   const target = new THREE.Vector3(0, landmarkHeight * (wide ? 0.48 : 0.42), landmarkZ);
   const portrait = window.innerHeight > window.innerWidth;
   const dist = (30 + landmarkHeight * 0.95 + (wide ? 14 : 0)) * (portrait ? 1.3 : 1);
@@ -6113,15 +5778,8 @@ const LANDMARK_BLUEPRINT = {
 const LANDMARK_XZ = {
   colosseum: 3.0,
   royalpalace: 2.4,
-  masp: 12.0,
-  temple: 1.0,
   marina: 2.0,
-  lhasa: 3.4,
-  melbourne: 2.0,
-  berlin: 1.6,
-  stbasil: 1.7,
-  opera: 1.9,
-  tiananmen: 1.15
+  stbasil: 1.7
 };
 
 function bpLineMat(color, opacity){
