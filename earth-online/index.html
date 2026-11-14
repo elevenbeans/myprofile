@@ -1148,7 +1148,7 @@ const CITIES = [
   { id:'shenzhen',     name:{zh:'深圳',en:'Shenzhen'},      country:{zh:'中国',en:'China'},       lat:22.5431,  lon:114.0579,  tz:'Asia/Shanghai' },
   { id:'guangzhou',    name:{zh:'广州',en:'Guangzhou'},     country:{zh:'中国',en:'China'},       lat:23.1291,  lon:113.2644,  tz:'Asia/Shanghai' },
   { id:'lhasa',        name:{zh:'拉萨',en:'Lhasa'},         country:{zh:'中国',en:'China'},       lat:29.6520,  lon:91.1721,   tz:'Asia/Shanghai' },
-  { id:'urumqi',       name:{zh:'乌鲁木齐',en:'Urumqi'},     country:{zh:'中国',en:'China'},       lat:43.7830,  lon:87.6160,   tz:'Asia/Shanghai' },
+  { id:'urumqi',       name:{zh:'乌鲁木齐',en:'Urumqi'},     country:{zh:'中国',en:'China'},       lat:43.7792,  lon:87.6153,   tz:'Asia/Shanghai' },
   { id:'taipei',       name:{zh:'台北',en:'Taipei'},        country:{zh:'中国',en:'China'},       lat:25.0330,  lon:121.5654,  tz:'Asia/Taipei' },
   { id:'tokyo',        name:{zh:'东京',en:'Tokyo'},         country:{zh:'日本',en:'Japan'},       lat:35.6762,  lon:139.6503,  tz:'Asia/Tokyo' },
   { id:'seoul',        name:{zh:'首尔',en:'Seoul'},         country:{zh:'韩国',en:'South Korea'}, lat:37.5665,  lon:126.9780,  tz:'Asia/Seoul' },
@@ -5759,11 +5759,11 @@ const CITY_MAPS = {
     roads:[{zh:'北京中路',en:'Beijing Middle Rd',lng:91.12,lat:29.654}]
   },
   urumqi: {
-    center:[87.616,43.783], zoom:16.0, pitch:55, bearing:-18, origin:[87.616,43.783], height:90,
+    center:[87.6153,43.7792], zoom:16.2, pitch:55, bearing:-18, origin:[87.6153,43.7792], height:0,
     label:{zh:'新疆国际大巴扎 · 二道桥',en:'Xinjiang Grand Bazaar · Erdaoqiao'},
     points:[
-      {id:'bazaar',name:{zh:'新疆国际大巴扎',en:'Xinjiang Grand Bazaar'},lng:87.616,lat:43.783,height:90,major:true},
-      {id:'erdaoqiao',name:{zh:'二道桥',en:'Erdaoqiao'},lng:87.615,lat:43.780,height:0},
+      {id:'bazaar',name:{zh:'新疆国际大巴扎',en:'Xinjiang Grand Bazaar'},lng:87.6153,lat:43.7792,height:0,major:true},
+      {id:'erdaoqiao',name:{zh:'二道桥',en:'Erdaoqiao'},lng:87.615,lat:43.782,height:0},
       {id:'hongshan',name:{zh:'红山公园',en:'Hong Shan Park'},lng:87.610,lat:43.807,height:0},
       {id:'museum',name:{zh:'新疆博物馆',en:'Xinjiang Museum'},lng:87.584,lat:43.818,height:0},
       {id:'square',name:{zh:'人民广场',en:"People's Square"},lng:87.626,lat:43.796,height:0}
@@ -6272,6 +6272,7 @@ function blueprintize(group, opts = {}){
 }
 
 const DATANG_DISTRICT = {
+  id:'datang',
   center:[108.9640,34.2118],
   polygon:[
     [108.9612,34.2192],[108.9676,34.2192],[108.9679,34.2140],
@@ -6279,19 +6280,30 @@ const DATANG_DISTRICT = {
     [108.9612,34.2192]
   ]
 };
-function addDistrictLayer(map){
-  const src = 'datang-district';
+const BAZAAR_DISTRICT = {
+  id:'bazaar',
+  center:[87.6153,43.7792],
+  polygon:[
+    [87.6116,43.7810],[87.6188,43.7810],[87.6192,43.7770],
+    [87.6158,43.7755],[87.6112,43.7778],[87.6116,43.7810]
+  ]
+};
+function addDistrictLayer(map, district){
+  const src = district.id + '-district';
   if (!map.getSource(src)){
-    map.addSource(src, { type:'geojson', data:{ type:'Feature', properties:{}, geometry:{ type:'Polygon', coordinates:[DATANG_DISTRICT.polygon] } } });
+    map.addSource(src, { type:'geojson', data:{ type:'Feature', properties:{}, geometry:{ type:'Polygon', coordinates:[district.polygon] } } });
   }
-  if (!map.getLayer('datang-fill')){
-    map.addLayer({ id:'datang-fill', type:'fill', source:src, paint:{ 'fill-color':'#39d0ff', 'fill-opacity':0.055 } });
+  const fillId = district.id + '-fill';
+  const lineId = district.id + '-line';
+  const innerId = district.id + '-line-inner';
+  if (!map.getLayer(fillId)){
+    map.addLayer({ id:fillId, type:'fill', source:src, paint:{ 'fill-color':'#39d0ff', 'fill-opacity':0.055 } });
   }
-  if (!map.getLayer('datang-line')){
-    map.addLayer({ id:'datang-line', type:'line', source:src, paint:{ 'line-color':'#39d0ff', 'line-width':1.2, 'line-opacity':0.75, 'line-dasharray':[3,2] } });
+  if (!map.getLayer(lineId)){
+    map.addLayer({ id:lineId, type:'line', source:src, paint:{ 'line-color':'#39d0ff', 'line-width':1.2, 'line-opacity':0.75, 'line-dasharray':[3,2] } });
   }
-  if (!map.getLayer('datang-line-inner')){
-    map.addLayer({ id:'datang-line-inner', type:'line', source:src, paint:{ 'line-color':'#7fe7ff', 'line-width':0.5, 'line-opacity':0.35 } });
+  if (!map.getLayer(innerId)){
+    map.addLayer({ id:innerId, type:'line', source:src, paint:{ 'line-color':'#7fe7ff', 'line-width':0.5, 'line-opacity':0.35 } });
   }
 }
 
@@ -6300,8 +6312,11 @@ function addShanghaiLandmarkLayer(map){
   const city = detail.city;
   const cfg = LANDMARKS[city.id] || LANDMARKS.paris;
   const active = activeMapConfig;
+  if (city.id === 'urumqi'){
+    try { addDistrictLayer(map, BAZAAR_DISTRICT); } catch(e){ console.warn('[city-landmark] district', e); }
+  }
   if (cfg.type === 'datang'){
-    try { addDistrictLayer(map); } catch(e){ console.warn('[city-landmark] district', e); }
+    try { addDistrictLayer(map, DATANG_DISTRICT); } catch(e){ console.warn('[city-landmark] district', e); }
     return;
   }
   const blueprint = LANDMARK_BLUEPRINT[cfg.type] || {};
