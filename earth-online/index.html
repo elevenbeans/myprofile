@@ -5782,10 +5782,10 @@ const CITY_MAPS = {
     roads:[{zh:'滨海大道',en:'Marina Blvd',lng:103.858,lat:1.284}]
   },
   mumbai: {
-    center:[72.8347,18.9220], zoom:14.9, pitch:55, bearing:-18, origin:[72.8347,18.9220], height:250,
+    center:[72.8347,18.9220], zoom:16.0, pitch:55, bearing:-18, origin:[72.8347,18.9220], height:26,
     label:{zh:'印度门 · 科拉巴',en:'Gateway of India · Colaba'},
     points:[
-      {id:'gate',name:{zh:'印度门',en:'Gateway of India'},lng:72.8347,lat:18.9220,height:250,major:true},
+      {id:'gate',name:{zh:'印度门',en:'Gateway of India'},lng:72.8347,lat:18.9220,height:26,major:true},
       {id:'colaba',name:{zh:'科拉巴',en:'Colaba'},lng:72.832,lat:18.921,height:0},
       {id:'taj',name:{zh:'泰姬玛哈酒店',en:'Taj Mahal Palace'},lng:72.833,lat:18.922,height:0},
       {id:'sea',name:{zh:'阿拉伯海',en:'Arabian Sea'},lng:72.82,lat:18.92,height:0}
@@ -6263,7 +6263,8 @@ const LANDMARK_BLUEPRINT = {
   empire:    { mode:'osm', alt:443, radius:62 },
   burj:      { mode:'osm', alt:828, radius:78 },
   cntower:   { mode:'osm', alt:553, radius:32 },
-  ryugyong:  { mode:'osm', alt:330, radius:64 }
+  ryugyong:  { mode:'osm', alt:330, radius:64 },
+  gate:      { mode:'osm', alt:26, radius:26, taper:0.78 }
 };
 
 // OSM building ids that are hidden under a structural wireframe. The Eiffel
@@ -6432,7 +6433,7 @@ function addShanghaiLandmarkLayer(map){
   try {
     if (blueprint.mode === 'osm'){
       const alt = blueprint.alt || active.height || 100;
-      group = buildBlueprintBase(alt, blueprint.radius || 50, { ruler: true, taper: 0.34 });
+      group = buildBlueprintBase(alt, blueprint.radius || 50, { ruler: true, taper: blueprint.taper ?? 0.34 });
       modelScale = 1;
     } else if (city.id === 'shanghai' && typeof buildPearlModel === 'function'){
       group = buildPearlModel();
@@ -6940,8 +6941,8 @@ const GUIDE_ITEMS = [
     en: { title: 'Basemap fallback', desc: 'When vector tiles are unavailable, an Esri dark-gray raster base keeps the city, labels and landmarks readable.', tech: 'OSM vector + Esri raster' }
   },
   {
-    zh: { title: '蓝图地标层', desc: '超高层直接用 OSM 体量并加瞄准框与海拔；其余转为结构线框，补齐拉伸体表达不了的轮廓。', tech: 'OSM 体量 + Three.js' },
-    en: { title: 'Blueprint landmarks', desc: 'OSM massing plus a lock-on frame for supertalls; structural edge wireframes for silhouettes an extrusion cannot express.', tech: 'OSM + Three.js' }
+    zh: { title: '蓝图地标层', desc: 'OSM 体量能直接读出形体的地标加瞄准框与海拔；其余转为结构线框，补齐拉伸体表达不了的轮廓。', tech: 'OSM 体量 + Three.js' },
+    en: { title: 'Blueprint landmarks', desc: 'Landmarks whose OSM massing reads get a lock-on frame and real altitude; the rest become structural edge wireframes.', tech: 'OSM + Three.js' }
   },
   {
     zh: { title: '大洲引导', desc: '首次进入按浏览器时区推断大洲，自动把地球转到该大洲并显示 chip；不使用定位权限。', tech: '时区推断 + 相机定位' },
