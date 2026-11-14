@@ -4916,9 +4916,9 @@ function updateCityMeta(){
   if (cityLandmarkEl) cityLandmarkEl.textContent = isMap ? (mapLabel || cfg.name[lang]) : cfg.name[lang];
   if (cityAltEl){
     const bp = LANDMARK_BLUEPRINT[cfg.type];
-    const alt = isMap && bp && bp.mode === 'osm' ? bp.alt : 0;
+    const alt = isMap ? ((bp && bp.alt) || (activeMapConfig ? activeMapConfig.height : 0)) : 0;
     cityAltEl.hidden = !alt;
-    cityAltEl.textContent = alt ? 'ALT ' + alt + ' M' : '';
+    cityAltEl.textContent = alt ? 'ALT ' + Math.round(alt) + ' M' : '';
   }
   if (cityCreditEl){
     cityCreditEl.hidden = !isMap;
@@ -6210,8 +6210,8 @@ const GUIDE_ITEMS = [
     en: { title: 'Basemap fallback', desc: 'When vector tiles are unavailable, an Esri dark-gray raster base keeps the city, labels and landmarks readable.', tech: 'OSM vector + Esri raster' }
   },
   {
-    zh: { title: '蓝图地标层', desc: 'OSM 体量能直接读出形体的地标加瞄准框与海拔；其余转为结构线框，补齐拉伸体表达不了的轮廓。', tech: 'OSM 体量 + Three.js' },
-    en: { title: 'Blueprint landmarks', desc: 'Landmarks whose OSM massing reads get a lock-on frame and real altitude; the rest become structural edge wireframes.', tech: 'OSM + Three.js' }
+    zh: { title: '蓝图地标层', desc: '地标用真实高度与 OSM 体量；能直接读出的加瞄准框，其余用结构线框补形体。', tech: 'OSM 体量 + Three.js' },
+    en: { title: 'Blueprint landmarks', desc: 'Real landmark heights with OSM massing; lock-on frames where it reads, structural wireframes elsewhere.', tech: 'OSM + Three.js' }
   },
   {
     zh: { title: '大洲引导', desc: '首次进入按浏览器时区推断大洲，自动把地球转到该大洲并显示 chip；不使用定位权限。', tech: '时区推断 + 相机定位' },
