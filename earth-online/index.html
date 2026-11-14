@@ -4627,13 +4627,10 @@ function playSceneMusic(quick){
     stopCityTheme();
     return;
   }
-  if (detail.active && detail.city){
-    stopMusic();
-    startCityTheme(detail.city);
-  } else {
-    stopCityTheme();
-    startMusic(quick ? 1.4 : 2.8);
-  }
+  /* One soundtrack for the whole site: the home piano keeps playing through
+     city entry and exit. City themes are retired. */
+  stopCityTheme();
+  startMusic(quick ? 1.4 : 2.8);
 }
 
 /* ?audio-debug=1: tiny readout for WeChat, where there is no console. */
@@ -6935,8 +6932,8 @@ const GUIDE_ITEMS = [
     en: { title: 'Continent intro', desc: 'First visit infers a continent from the browser timezone, centers the globe and shows a chip; no location permission is requested.', tech: 'Timezone + camera target' }
   },
   {
-    zh: { title: '首页与城市音乐', desc: 'Web Audio 合成首页原创钢琴与 34 城地域主题；每城使用自己的音阶、乐器与节奏，微信内自动避开低频，进出城市交叉淡化。', tech: 'Web Audio + 地域音色' },
-    en: { title: 'Home & city music', desc: 'Web Audio synthesizes an original home piano and 34 regional city themes; each city has its own scale, instruments and rhythm, with a low-frequency-safe WeChat mix and crossfades.', tech: 'Web Audio + regional voices' }
+    zh: { title: '全局背景音乐', desc: '首页原创钢琴在浏览地球和进入城市时持续播放；城市不再单独配乐，静音按钮全局生效。', tech: 'Web Audio + 单一音轨' },
+    en: { title: 'Global background music', desc: 'The original home piano keeps playing across the globe and city views; cities no longer have separate themes, and mute applies globally.', tech: 'Web Audio + one soundtrack' }
   },
   {
     zh: { title: 'HUD 与移动端', desc: 'Orbital Blueprint 网格、扫描线、雷达和目标括号；桌面、平板与手机布局自适应。', tech: 'CSS HUD + 响应式' },

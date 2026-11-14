@@ -133,19 +133,13 @@ npm run sync
 
 The page itself is static; publish `myprofile/earth-online/` as usual.
 
-## City themes
+## Background music
 
-Entering a city detail crossfades the home piano piece into a short, original Web Audio theme for that city, and fades back on exit:
+The home page uses an original slow piano piece in A minor: broken chords, a low root, a soft string pad and a long dark echo. It is generated live with Web Audio and uses no samples or copyrighted melody.
 
-- 34 compact `CITY_MUSIC_THEMES` configs: root, scale/mode, 4-chord progression, tempo, 7-note motif, and a style preset (jazz, city-pop, pentatonic, electronic, techno, ambient, strings, world, bossa, indie, flamenco, march).
-- The synth engine renders pluck, pulse arp, bass, pad, muted trumpet/flute/bell, brush/kick/hat/clap/frame drums, and occasional risers. No audio files, samples, or extra network requests.
-- The home page uses an original slow piano piece in A minor: broken chords, a low root, a soft string pad and a long dark echo. It is generated live with Web Audio and uses no samples or copyrighted melody.
-- All 34 cities now choose a regional palette; every city has its own scale, tempo, motif, lead instrument, pluck and percussion. These are original motifs built from regional scales and rhythms; no folk melody is quoted.
-- Reference-driven pilot (8 cities, chosen from Apple Music references): Beijing (jinghu, dagu, bangu, gong; 夜深沉), Shanghai (synth lead/bass, four-on-the-floor, dizi/guzheng accents; Carta), Xi'an (banhu, dagu/bangu, guzheng; dry, no reverb; 秦腔), Lhasa (dungchen, choir, dramyin, singing bowl, low drum; Karma), Tokyo (citypop e-piano, synth bass, nylon guitar, drums; Mayonaka no Door), Istanbul (synth lead/bass, oud, ney, darbuka; Tarkan), Cairo (strings, qanun, oud, riq; Umm Kulthum), Madrid (flamenco guitar, rasgueado, palmas, cajon; Paco de Lucía). These are style references only: no melody, sample or arrangement is copied.
-- Data-driven palettes: Chengdu/Guangzhou (dizi/guzheng), Hong Kong/Taipei (erhu/guzheng or guzheng), Seoul/Pyongyang (gayageum, daegeum, janggu), Singapore/Bangkok (steel drum, marimba, hand drums), Mumbai (sitar, tabla, drone), Dubai (oud, qanun, darbuka, drone), Moscow (balalaika, low strings), Cape Town (marimba, indie guitar), London/Amsterdam/Berlin/Shenzhen/Chongqing (pulse/electronic), Paris/Rome (accordion/mandolin, nylon guitar), New York (trumpet, keys), São Paulo (nylon guitar, marimba), San Francisco/Sydney/Toronto/Melbourne (indie guitar/synth), Ho Chi Minh (guzheng-like dan tranh plus electronic beat).
-- Each theme is original; **no 《夜上海》 melody** or other copyrighted tune is used.
-- In WeChat's WebView the home piano is high-passed at 72 Hz and the city mix at 88 Hz; sub-bass notes are raised or trimmed and the compressor is bypassed. This avoids the low-frequency hum some WeChat/iOS audio paths add to Web Audio. Use `?audio-debug=1` for a small readout of mode, context state, sample rate and active track.
-- The **♪** button in the city header (and the globe top bar) mutes/unmutes both the theme and UI effects.
+- It is the **only** background track: it keeps playing when the user opens or leaves a city. There are no per-city themes.
+- In WeChat's WebView the piano is high-passed at 72 Hz, sub-bass notes are raised or trimmed, and the compressor is bypassed. This avoids the low-frequency hum some WeChat/iOS audio paths add to Web Audio. Use `?audio-debug=1` for a small readout of mode, context state, sample rate and active track.
+- The **♪** button in the city header (and the globe top bar) mutes/unmutes the piano and UI effects globally.
 
 ## Controls
 
@@ -184,7 +178,7 @@ Entering a city detail crossfades the home piano piece into a short, original We
 - Weather comes from [Open-Meteo](https://open-meteo.com/) with a 10-minute `sessionStorage` cache; the panel shows local clock, current conditions, feels-like, humidity, wind, sunrise/sunset and a three-day forecast.
 - Air quality is a separate Open-Meteo Air Quality request (`us_aqi`, `pm2_5`, `pm10`) with the same 10-minute cache and independent failure state; the panel shows US AQI, its category, and PM2.5.
 - The 3D detail scene is built from `BoxGeometry`, `CylinderGeometry`, `ConeGeometry`, `SphereGeometry`, `ExtrudeGeometry` and `Line` primitives; no external models. A seeded PRNG keeps each district deterministic.
-- Web Audio synthesises the UI cues, the home piano piece, and 34 per-city themes. The first pointer/key creates/resumes the AudioContext; entering a city crossfades the piano to that city's theme, and exiting crossfades back. The **♪** button in the city header or top bar mutes/unmutes everything; no audio files are loaded.
+- Web Audio synthesises the UI cues and the home piano piece, which also plays in every city view. The first pointer/key creates/resumes the AudioContext; opening or leaving a city does not change the soundtrack. The **♪** button in the city header or top bar mutes/unmutes everything; no audio files are loaded.
 - The score API is implemented in `nas-portal/app/api/earth-score/route.ts` and `session/route.ts`, with shared state in `lib/earth-score.ts`.
 
 ## Known limitations
@@ -197,7 +191,7 @@ Entering a city detail crossfades the home piano piece into a short, original We
 - Air quality is model-based (CAMS via Open-Meteo), not a local monitoring station; the panel shows US AQI, and values can differ from official city readings.
 - The "online" count is simulated.
 - Very rapid repeated clicks can be dropped by the score cooldown; this is intentional anti-abuse behaviour.
-- Audio defaults on, but browsers require one user gesture before sound can play; the first click/key starts the home piano, then a city detail crossfades to its theme. The **♪** button mutes/unmutes everything, and the preference is remembered. All themes are original Web Audio synthesis; no copyrighted melody or recording is used.
+- Audio defaults on, but browsers require one user gesture before sound can play; the first click/key starts the home piano, which continues through city views. The **♪** button mutes/unmutes everything, and the preference is remembered. The soundtrack is original Web Audio synthesis; no copyrighted melody or recording is used.
 
 ## Credits
 
