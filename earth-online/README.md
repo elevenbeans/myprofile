@@ -140,6 +140,7 @@ Entering a city detail crossfades the globe ambient pad into a short, original W
 - 34 compact `CITY_MUSIC_THEMES` configs: root, scale/mode, 4-chord progression, tempo, 7-note motif, and a style preset (jazz, city-pop, pentatonic, electronic, techno, ambient, strings, world, bossa, indie, flamenco, march).
 - The synth engine renders pluck, pulse arp, bass, pad, muted trumpet/flute/bell, brush/kick/hat/clap/frame drums, and occasional risers. No audio files, samples, or extra network requests.
 - Each theme is original; **no 《夜上海》 melody** or other copyrighted tune is used.
+- In WeChat's WebView the ambient and city mix is high-passed at 88–95 Hz, the 55/82 Hz drone is removed, and the compressor is bypassed. This avoids the low-frequency hum some WeChat/iOS audio paths add to Web Audio. Use `?audio-debug=1` for a small readout of mode, context state, sample rate and active track.
 - The **♪** button in the city header (and the globe top bar) mutes/unmutes both the theme and UI effects.
 
 ## Controls

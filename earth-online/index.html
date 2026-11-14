@@ -3508,6 +3508,14 @@ function updateBursts(dt){
 
 let audioCtx = null;
 
+/* Phones (especially WeChat's WebView) turn the 55–82 Hz ambient drone into
+   a constant hum. Keep the same pad an octave up and trim the sub-bass. */
+const WECHAT_AUDIO = /MicroMessenger/i.test(navigator.userAgent) &&
+  /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+const SAFE_BASS = WECHAT_AUDIO;
+const audioInfo = { mode: WECHAT_AUDIO ? 'wechat' : 'webaudio', state: 'idle', sampleRate: 0, key: '' };
+window.__EARTH_AUDIO = audioInfo;
+
 function ensureAudio(){
   if (!world.sound) return null;
   try {
@@ -3515,7 +3523,10 @@ function ensureAudio(){
       const AC = window.AudioContext || window.webkitAudioContext;
       if (!AC) return null;
       audioCtx = new AC();
+      audioInfo.sampleRate = audioCtx.sampleRate;
+      audioInfo.state = audioCtx.state;
       audioCtx.addEventListener('statechange', () => {
+        audioInfo.state = audioCtx.state;
         if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume().catch(() => {});
       });
     }
@@ -3549,17 +3560,21 @@ function startMusic(fade = 4){
     const master = ac.createGain();
     const filter = ac.createBiquadFilter();
     filter.type = 'lowpass';
-    filter.frequency.value = 520;
+    filter.frequency.value = SAFE_BASS ? 900 : 520;
     filter.Q.value = 0.7;
+    const hp = ac.createBiquadFilter();
+    hp.type = 'highpass';
+    hp.frequency.value = SAFE_BASS ? 95 : 32;
+    hp.Q.value = 0.7;
     const oscs = [];
-    const notes = [55, 82.41, 110, 164.81, 220];
+    const notes = SAFE_BASS ? [110, 164.81, 220, 329.63] : [55, 82.41, 110, 164.81, 220];
     notes.forEach((freq, index) => {
       const osc = ac.createOscillator();
       osc.type = index === 0 ? 'sine' : (index % 2 ? 'triangle' : 'sine');
       osc.frequency.value = freq;
-      osc.detune.value = (index - 2) * 3;
+      osc.detune.value = (index - 2) * (SAFE_BASS ? 1.2 : 3);
       const gain = ac.createGain();
-      gain.gain.value = 0.5 / (index + 1);
+      gain.gain.value = (SAFE_BASS ? 0.30 : 0.5) / (index + 1);
       osc.connect(gain);
       gain.connect(filter);
       osc.start();
@@ -3567,25 +3582,27 @@ function startMusic(fade = 4){
     });
     const shimmer = ac.createOscillator();
     shimmer.type = 'sine';
-    shimmer.frequency.value = 523.25;
+    shimmer.frequency.value = SAFE_BASS ? 659.25 : 523.25;
     const shimmerGain = ac.createGain();
-    shimmerGain.gain.value = 0.012;
+    shimmerGain.gain.value = SAFE_BASS ? 0.007 : 0.012;
     shimmer.connect(shimmerGain);
     shimmerGain.connect(filter);
     shimmer.start();
     oscs.push(shimmer);
     const lfo = ac.createOscillator();
-    lfo.frequency.value = 0.035;
+    lfo.frequency.value = SAFE_BASS ? 0.055 : 0.035;
     const lfoGain = ac.createGain();
-    lfoGain.gain.value = 180;
+    lfoGain.gain.value = SAFE_BASS ? 120 : 180;
     lfo.connect(lfoGain);
     lfoGain.connect(filter.frequency);
     lfo.start();
-    filter.connect(master);
+    filter.connect(hp);
+    hp.connect(master);
     master.connect(ac.destination);
     master.gain.setValueAtTime(0.0001, ac.currentTime);
-    master.gain.exponentialRampToValueAtTime(0.028, ac.currentTime + fade);
-    music = { ac, master, filter, oscs, lfo };
+    master.gain.exponentialRampToValueAtTime(SAFE_BASS ? 0.016 : 0.028, ac.currentTime + fade);
+    music = { ac, master, filter, hp, oscs, lfo };
+    audioInfo.key = 'ambient';
   } catch (err){ /* audio is a bonus */ }
 }
 
@@ -3593,6 +3610,7 @@ function stopMusic(){
   if (!music) return;
   const { ac, master, oscs, lfo } = music;
   music = null;
+  audioInfo.key = '';
   try {
     master.gain.cancelScheduledValues(ac.currentTime);
     master.gain.setTargetAtTime(0.0001, ac.currentTime, 0.35);
@@ -3678,6 +3696,7 @@ function stopCityTheme(){
   if (!cityMusic) return;
   const { ac, master, active, timer } = cityMusic;
   cityMusic = null;
+  audioInfo.key = '';
   clearInterval(timer);
   try {
     master.gain.cancelScheduledValues(ac.currentTime);
@@ -3695,16 +3714,25 @@ function startCityTheme(city){
   const preset = THEME_STYLES[theme.style] || THEME_STYLES.pentatonic;
   const scale = THEME_SCALES[theme.scale] || THEME_SCALES.minor;
   const master = ac.createGain();
-  const limiter = ac.createDynamicsCompressor();
-  limiter.threshold.value = -18;
-  limiter.knee.value = 12;
-  limiter.ratio.value = 3;
-  limiter.attack.value = 0.003;
-  limiter.release.value = 0.25;
-  master.connect(limiter);
-  limiter.connect(ac.destination);
+  const hp = ac.createBiquadFilter();
+  hp.type = 'highpass';
+  hp.frequency.value = SAFE_BASS ? 88 : 30;
+  hp.Q.value = 0.7;
+  master.connect(hp);
+  if (WECHAT_AUDIO){
+    hp.connect(ac.destination);
+  } else {
+    const limiter = ac.createDynamicsCompressor();
+    limiter.threshold.value = -18;
+    limiter.knee.value = 12;
+    limiter.ratio.value = 3;
+    limiter.attack.value = 0.003;
+    limiter.release.value = 0.25;
+    hp.connect(limiter);
+    limiter.connect(ac.destination);
+  }
   master.gain.setValueAtTime(0.0001, ac.currentTime);
-  master.gain.exponentialRampToValueAtTime(0.19, ac.currentTime + 1.1);
+  master.gain.exponentialRampToValueAtTime(SAFE_BASS ? 0.15 : 0.19, ac.currentTime + 1.1);
   if (!cityNoiseBuffer) {
     const len = Math.floor(ac.sampleRate * 2.4);
     cityNoiseBuffer = ac.createBuffer(1, len, ac.sampleRate);
@@ -3720,8 +3748,9 @@ function startCityTheme(city){
   const swing = theme.style === 'jazz' ? 0.16 : (theme.style === 'bossa' ? 0.08 : 0);
   let index = 0;
   let nextTime = ac.currentTime + 0.12;
-  const state = { ac, master, active, timer: 0, theme, style: theme.style };
+  const state = { ac, master, active, timer: 0, theme, style: theme.style, lastClock: ac.currentTime, lastWall: performance.now() };
   cityMusic = state;
+  audioInfo.key = 'city:' + city.id;
 
   function track(node, end) { node.__end = end; active.push(node); return node; }
   function prune(){
@@ -3738,6 +3767,7 @@ function startCityTheme(city){
     const gain = ac.createGain();
     const filter = ac.createBiquadFilter();
     osc.type = type || 'sine';
+    if (WECHAT_AUDIO && (osc.type === 'square' || osc.type === 'sawtooth')) osc.type = 'triangle';
     osc.frequency.setValueAtTime(440 * Math.pow(2, (midiNote - 69) / 12), t);
     osc.detune.value = detune || 0;
     filter.type = 'lowpass';
@@ -3766,13 +3796,14 @@ function startCityTheme(city){
     tone(midiNote, t, dur, 'square', vol, 1200, 0.006, 0);
   }
   function bass(midiNote, t){
-    tone(midiNote, t, 0.38, 'sine', 0.10, 380, 0.012, 0);
-    tone(midiNote, t, 0.3, 'triangle', 0.032, 520, 0.012, -4);
+    const note = SAFE_BASS && midiNote < 50 ? midiNote + 12 : midiNote;
+    tone(note, t, 0.38, 'sine', SAFE_BASS ? 0.070 : 0.10, SAFE_BASS ? 300 : 380, 0.012, 0);
+    tone(note, t, 0.3, 'triangle', SAFE_BASS ? 0.020 : 0.032, SAFE_BASS ? 420 : 520, 0.012, -4);
   }
   function padChord(chord, t){
     for (const n of chord.slice(0, 4)){
-      tone(n, t, barDur * 1.04, 'triangle', 0.020, 700, 1.0, -5);
-      tone(n + 12, t, barDur * 1.02, 'sine', 0.010, 900, 1.5, 6);
+      tone(n, t, barDur * 1.04, 'triangle', SAFE_BASS ? 0.016 : 0.020, SAFE_BASS ? 900 : 700, 1.0, -5);
+      tone(n + 12, t, barDur * 1.02, 'sine', SAFE_BASS ? 0.008 : 0.010, SAFE_BASS ? 1100 : 900, 1.5, 6);
     }
   }
   function comp(chord, t){
@@ -3807,11 +3838,11 @@ function startCityTheme(city){
     const o = track(ac.createOscillator(), t + 0.32);
     const g = ac.createGain();
     o.type = 'sine';
-    o.frequency.setValueAtTime(74, t);
-    o.frequency.exponentialRampToValueAtTime(38, t + 0.18);
+    o.frequency.setValueAtTime(SAFE_BASS ? 92 : 74, t);
+    o.frequency.exponentialRampToValueAtTime(SAFE_BASS ? 58 : 38, t + 0.18);
     o.connect(g); g.connect(master);
     g.gain.setValueAtTime(0.0001, t);
-    g.gain.exponentialRampToValueAtTime(0.16, t + 0.006);
+    g.gain.exponentialRampToValueAtTime(SAFE_BASS ? 0.10 : 0.16, t + 0.006);
     g.gain.exponentialRampToValueAtTime(0.0001, t + 0.26);
     o.start(t); o.stop(t + 0.3);
   }
@@ -3880,12 +3911,24 @@ function startCityTheme(city){
     drumsFor(t, s);
     arpFor(chord, t, barIndex, s);
     melodyFor(chord, t, barIndex, s);
-    if (preset.riser && barIndex % 4 === 3 && s === 4) riser(t, stepDur * 3.5);
+    if (!SAFE_BASS && preset.riser && barIndex % 4 === 3 && s === 4) riser(t, stepDur * 3.5);
   }
   function schedule(){
     if (cityMusic !== state) return;
+    /* WeChat can leave a context suspended while the graph clock is frozen.
+       Do not queue thousands of notes that would all fire on resume. */
+    if (ac.state !== 'running') return;
+    const now = ac.currentTime;
+    const wall = performance.now();
+    if (Math.abs(now - state.lastClock) < 0.0005){
+      if (wall - state.lastWall > 700) return;
+    } else {
+      state.lastClock = now;
+      state.lastWall = wall;
+    }
+    if (nextTime < now - stepDur) nextTime = now + 0.12;
     prune();
-    while (nextTime < ac.currentTime + 0.25){
+    while (nextTime < now + 0.25){
       const barIndex = Math.floor(index / 8) % bars;
       const s = index % 8;
       const swingOffset = s % 2 === 1 ? stepDur * swing : 0;
@@ -3905,13 +3948,28 @@ function playSceneMusic(quick){
     return;
   }
   if (detail.active && detail.city){
-    startCityTheme(detail.city);
     stopMusic();
+    startCityTheme(detail.city);
   } else {
     stopCityTheme();
     startMusic(quick ? 1.4 : 4);
   }
 }
+
+/* ?audio-debug=1: tiny readout for WeChat, where there is no console. */
+function mountAudioDebug(){
+  const el = document.createElement('div');
+  el.style.cssText = 'position:fixed;left:8px;bottom:8px;z-index:9999;padding:6px 8px;border:1px solid rgba(110,231,249,.35);border-radius:6px;background:rgba(3,10,20,.9);color:#8fe9ff;font:11px/1.5 ui-monospace,monospace;white-space:pre;pointer-events:none';
+  document.body.appendChild(el);
+  const paint = () => {
+    el.textContent = 'audio ' + audioInfo.mode + ' · ' + audioInfo.state +
+      '\n' + (audioInfo.sampleRate || '-') + ' Hz · ' + (audioInfo.key || '-') +
+      '\nSAFE_BASS ' + SAFE_BASS;
+  };
+  paint();
+  setInterval(paint, 500);
+}
+if (new URLSearchParams(location.search).get('audio-debug') === '1') mountAudioDebug();
 
 function sfx(kind){
   const ac = ensureAudio();
@@ -6015,8 +6073,8 @@ const GUIDE_ITEMS = [
     en: { title: 'Continent intro', desc: 'First visit infers a continent from the browser timezone, centers the globe and shows a chip; no location permission is requested.', tech: 'Timezone + camera target' }
   },
   {
-    zh: { title: '城市音乐', desc: 'Web Audio 合成环境 pad 与 34 城主题；进入城市交叉淡化，退出恢复 ambient，城市头部可静音。', tech: 'Web Audio + 交叉淡化' },
-    en: { title: 'City music', desc: 'Web Audio synthesizes the ambient pad and 34 city themes; entering crossfades in, exiting returns to ambient, with a mute control.', tech: 'Web Audio + crossfade' }
+    zh: { title: '城市音乐', desc: 'Web Audio 合成环境 pad 与 34 城主题；微信内自动去掉低频 drone，进入城市交叉淡化，退出恢复 ambient。', tech: 'Web Audio + 微信安全混音' },
+    en: { title: 'City music', desc: 'Web Audio synthesizes the ambient pad and 34 city themes; WeChat gets a sub-bass-safe mix, with crossfades in and out of each city.', tech: 'Web Audio + WeChat-safe mix' }
   },
   {
     zh: { title: 'HUD 与移动端', desc: 'Orbital Blueprint 网格、扫描线、雷达和目标括号；桌面、平板与手机布局自适应。', tech: 'CSS HUD + 响应式' },
