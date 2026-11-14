@@ -5989,7 +5989,7 @@ function checkCityPhase(){
 
 function startCityPhaseWatch(){
   if (cityPhaseTimer) clearInterval(cityPhaseTimer);
-  cityPhaseTimer = setInterval(checkCityPhase, 30000);
+  cityPhaseTimer = setInterval(checkCityPhase, 5 * 60 * 1000);
 }
 
 function stopCityPhaseWatch(){
