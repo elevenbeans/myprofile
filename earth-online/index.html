@@ -4227,7 +4227,7 @@ const LANDMARKS = {
   shanghai:     { type:'shanghaitower',name:{zh:'上海中心',en:'Shanghai Tower'},       color:0x9fb6c9, accent:0x7fd3ff, scale:1.00, theme:'asia' },
   chengdu:      { type:'ifs',         name:{zh:'成都 IFS',en:'Chengdu IFS'},          color:0x9fb6c9, accent:0xd94b5b, scale:1.00, theme:'asia' },
   hongkong:     { type:'bank',         name:{zh:'中银大厦',en:'Bank of China Tower'}, color:0x8fa6b8, accent:0x7fd3ff, scale:1.08, theme:'asia' },
-  xian:         { type:'pagoda',       name:{zh:'大雁塔',en:'Giant Wild Goose Pagoda'},color:0xb08a5a, accent:0xf0d9b5, scale:1.00, theme:'asia' },
+  xian:         { type:'datang',       name:{zh:'大唐不夜城',en:'Datang Everbright City'},color:0x39d0ff, accent:0xf0d9b5, scale:1.00, theme:'asia' },
   chongqing:    { type:'raffles',      name:{zh:'重庆来福士',en:'Raffles City'},       color:0x9fb6c9, accent:0xffb347, scale:1.00, theme:'asia' },
   shenzhen:     { type:'pingan',       name:{zh:'平安金融中心',en:'Ping An Finance'}, color:0x9fb6c9, accent:0x7fd3ff, scale:1.00, theme:'asia' },
   guangzhou:    { type:'canton',       name:{zh:'广州塔',en:'Canton Tower'},          color:0x9fb6c9, accent:0xff4fd8, scale:1.00, theme:'asia' },
@@ -4266,7 +4266,7 @@ const LANDMARK_HEIGHTS = {
   opera: 14, stbasil: 20, pyramid: 13, table: 14, masp: 18, goldengate: 24, seoul: 34, gate: 16, coveredbridge: 11,
   pagoda: 24, chongqing: 22, pingan: 50, canton: 42, potala: 20, taipei101: 48,
   canalhouse: 12, brandenburg: 14, ryugyong: 40, hagia: 18, bitexco: 36, watarun: 26,
-  cntower: 50, royalpalace: 16, colosseum: 14, flinders: 14, ifs: 24, tiananmen: 16, raffles: 30, citic: 52, shanghaitower: 63, arc: 15, salesforce: 40, highroller: 56, bazaar: 32, sapphire: 28, mahanakhon: 31, portside: 14, italia: 17, sydneytower: 31, westerkerk: 8, eureka: 30
+  cntower: 50, royalpalace: 16, colosseum: 14, flinders: 14, ifs: 24, tiananmen: 16, raffles: 30, citic: 52, shanghaitower: 63, arc: 15, salesforce: 40, highroller: 56, bazaar: 32, sapphire: 28, mahanakhon: 31, portside: 14, italia: 17, sydneytower: 31, westerkerk: 8, eureka: 30, datang: 10
 };
 
 const detail = {
@@ -5128,6 +5128,24 @@ function buildBazaar(cfg){
   return g;
 }
 
+function buildDatang(cfg){
+  const g = new THREE.Group();
+  for (let z = -10; z <= 10; z += 4){
+    for (const x of [-3.2, 3.2]){
+      lbox(g, 2.4, 2.4, 3.2, cfg.color, x, 0, z);
+      lbox(g, 3.0, 0.5, 3.8, cfg.accent, x, 2.4, z);
+      lbox(g, 1.8, 0.16, 0.6, cfg.accent, x, 0.7, z + 1.7);
+    }
+  }
+  for (const z of [-12, 12]){
+    lbox(g, 7.5, 0.8, 0.8, cfg.accent, 0, 0, z);
+    lbox(g, 1.2, 5, 1.2, cfg.color, -3.2, 0, z);
+    lbox(g, 1.2, 5, 1.2, cfg.color, 3.2, 0, z);
+    lbox(g, 8.2, 0.8, 1.2, cfg.accent, 0, 5, z);
+  }
+  return g;
+}
+
 function buildLandmark(cfg){
   switch (cfg.type){
     case 'eiffel': return buildEiffel(cfg);
@@ -5164,6 +5182,7 @@ function buildLandmark(cfg){
     case 'coveredbridge': return buildCoveredBridge(cfg);
     case 'ifs': return buildIfs(cfg);
     case 'pagoda': return buildPagoda(cfg);
+    case 'datang': return buildDatang(cfg);
     case 'chongqing': return buildChongqing(cfg);
     case 'pingan': return buildPingan(cfg);
     case 'canton': return buildCanton(cfg);
@@ -5685,15 +5704,15 @@ const CITY_MAPS = {
     roads:[{zh:'市场街',en:'Market St',lng:151.207,lat:-33.87}]
   },
   xian: {
-    center:[108.9642,34.2186], zoom:16.8, pitch:55, bearing:-18, origin:[108.9642,34.2186], height:64,
-    label:{zh:'大雁塔 · 大唐不夜城',en:'Giant Wild Goose Pagoda · Tang'},
+    center:[108.9640,34.2118], zoom:15.2, pitch:50, bearing:-18, origin:[108.9640,34.2118], height:0,
+    label:{zh:'大唐不夜城 · 曲江',en:'Datang Everbright City · Qujiang'},
     points:[
-      {id:'pagoda',name:{zh:'大雁塔',en:'Giant Wild Goose Pagoda'},lng:108.9642,lat:34.2186,height:64,major:true},
-      {id:'bell',name:{zh:'钟楼',en:'Bell Tower'},lng:108.9470,lat:34.2610,height:0},
-      {id:'tang',name:{zh:'大唐不夜城',en:'Tang Never Sleeps'},lng:108.968,lat:34.213,height:0},
-      {id:'wall',name:{zh:'西安城墙',en:'City Wall'},lng:108.953,lat:34.251,height:0}
+      {id:'datang',name:{zh:'大唐不夜城',en:'Datang Everbright City'},lng:108.9640,lat:34.2118,height:0,major:true},
+      {id:'pagoda',name:{zh:'大雁塔',en:'Giant Wild Goose Pagoda'},lng:108.9642,lat:34.2186,height:0},
+      {id:'kaiyuan',name:{zh:'开元广场',en:'Kaiyuan Square'},lng:108.9640,lat:34.2145,height:0},
+      {id:'qujiang',name:{zh:'曲江池',en:'Qujiang Pool'},lng:108.982,lat:34.201,height:0}
     ],
-    roads:[{zh:'雁塔路',en:'Yanta Road',lng:108.958,lat:34.23}]
+    roads:[{zh:'雁塔南路',en:'Yanta South Rd',lng:108.964,lat:34.214}]
   },
   chongqing: {
     center:[106.583935,29.56869], zoom:15.2, pitch:55, bearing:-18, origin:[106.583935,29.56869], height:350,
@@ -6079,7 +6098,6 @@ const LANDMARK_BLUEPRINT = {
   royalpalace:{ mode:'osm', alt:33, radius:80, taper:0.9 },
   pingan:    { mode:'osm', alt:600, radius:45, taper:0.4 },
   colosseum: { mode:'osm', alt:48, radius:95, taper:0.9 },
-  pagoda:    { mode:'osm', alt:64, radius:30, taper:0.7 },
   sapphire:  { mode:'osm', alt:275, radius:35, taper:0.4 },
   mahanakhon:{ mode:'osm', alt:315, radius:30, taper:0.4 },
   portside:  { mode:'osm', alt:142, radius:25, taper:0.5 },
@@ -6253,11 +6271,39 @@ function blueprintize(group, opts = {}){
   }
 }
 
+const DATANG_DISTRICT = {
+  center:[108.9640,34.2118],
+  polygon:[
+    [108.9612,34.2192],[108.9676,34.2192],[108.9679,34.2140],
+    [108.9668,34.2044],[108.9616,34.2044],[108.9610,34.2140],
+    [108.9612,34.2192]
+  ]
+};
+function addDistrictLayer(map){
+  const src = 'datang-district';
+  if (!map.getSource(src)){
+    map.addSource(src, { type:'geojson', data:{ type:'Feature', properties:{}, geometry:{ type:'Polygon', coordinates:[DATANG_DISTRICT.polygon] } } });
+  }
+  if (!map.getLayer('datang-fill')){
+    map.addLayer({ id:'datang-fill', type:'fill', source:src, paint:{ 'fill-color':'#39d0ff', 'fill-opacity':0.055 } });
+  }
+  if (!map.getLayer('datang-line')){
+    map.addLayer({ id:'datang-line', type:'line', source:src, paint:{ 'line-color':'#39d0ff', 'line-width':1.2, 'line-opacity':0.75, 'line-dasharray':[3,2] } });
+  }
+  if (!map.getLayer('datang-line-inner')){
+    map.addLayer({ id:'datang-line-inner', type:'line', source:src, paint:{ 'line-color':'#7fe7ff', 'line-width':0.5, 'line-opacity':0.35 } });
+  }
+}
+
 function addShanghaiLandmarkLayer(map){
   if (!map || !window.maplibregl || !THREE || !activeMapConfig || !detail.city) return;
   const city = detail.city;
   const cfg = LANDMARKS[city.id] || LANDMARKS.paris;
   const active = activeMapConfig;
+  if (cfg.type === 'datang'){
+    try { addDistrictLayer(map); } catch(e){ console.warn('[city-landmark] district', e); }
+    return;
+  }
   const blueprint = LANDMARK_BLUEPRINT[cfg.type] || {};
   let group = null;
   let modelScale = 1;
