@@ -30,7 +30,7 @@ export const i18n = {
     'project-blog-title': 'Blog',
     'project-blog-desc': 'Thoughts on engineering, travel, and side projects.',
     'project-earth-title': 'Earth Online',
-    'project-earth-desc': 'An interactive 3D Earth with 35 cities, live weather and shared scores.',
+    'project-earth-desc': 'An interactive 3D Earth with 36 cities, live weather and shared scores.',
     'tag-1': 'Self-hosting',
     'tag-2': 'Travel',
     'tag-3': 'Coffee',
