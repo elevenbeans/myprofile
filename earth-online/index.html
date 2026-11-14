@@ -5063,11 +5063,11 @@ function addRoads(scene, theme, rng, night){
   }
 }
 
-// Local solar elevation, not the visitor's clock: Beijing at 21:00 is night
-// while London at 13:00 is still day. The -0.833° horizon includes refraction.
+// Local solar elevation, not the visitor's clock or a cached weather flag:
+// Beijing at 21:00 is night while London at 13:00 is still day. Recomputing
+// this while a city stays open lets sunrise/sunset repaint the map in place.
+// The -0.833° horizon includes atmospheric refraction.
 function cityIsDay(city){
-  const current = city.weather && city.weather.current;
-  if (current && (current.is_day === 0 || current.is_day === 1)) return current.is_day === 1;
   const lat = Number(city.lat);
   const lon = Number(city.lon);
   if (!Number.isFinite(lat) || !Number.isFinite(lon)) return true;
@@ -5734,9 +5734,9 @@ function loadMapLibre(){
   return maplibrePromise;
 }
 
-function shanghaiMapStyle(isDay = cityPhaseDay){
+function cityMapPalette(isDay = cityPhaseDay){
   const day = !!isDay;
-  const p = day ? {
+  return day ? {
     raster: 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}',
     rasterOpacity: 0.76, brightness: 0.96, saturation: -0.2, contrast: 0.08,
     bg: '#dfeaed', water: '#a9d7e3', waterway: '#2c869a',
@@ -5755,6 +5755,15 @@ function shanghaiMapStyle(isDay = cityPhaseDay){
     sky: '#020b16', horizon: '#0b4354', fog: '#020b16',
     skyBlend: 0.4, horizonBlend: 0.5, fogBlend: 0.3
   };
+}
+
+function buildingColorExpression(p){
+  return ['interpolate', ['linear'], ['coalesce', ['get', 'render_height'], 12],
+    0, p.building[0], 50, p.building[1], 150, p.building[2], 300, p.building[3], 500, p.building[4]];
+}
+
+function shanghaiMapStyle(isDay = cityPhaseDay){
+  const p = cityMapPalette(isDay);
   return {
     version: 8,
     sources: {
@@ -5791,8 +5800,7 @@ function shanghaiMapStyle(isDay = cityPhaseDay){
         paint: {
           'fill-extrusion-height': ['coalesce', ['get', 'render_height'], 12],
           'fill-extrusion-base': ['coalesce', ['get', 'render_min_height'], 0],
-          'fill-extrusion-color': ['interpolate', ['linear'], ['coalesce', ['get', 'render_height'], 12],
-            0, p.building[0], 50, p.building[1], 150, p.building[2], 300, p.building[3], 500, p.building[4]],
+          'fill-extrusion-color': buildingColorExpression(p),
           'fill-extrusion-opacity': 1,
           'fill-extrusion-vertical-gradient': false
         } },
@@ -5801,6 +5809,52 @@ function shanghaiMapStyle(isDay = cityPhaseDay){
     ],
     sky: { 'sky-color': p.sky, 'horizon-color': p.horizon, 'fog-color': p.fog, 'sky-horizon-blend': p.skyBlend, 'horizon-fog-blend': p.horizonBlend, 'fog-ground-blend': p.fogBlend }
   };
+}
+
+// Swap the basemap palette in place, keeping camera, markers and the landmark
+// layer. Called when a city crosses sunrise or sunset while it is open.
+function applyCityMapPalette(map, isDay = cityPhaseDay){
+  if (!map) return;
+  const p = cityMapPalette(isDay);
+  try {
+    const raster = map.getSource('esri');
+    if (raster && typeof raster.setTiles === 'function') raster.setTiles([p.raster]);
+  } catch (err) { console.warn('[city-theme] raster', err); }
+  const paint = (layer, prop, value) => {
+    try { if (map.getLayer(layer)) map.setPaintProperty(layer, prop, value); }
+    catch (err) { console.warn('[city-theme]', layer, err); }
+  };
+  paint('bg', 'background-color', p.bg);
+  paint('esri', 'raster-opacity', p.rasterOpacity);
+  paint('esri', 'raster-brightness-max', p.brightness);
+  paint('esri', 'raster-saturation', p.saturation);
+  paint('esri', 'raster-contrast', p.contrast);
+  paint('water', 'fill-color', p.water);
+  paint('waterway', 'line-color', p.waterway);
+  paint('roads-casing', 'line-color', p.roadCasing);
+  paint('roads', 'line-color', p.road);
+  paint('buildings-3d', 'fill-extrusion-color', buildingColorExpression(p));
+  paint('building-outline', 'line-color', p.outline);
+  paint('building-outline', 'line-width', p.outlineWidth);
+  paint('building-outline', 'line-opacity', p.outlineOpacity);
+  try {
+    if (typeof map.setSky === 'function'){
+      map.setSky({
+        'sky-color': p.sky, 'horizon-color': p.horizon, 'fog-color': p.fog,
+        'sky-horizon-blend': p.skyBlend, 'horizon-fog-blend': p.horizonBlend,
+        'fog-ground-blend': p.fogBlend
+      });
+    }
+  } catch (err) { console.warn('[city-theme] sky', err); }
+  map.triggerRepaint();
+}
+
+function refreshCityLandmarkLayer(map){
+  if (!map) return;
+  try {
+    if (map.getLayer('city-landmark-3d')) map.removeLayer('city-landmark-3d');
+  } catch (err) { console.warn('[city-theme] landmark remove', err); }
+  addShanghaiLandmarkLayer(map);
 }
 
 function addShanghaiMarkers(map){
@@ -5918,6 +5972,29 @@ function setCityPhase(isDay){
   if (mapViewEl) mapViewEl.classList.toggle('is-day', cityPhaseDay);
   const phase = document.querySelector('.ra-badge em');
   if (phase) phase.textContent = cityPhaseDay ? 'SECTOR 07 · DAY' : 'SECTOR 07 · NIGHT';
+}
+
+let cityPhaseTimer = 0;
+
+function checkCityPhase(){
+  if (!detail.active || !detail.city) return;
+  const next = cityIsDay(detail.city);
+  if (next === cityPhaseDay) return;
+  setCityPhase(next);
+  if (shanghaiMap){
+    applyCityMapPalette(shanghaiMap, next);
+    refreshCityLandmarkLayer(shanghaiMap);
+  }
+}
+
+function startCityPhaseWatch(){
+  if (cityPhaseTimer) clearInterval(cityPhaseTimer);
+  cityPhaseTimer = setInterval(checkCityPhase, 30000);
+}
+
+function stopCityPhaseWatch(){
+  if (cityPhaseTimer) clearInterval(cityPhaseTimer);
+  cityPhaseTimer = 0;
 }
 
 // Landmarks whose OSM mass already reads as the building: keep the map model
@@ -6144,14 +6221,22 @@ function addDistrictLayer(map, district){
   const innerId = district.id + '-line-inner';
   const ink = cityPhaseDay ? '#0b7188' : '#39d0ff';
   const inner = cityPhaseDay ? '#2b93a5' : '#7fe7ff';
+  const fillOpacity = cityPhaseDay ? 0.08 : 0.055;
   if (!map.getLayer(fillId)){
-    map.addLayer({ id:fillId, type:'fill', source:src, paint:{ 'fill-color':ink, 'fill-opacity':cityPhaseDay ? 0.08 : 0.055 } });
+    map.addLayer({ id:fillId, type:'fill', source:src, paint:{ 'fill-color':ink, 'fill-opacity':fillOpacity } });
+  } else {
+    map.setPaintProperty(fillId, 'fill-color', ink);
+    map.setPaintProperty(fillId, 'fill-opacity', fillOpacity);
   }
   if (!map.getLayer(lineId)){
     map.addLayer({ id:lineId, type:'line', source:src, paint:{ 'line-color':ink, 'line-width':1.2, 'line-opacity':0.82, 'line-dasharray':[3,2] } });
+  } else {
+    map.setPaintProperty(lineId, 'line-color', ink);
   }
   if (!map.getLayer(innerId)){
     map.addLayer({ id:innerId, type:'line', source:src, paint:{ 'line-color':inner, 'line-width':0.5, 'line-opacity':0.45 } });
+  } else {
+    map.setPaintProperty(innerId, 'line-color', inner);
   }
 }
 
@@ -6367,6 +6452,7 @@ function enterCity(city, opts = {}){
   detail.city = city;
   activeMapConfig = CITY_MAPS[city.id] || null;
   setCityPhase(cityIsDay(city));
+  startCityPhaseWatch();
   detail.mapActive = true;
   detail.scene = null;
   detail.camera = null;
@@ -6422,6 +6508,7 @@ function exitCity(opts = {}){
   detail.mapActive = false;
   detail.mapReady = false;
   document.body.classList.remove('city-mode');
+  stopCityPhaseWatch();
   setCityPhase(false);
   cityViewEl.classList.remove('is-open', 'map-mode');
   cityViewEl.setAttribute('aria-hidden', 'true');
@@ -6682,8 +6769,8 @@ const GUIDE_ITEMS = [
     en: { title: 'Anti-abuse', desc: 'Every score has an idempotent eventId; the server applies per-token/city/action cooldowns and an IP rate limit.', tech: 'Cooldown + IP rate limit' }
   },
   {
-    zh: { title: '城市详情地图', desc: 'MapLibre 加载 OSM 建筑并拉伸为 3D；每城独立相机、地标标签和可点击 marker，昼/夜自动换色。', tech: 'MapLibre + 本地太阳高度' },
-    en: { title: 'City detail map', desc: 'MapLibre loads OSM buildings and extrudes them into 3D; each city has its own camera, labels and clickable markers, with an automatic day/night palette.', tech: 'MapLibre + local solar altitude' }
+    zh: { title: '城市详情地图', desc: 'MapLibre 加载 OSM 建筑并拉伸为 3D；每城独立相机、地标标签和可点击 marker，日出/日落自动换色。', tech: 'MapLibre + 本地太阳高度' },
+    en: { title: 'City detail map', desc: 'MapLibre loads OSM buildings and extrudes them into 3D; each city has its own camera, labels and clickable markers, with an automatic day/night palette that follows sunrise and sunset while open.', tech: 'MapLibre + local solar altitude' }
   },
   {
     zh: { title: '底图兜底', desc: '矢量瓦片不可用时自动使用 Esri 深灰/浅灰底图，城市、标签和地标仍然可读。', tech: 'OSM 矢量 + Esri 栅格' },
