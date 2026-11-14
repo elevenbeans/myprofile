@@ -373,6 +373,18 @@
   .cell:nth-child(even){padding-left:12px}
   .cell span{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);line-height:1.5}
   .cell b{display:block;margin-top:2px;font-family:var(--mono);font-size:12.5px;font-weight:500;color:var(--ink);font-variant-numeric:tabular-nums}
+  .cell--air{grid-column:1/-1;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:8px;padding:9px 2px 10px}
+  .cell--air b{display:flex;align-items:center;gap:6px;margin:0;min-width:0;justify-self:start}
+  .cell--air b strong{font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums}
+  .cell--air b em{font-style:normal;font-family:var(--mono);font-size:9.5px;font-weight:400;letter-spacing:.04em;color:var(--muted);white-space:nowrap;max-width:108px;overflow:hidden;text-overflow:ellipsis}
+  .cell--air small{font-family:var(--mono);font-size:9px;color:var(--dim);white-space:nowrap;letter-spacing:.02em}
+  .air-dot{width:7px;height:7px;flex:0 0 auto;border-radius:50%;background:var(--dim);box-shadow:0 0 0 2px rgba(255,255,255,.04)}
+  .air-dot.is-good{background:#6ee7b7;box-shadow:0 0 8px rgba(110,231,183,.55)}
+  .air-dot.is-moderate{background:#fbbf24;box-shadow:0 0 8px rgba(251,191,36,.5)}
+  .air-dot.is-sensitive{background:#fb923c;box-shadow:0 0 8px rgba(251,146,60,.5)}
+  .air-dot.is-unhealthy{background:#f87171;box-shadow:0 0 8px rgba(248,113,113,.5)}
+  .air-dot.is-very{background:#c084fc;box-shadow:0 0 8px rgba(192,132,252,.5)}
+  .air-dot.is-hazard{background:#ef4444;box-shadow:0 0 9px rgba(239,68,68,.65)}
   .panel__section{
     margin:15px 0 8px;font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);
   }
@@ -1022,6 +1034,11 @@
         <div class="cell"><span data-i18n="panel-wind">风速</span><b id="pWind">—</b></div>
         <div class="cell"><span data-i18n="panel-sunrise">日出</span><b id="pSunrise">—</b></div>
         <div class="cell"><span data-i18n="panel-sunset">日落</span><b id="pSunset">—</b></div>
+        <div class="cell cell--air" id="airCell" aria-live="polite">
+          <span data-i18n="panel-air">空气质量</span>
+          <b><i class="air-dot" id="pAqiDot"></i><strong id="pAqi">—</strong><em id="pAqiCat">—</em></b>
+          <small id="pPm25">PM2.5 —</small>
+        </div>
       </div>
 
       <div class="panel__section" data-i18n="panel-forecast">未来三天</div>
@@ -1173,6 +1190,15 @@ const I18N = {
     'panel-wind':'风速',
     'panel-sunrise':'日出',
     'panel-sunset':'日落',
+    'panel-air':'空气质量',
+    'panel-pm25':'PM2.5',
+    'air-good':'优',
+    'air-moderate':'良',
+    'air-sensitive':'敏感人群',
+    'air-unhealthy':'不健康',
+    'air-very':'很不健康',
+    'air-hazard':'危险',
+    'air-unavailable':'暂无',
     'panel-forecast':'未来三天',
     'panel-demolish':'拆除城市',
     'panel-rebuild':'重建城市',
@@ -1303,6 +1329,15 @@ const I18N = {
     'panel-wind':'Wind',
     'panel-sunrise':'Sunrise',
     'panel-sunset':'Sunset',
+    'panel-air':'Air quality',
+    'panel-pm25':'PM2.5',
+    'air-good':'Good',
+    'air-moderate':'Moderate',
+    'air-sensitive':'Sensitive',
+    'air-unhealthy':'Unhealthy',
+    'air-very':'Very unhealthy',
+    'air-hazard':'Hazardous',
+    'air-unavailable':'N/A',
     'panel-forecast':'Next three days',
     'panel-demolish':'Demolish city',
     'panel-rebuild':'Rebuild city',
@@ -2835,6 +2870,7 @@ function setPanelLoading(){
   $('#pSunrise').textContent = '—';
   $('#pSunset').textContent = '—';
   $('#pForecast').innerHTML = '';
+  setAirLoading();
   $('#pUpdated').textContent = tr('panel-loading');
   $('#wxRetry').hidden = true;
   setPanelStatus(tr('panel-loading'));
@@ -2868,6 +2904,77 @@ function weatherURL(city){
   u.searchParams.set('timezone', 'auto');
   u.searchParams.set('forecast_days', '3');
   return u.toString();
+}
+
+function airURL(city){
+  const u = new URL('https://air-quality-api.open-meteo.com/v1/air-quality');
+  u.searchParams.set('latitude', city.lat);
+  u.searchParams.set('longitude', city.lon);
+  u.searchParams.set('current', 'us_aqi,pm2_5,pm10');
+  u.searchParams.set('timezone', 'auto');
+  return u.toString();
+}
+
+function aqiCategory(n){
+  if (n <= 50) return { key: 'air-good', cls: 'is-good' };
+  if (n <= 100) return { key: 'air-moderate', cls: 'is-moderate' };
+  if (n <= 150) return { key: 'air-sensitive', cls: 'is-sensitive' };
+  if (n <= 200) return { key: 'air-unhealthy', cls: 'is-unhealthy' };
+  if (n <= 300) return { key: 'air-very', cls: 'is-very' };
+  return { key: 'air-hazard', cls: 'is-hazard' };
+}
+
+function setAirLoading(){
+  if (!$('#pAqi')) return;
+  $('#pAqi').textContent = '—';
+  $('#pAqiCat').textContent = '—';
+  $('#pAqiDot').className = 'air-dot';
+  $('#pPm25').textContent = 'PM2.5 —';
+}
+
+function setAirUnavailable(){
+  if (!$('#pAqi')) return;
+  $('#pAqi').textContent = '—';
+  $('#pAqiCat').textContent = tr('air-unavailable');
+  $('#pAqiDot').className = 'air-dot';
+  $('#pPm25').textContent = 'PM2.5 —';
+}
+
+function applyAir(city, data){
+  city.air = data;
+  if (!world.selected || world.selected.id !== city.id) return;
+  const cur = data.current || {};
+  const pm = typeof cur.pm2_5 === 'number' ? Math.round(cur.pm2_5) : null;
+  $('#pPm25').textContent = pm === null ? 'PM2.5 —' : 'PM2.5 ' + pm + ' µg/m³';
+  const aqi = typeof cur.us_aqi === 'number' ? Math.round(cur.us_aqi) : null;
+  if (aqi === null){
+    $('#pAqi').textContent = '—';
+    $('#pAqiCat').textContent = tr('air-unavailable');
+    $('#pAqiDot').className = 'air-dot';
+    return;
+  }
+  const cat = aqiCategory(aqi);
+  $('#pAqi').textContent = aqi;
+  $('#pAqiCat').textContent = tr(cat.key);
+  $('#pAqiDot').className = 'air-dot ' + cat.cls;
+}
+
+async function loadAir(city, force = false){
+  const key = 'earth:air:' + city.id;
+  if (force) { try { sessionStorage.removeItem(key); } catch {} }
+  if (!force){
+    const cached = readSession(key, 10 * 60 * 1000);
+    if (cached){ applyAir(city, cached); return; }
+  }
+  try {
+    const data = await fetchJSON(airURL(city), 7000);
+    if (!data || !data.current) throw new Error('bad air payload');
+    writeSession(key, data);
+    applyAir(city, data);
+  } catch (err){
+    console.warn('[earth] air quality unavailable:', city.id, err && err.message);
+    if (world.selected && world.selected.id === city.id) setAirUnavailable();
+  }
 }
 
 async function loadWeather(city, force = false){
@@ -3036,6 +3143,11 @@ function selectCity(city, opts = {}){
   else {
     setPanelLoading();
     loadWeather(city);
+  }
+  if (city.air) applyAir(city, city.air);
+  else {
+    setAirLoading();
+    loadAir(city);
   }
 }
 
@@ -6527,8 +6639,8 @@ const GUIDE_ITEMS = [
     en: { title: 'City interaction', desc: 'City dots are HTML buttons; click the dot or label to focus. Labels offset by height and zoom to avoid overlap.', tech: 'Sphere projection + depth test' }
   },
   {
-    zh: { title: '实时天气', desc: 'Open-Meteo 提供当前天气、体感、湿度、风速、日出日落和三日预报，并按城市时区显示本地时间。', tech: 'Open-Meteo + 10 分缓存' },
-    en: { title: 'Live weather', desc: 'Open-Meteo supplies current conditions, feels-like, humidity, wind, sunrise/sunset and a 3-day forecast, shown in local time.', tech: 'Open-Meteo + 10-min cache' }
+    zh: { title: '实时天气与空气质量', desc: 'Open-Meteo 提供天气、体感、湿度、风速、日出日落和三日预报；空气质量单独请求 AQI 与 PM2.5，并按城市时区显示。', tech: 'Open-Meteo + 10 分缓存' },
+    en: { title: 'Live weather & air', desc: 'Open-Meteo supplies current conditions, feels-like, humidity, wind, sunrise/sunset and a 3-day forecast; air quality is a separate AQI and PM2.5 request, with local time.', tech: 'Open-Meteo + 10-min cache' }
   },
   {
     zh: { title: '34 座城市', desc: '每城包含经纬度、时区、地标、标签和详情相机；地球、榜单和城市页共用 CITIES 数据源。', tech: '单一 CITIES 数据源' },
@@ -6695,7 +6807,7 @@ function bindUI(){
   $('#closeBtn').addEventListener('click', closePanel);
   if (enterCityBtn) enterCityBtn.addEventListener('click', () => { if (world.selected) enterCity(world.selected); });
   if (cityBackEl) cityBackEl.addEventListener('click', exitCity);
-  $('#wxRetry').addEventListener('click', () => { if (world.selected) loadWeather(world.selected, true); });
+  $('#wxRetry').addEventListener('click', () => { if (world.selected){ loadWeather(world.selected, true); loadAir(world.selected, true); } });
   $('#bootReload').addEventListener('click', () => location.reload());
 
   window.addEventListener('resize', () => {
@@ -6724,6 +6836,7 @@ function refreshLanguage(){
     if (panelEl.classList.contains('is-error')) showWeatherError();
     else if (panelEl.classList.contains('is-loading')) setPanelLoading();
     else if (world.selected.weather) applyWeather(world.selected, world.selected.weather);
+    if (world.selected.air) applyAir(world.selected, world.selected.air);
   }
   renderBoard();
   if (detail.active) updateCityMeta();

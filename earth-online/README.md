@@ -182,6 +182,7 @@ Entering a city detail crossfades the home piano piece into a short, original We
 - The globe uses a custom shader to blend day/night maps at the real subsolar point, with a warm terminator band, atmospheric rim, stars, clouds and great-circle arcs.
 - City markers are HTML buttons projected from 3D positions each frame, so they stay crisp and keyboard accessible.
 - Weather comes from [Open-Meteo](https://open-meteo.com/) with a 10-minute `sessionStorage` cache; the panel shows local clock, current conditions, feels-like, humidity, wind, sunrise/sunset and a three-day forecast.
+- Air quality is a separate Open-Meteo Air Quality request (`us_aqi`, `pm2_5`, `pm10`) with the same 10-minute cache and independent failure state; the panel shows US AQI, its category, and PM2.5.
 - The 3D detail scene is built from `BoxGeometry`, `CylinderGeometry`, `ConeGeometry`, `SphereGeometry`, `ExtrudeGeometry` and `Line` primitives; no external models. A seeded PRNG keeps each district deterministic.
 - Web Audio synthesises the UI cues, the home piano piece, and 34 per-city themes. The first pointer/key creates/resumes the AudioContext; entering a city crossfades the piano to that city's theme, and exiting crossfades back. The **♪** button in the city header or top bar mutes/unmutes everything; no audio files are loaded.
 - The score API is implemented in `nas-portal/app/api/earth-score/route.ts` and `session/route.ts`, with shared state in `lib/earth-score.ts`.
@@ -193,6 +194,7 @@ Entering a city detail crossfades the home piano piece into a short, original We
 - The view needs network access for raster/vector tiles. If MapLibre fails entirely, the procedural Three.js district is used as a fallback.
 - Shared scores require the NAS API. Without it the board shows offline, keeps optimistic points, and retries queued events when the connection returns.
 - Weather is current conditions at roughly 15-minute resolution; if Open-Meteo is unavailable the panel shows a retry state and the 3D scene falls back to the city's local day/night.
+- Air quality is model-based (CAMS via Open-Meteo), not a local monitoring station; the panel shows US AQI, and values can differ from official city readings.
 - The "online" count is simulated.
 - Very rapid repeated clicks can be dropped by the score cooldown; this is intentional anti-abuse behaviour.
 - Audio defaults on, but browsers require one user gesture before sound can play; the first click/key starts the home piano, then a city detail crossfades to its theme. The **♪** button mutes/unmutes everything, and the preference is remembered. All themes are original Web Audio synthesis; no copyrighted melody or recording is used.
@@ -204,5 +206,5 @@ Entering a city detail crossfades the home piano piece into a short, original We
 - City building footprints/heights — © OpenStreetMap contributors, rendered via [OpenFreeMap](https://openfreemap.org/).
 - Dark-gray raster fallback — Esri, HERE, Garmin, © OpenStreetMap contributors.
 - Earth imagery — NASA Blue Marble / Black Marble / cloud maps, public domain, via the Three.js example assets.
-- Weather — [Open-Meteo](https://open-meteo.com/), free for non-commercial use, no key required.
+- Weather & air quality — [Open-Meteo](https://open-meteo.com/), free for non-commercial use, no key required.
 - Score API — Next.js route handlers in `nas-portal`, with file-backed persistence and in-memory session/rate-limit state.
