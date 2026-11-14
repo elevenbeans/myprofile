@@ -87,25 +87,15 @@ Drag to pan, scroll or pinch to zoom, right-drag or two fingers rotate/pitch the
 
 ## Screenshots
 
-| Shared score board + globe | City weather panel |
-| --- | --- |
-| ![Shared city score board](preview/home.webp) | ![Tokyo weather panel](preview/panel.webp) |
+One city per render mode. All 36 share the MapLibre/OSM basemap; only the landmark overlay differs.
 
-| Dubai — Orbital Blueprint |
-| --- |
-| ![Burj Khalifa and Downtown Dubai in the Orbital Blueprint style](preview/cities/dubai.webp) |
-
-| Blueprint landmark layer — lattice vs OSM lock-on | |
+| OSM mass + lock-on — Dubai | Structural wireframe — Lhasa |
 | --- | --- |
-| ![Paris lattice, New York and Dubai lock-on, Rome wireframe](preview/blueprint-landmarks.webp) | |
+| ![Burj Khalifa OSM mass with a lock-on frame](preview/modes/osm-lockon-dubai.webp) | ![Potala Palace structural wireframe](preview/modes/structural-lhasa.webp) |
 
-| Shanghai | Paris |
+| District + structural — Urumqi | District only — Xi'an |
 | --- | --- |
-| ![Shanghai Lujiazui and the Bund](preview/cities/shanghai.webp) | ![Eiffel Tower district](preview/cities/paris.webp) |
-
-| Mobile weather sheet | Mobile 3D Shanghai |
-| --- | --- |
-| ![Mobile city panel](preview/mobile.webp) | ![Shanghai 3D map on mobile](preview/shanghai-mobile.webp) |
+| ![Xinjiang Grand Bazaar district and wireframe](preview/modes/district-structural-urumqi.webp) | ![Datang Everbright City district outline](preview/modes/district-xian.webp) |
 
 ## Run it
 
