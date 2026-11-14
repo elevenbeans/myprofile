@@ -91,9 +91,9 @@ Drag to pan, scroll or pinch to zoom, right-drag or two fingers rotate/pitch the
 | --- | --- |
 | ![Shared city score board](preview/home.webp) | ![Tokyo weather panel](preview/panel.webp) |
 
-| City overview — Orbital Blueprint | |
-| --- | --- |
-| ![Orbital Blueprint city maps](preview/cities-contact.webp) | |
+| Dubai — Orbital Blueprint |
+| --- |
+| ![Burj Khalifa and Downtown Dubai in the Orbital Blueprint style](preview/cities/dubai.webp) |
 
 | Blueprint landmark layer — lattice vs OSM lock-on | |
 | --- | --- |
