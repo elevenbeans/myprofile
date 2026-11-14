@@ -5649,10 +5649,10 @@ const CITY_MAPS = {
     roads:[{zh:'苏丹艾哈迈德',en:'Sultanahmet',lng:28.978,lat:41.007}]
   },
   hochiminh: {
-    center:[106.7048,10.7717], zoom:14.8, pitch:55, bearing:-18, origin:[106.7048,10.7717], height:262,
+    center:[106.704185,10.771965], zoom:14.8, pitch:55, bearing:-18, origin:[106.704185,10.771965], height:262,
     label:{zh:'金融塔 · 阮惠步行街',en:'Bitexco · Nguyen Hue'},
     points:[
-      {id:'bitexco',name:{zh:'金融塔',en:'Bitexco Tower'},lng:106.7048,lat:10.7717,height:262,major:true},
+      {id:'bitexco',name:{zh:'金融塔',en:'Bitexco Tower'},lng:106.704185,lat:10.771965,height:262,major:true},
       {id:'nguyen',name:{zh:'阮惠步行街',en:'Nguyen Hue'},lng:106.703,lat:10.773,height:0},
       {id:'saigon',name:{zh:'西贡河',en:'Saigon River'},lng:106.708,lat:10.768,height:0},
       {id:'ben',name:{zh:'滨城市场',en:'Ben Thanh Market'},lng:106.698,lat:10.772,height:0}
@@ -5911,7 +5911,15 @@ const LANDMARK_BLUEPRINT = {
   arc:       { mode:'osm', alt:50, radius:28, taper:0.85 },
   bigben:    { mode:'osm', alt:96, radius:26, taper:0.7 },
   eiffel:    { mode:'osm', alt:333, radius:40, taper:0.5 },
-  salesforce:{ mode:'osm', alt:326, radius:45, taper:0.4 }
+  salesforce:{ mode:'osm', alt:326, radius:45, taper:0.4 },
+  seoul:     { mode:'osm', alt:236, radius:30, taper:0.5 },
+  marina:    { mode:'osm', alt:200, radius:80, taper:0.7 },
+  bitexco:   { mode:'osm', alt:262, radius:30, taper:0.5 },
+  stbasil:   { mode:'osm', alt:65, radius:36, taper:0.8 },
+  pyramid:   { mode:'osm', alt:139, radius:130, taper:0.95 },
+  brandenburg:{ mode:'osm', alt:26, radius:40, taper:0.9 },
+  royalpalace:{ mode:'osm', alt:33, radius:80, taper:0.9 },
+  colosseum: { mode:'osm', alt:48, radius:95, taper:0.9 }
 };
 
 // OSM building ids that are hidden under a structural wireframe. The Eiffel
