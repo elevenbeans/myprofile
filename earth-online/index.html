@@ -5991,10 +5991,10 @@ const CITY_MAPS = {
     roads:[{zh:'菩提树下大街',en:'Unter den Linden',lng:13.38,lat:52.517}]
   },
   pyongyang: {
-    center:[125.7300,39.0360], zoom:14.4, pitch:55, bearing:-18, origin:[125.7300,39.0360], height:330,
+    center:[125.73087,39.03652], zoom:14.4, pitch:55, bearing:-18, origin:[125.73087,39.03652], height:330,
     label:{zh:'柳京饭店 · 大同江',en:'Ryugyong Hotel · Taedong'},
     points:[
-      {id:'ryugyong',name:{zh:'柳京饭店',en:'Ryugyong Hotel'},lng:125.7300,lat:39.0360,height:330,major:true},
+      {id:'ryugyong',name:{zh:'柳京饭店',en:'Ryugyong Hotel'},lng:125.73087,lat:39.03652,height:330,major:true},
       {id:'square',name:{zh:'金日成广场',en:'Kim Il-sung Square'},lng:125.752,lat:39.019,height:0},
       {id:'taedong',name:{zh:'大同江',en:'Taedong River'},lng:125.745,lat:39.025,height:0},
       {id:'juche',name:{zh:'主体思想塔',en:'Juche Tower'},lng:125.760,lat:39.018,height:0}
@@ -6252,7 +6252,6 @@ function buildTableMountainWire(){
 /* ---------------- Orbital Blueprint landmark layer ---------------- */
 
 const BP_CYAN = 0x39d0ff;
-const BP_PALE = 0x7fe7ff;
 const BP_AMBER = 0xffb347;
 
 // Landmarks whose OSM mass already reads as the building: keep the map model
@@ -6264,8 +6263,15 @@ const LANDMARK_BLUEPRINT = {
   empire:    { mode:'osm', alt:443, radius:62 },
   burj:      { mode:'osm', alt:828, radius:78 },
   cntower:   { mode:'osm', alt:553, radius:32 },
-  ryugyong:  { mode:'osm', alt:330, radius:64 },
-  taipei101: { mode:'osm', alt:508, radius:52 }
+  ryugyong:  { mode:'osm', alt:330, radius:64 }
+};
+
+// OSM building ids that are hidden under a structural wireframe. The Eiffel
+// Tower's 48x48 m footprint is extruded as a single 330 m column, which reads
+// as a skyscraper, so the OSM 2D/3D mass is removed and the lattice is the only
+// Eiffel on the map. Ids come from the OpenFreeMap z14 building tile.
+const LANDMARK_MASS_EXCLUDE = {
+  paris: [14625977622, 3080213892, 3086877450, 41148423, 3086877440]
 };
 
 function bpLineMat(color, opacity){
@@ -6367,11 +6373,12 @@ function buildBlueprintBase(height, radius, opts = {}){
   }
 
   const br = Math.max(0.5, height * 0.011);
+  const beaconY = opts.beaconY ?? height;
   const beacon = new THREE.Mesh(
     new THREE.SphereGeometry(br, 10, 8),
     new THREE.MeshBasicMaterial({ color: BP_AMBER, depthTest:false, depthWrite:false })
   );
-  beacon.position.y = height + br * 0.5;
+  beacon.position.y = beaconY + br * 0.5;
   g.add(beacon);
   const pulse = new THREE.Mesh(
     new THREE.RingGeometry(br * 1.5, br * 2.1, 28),
@@ -6441,7 +6448,7 @@ function addShanghaiLandmarkLayer(map){
       blueprintize(group, { fill: isTable ? 0.18 : 0.28 });
       const box = new THREE.Box3().setFromObject(group);
       const span = Math.max(box.max.x - box.min.x, box.max.z - box.min.z);
-      const base = buildBlueprintBase(native, Math.max(native * 0.08, span * 0.52), { top: false });
+      const base = buildBlueprintBase(native, Math.max(native * 0.08, span * 0.52), { top: false, beaconY: Math.min(native, box.max.y) });
       group.add(base);
       group.userData.pulse = base.userData.pulse;
       modelScale = (active.height || native) / native;
@@ -6483,6 +6490,12 @@ function addShanghaiLandmarkLayer(map){
     }
   };
   try { map.addLayer(layer); } catch(e){ console.warn('[city-landmark] layer',e); }
+  const exclude = LANDMARK_MASS_EXCLUDE[city.id];
+  if (exclude && exclude.length){
+    try {
+      map.setFilter('buildings-3d', ['all', ['!', ['has', 'hide_3d']], ['!', ['in', ['id'], ['literal', exclude]]]]);
+    } catch(e){ console.warn('[city-landmark] mass filter', e); }
+  }
 }
 
 function removeShanghaiLoading(){
@@ -6554,7 +6567,6 @@ async function openShanghaiMap(city){
       attributionControl: false
     });
     shanghaiMap = map;
-    window.__earthMap = map; // TEMP debug
     map.addControl(new maplibregl.NavigationControl({ visualizePitch: true, showCompass: true }), 'bottom-right');
     map.addControl(new maplibregl.AttributionControl({
       compact: true,
@@ -6928,8 +6940,8 @@ const GUIDE_ITEMS = [
     en: { title: 'Basemap fallback', desc: 'When vector tiles are unavailable, an Esri dark-gray raster base keeps the city, labels and landmarks readable.', tech: 'OSM vector + Esri raster' }
   },
   {
-    zh: { title: '线框地标', desc: '每城程序化地标转换为青色线框，叠加在 MapLibre 上；上海东方明珠为专用线框模型。', tech: 'Three.js 自定义层' },
-    en: { title: 'Wireframe landmarks', desc: 'Procedural landmarks become cyan wireframes on a Three.js custom layer; Shanghai has a bespoke Oriental Pearl model.', tech: 'Three.js custom layer' }
+    zh: { title: '蓝图地标层', desc: '超高层直接用 OSM 体量并加瞄准框与海拔；其余转为结构线框，补齐拉伸体表达不了的轮廓。', tech: 'OSM 体量 + Three.js' },
+    en: { title: 'Blueprint landmarks', desc: 'OSM massing plus a lock-on frame for supertalls; structural edge wireframes for silhouettes an extrusion cannot express.', tech: 'OSM + Three.js' }
   },
   {
     zh: { title: '大洲引导', desc: '首次进入按浏览器时区推断大洲，自动把地球转到该大洲并显示 chip；不使用定位权限。', tech: '时区推断 + 相机定位' },

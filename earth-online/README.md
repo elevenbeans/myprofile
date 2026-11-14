@@ -9,7 +9,7 @@ A real-time, shareable Earth for [elevenbeans.me](https://elevenbeans.me) — NA
 ## What you can do
 
 - **Focus a city — +5.** Click or tap a marker dot **or its label**. The camera flies in, the weather panel opens, and the shared city score increments.
-- **Enter the city — +10.** The panel's **进入城市 · +10** button opens a full-screen Orbital Blueprint map of the city's signature district, with OSM building footprints/heights, a wireframe landmark, and local labels. Repeatable: come back and enter again for another +10.
+- **Enter the city — +10.** The panel's **进入城市 · +10** button opens a full-screen Orbital Blueprint map of the city's signature district, with OSM building footprints/heights, a blueprint landmark layer, and local labels. Repeatable: come back and enter again for another +10.
 - **Shared city score.** The left board lists all 34 cities, highest first, with the total shared across every visitor. On mobile the same board opens from the **▤** button in the top bar.
 - **First-visit continent intro.** The globe infers the visitor's continent from the browser timezone (no location permission prompt), centers on it, and shows a small continent chip. A `?city=` deep link skips the intro.
 - **No economy.** There are no credits, contracts, levels, combos, ranks, stability or demolition/rebuild. The visit itself is the score.
@@ -36,12 +36,13 @@ Every city now opens the same MapLibre/OSM city view instead of a procedural dio
 - **OpenFreeMap / OpenStreetMap** supplies building footprints and `render_height` values, extruded in 3D.
 - **Esri World Dark Gray Base** is used as a no-key raster fallback so a city is still readable when vector tiles are slow or unavailable.
 - **Orbital Blueprint palette:** deep navy land and water, cyan building outlines and roads, cyan grid/scanlines and radar, with amber selected labels and the city score. A `TACTICAL SCHEMATIC` HUD sits over the map. No satellite layer is used.
-- Each city has a **wireframe landmark** drawn in a Three.js custom layer: Oriental Pearl, Temple of Heaven, Anshun Bridge, Bank of China, the Giant Wild Goose Pagoda, Hongya Cave, Ping An Finance, Canton Tower, Potala Palace, Taipei 101, Tokyo Tower, N Seoul Tower, Marina Bay Sands, Gateway of India, Burj Khalifa, St. Basil's, the Giza pyramids, Table Mountain, Big Ben, the Eiffel Tower, the Empire State Building, the Golden Gate Bridge, MASP, the Sydney Opera House, Amsterdam canal houses, the Brandenburg Gate, Ryugyong Hotel, Hagia Sophia, Bitexco Tower, Wat Arun, CN Tower, the Royal Palace of Madrid, the Colosseum, and Flinders Street Station.
+- Each city has a **blueprint landmark layer** drawn in a Three.js custom layer. Where the OSM massing already reads as the landmark (Empire State, Burj Khalifa, CN Tower, Ryugyong Hotel), the map model is the landmark and a real-height **lock-on frame** adds a ground survey ring, tapered guide volume, altitude ruler and amber beacon. Everywhere else a **structural edge wireframe** carries the silhouette that a single-height extrusion cannot: Oriental Pearl, Taipei 101, Temple of Heaven, Anshun Bridge, Bank of China, the Giant Wild Goose Pagoda, Hongya Cave, Ping An Finance, Canton Tower, Potala Palace, Tokyo Tower, N Seoul Tower, Marina Bay Sands, Gateway of India, St. Basil's, the Giza pyramids, Table Mountain, Big Ben, the Eiffel Tower, the Golden Gate Bridge, MASP, the Sydney Opera House, Amsterdam canal houses, the Brandenburg Gate, Hagia Sophia, Bitexco Tower, Wat Arun, the Royal Palace of Madrid, the Colosseum, and Flinders Street Station.
+- The Eiffel Tower's OSM footprint is excluded from the building extrusion because a 48×48 m footprint swept to 330 m reads as a skyscraper; the structural lattice is the only Eiffel on the map.
 - **No API key** is required at runtime; internet access is required for the raster/vector tiles.
 
 ## 3D city detail
 
-The city view is the real-map district described above, with a wireframe landmark and pinned labels. If MapLibre fails, the old procedural Three.js landmark/district is used as a fallback. The globe and weather panel still show the city's local time and current conditions.
+The city view is the real-map district described above, with a blueprint landmark layer and pinned labels. If MapLibre fails, the old procedural Three.js landmark/district is used as a fallback. The globe and weather panel still show the city's local time and current conditions.
 
 | City | Landmark |
 | --- | --- |
@@ -91,6 +92,10 @@ Drag to pan, scroll or pinch to zoom, right-drag or two fingers rotate/pitch the
 | All 34 cities — Orbital Blueprint | |
 | --- | --- |
 | ![All 34 Orbital Blueprint city maps](preview/cities-contact.webp) | |
+
+| Blueprint landmark layer — lattice vs OSM lock-on | |
+| --- | --- |
+| ![Paris lattice, New York and Dubai lock-on, Taipei 101 wireframe](preview/blueprint-landmarks.webp) | |
 
 | Shanghai | Paris |
 | --- | --- |
@@ -171,7 +176,7 @@ The home page uses an original slow piano piece in A minor: broken chords, a low
 - `vendor/three.module.min.js` is Three.js r160 (MIT), loaded locally with a CDN fallback.
 - `vendor/maplibre-gl.js` + CSS are MapLibre GL JS 4.7 (BSD-3), loaded locally for every city view.
 - Each city's 3D layer is a MapLibre `fill-extrusion` of the `building` source-layer from OpenFreeMap, combined with water/road layers, an Esri dark-gray raster fallback, a blueprint HUD overlay and HTML landmark labels. No building data file is bundled; tiles are fetched at runtime.
-- Each landmark is a separate Three.js custom layer on the MapLibre canvas: the old procedural geometry is converted to cyan wireframe, scaled to the city's visual landmark height, and given an amber beacon. Shanghai keeps its bespoke Oriental Pearl wireframe.
+- Each landmark is a separate Three.js custom layer on the MapLibre canvas. The four OSM-readable supertalls get a lock-on frame tied to the map's `building:part` massing and a real `ALT` readout; the rest get structural edges (`EdgesGeometry`, not a triangulated wireframe) over a dim volume, scaled to the city's visual landmark height. Both use a ground survey ring and an amber beacon; Shanghai keeps its bespoke Oriental Pearl geometry in the same edge language.
 - `textures/` holds NASA day, night-lights and cloud maps (public domain, via the Three.js examples).
 - The globe uses a custom shader to blend day/night maps at the real subsolar point, with a warm terminator band, atmospheric rim, stars, clouds and great-circle arcs.
 - City markers are HTML buttons projected from 3D positions each frame, so they stay crisp and keyboard accessible.
@@ -183,8 +188,8 @@ The home page uses an original slow piano piece in A minor: broken chords, a low
 
 ## Known limitations
 
-- All city maps are stylised Orbital Blueprint views, not photo-real. The wireframe landmarks are deliberately exaggerated where the real structure is low, so it reads at map scale. Photo-real Google/Amap/Baidu detail would require their platform keys and 3D tiles.
-- OSM building coverage and OpenFreeMap tile availability vary by city. The Esri dark-gray raster base keeps the district readable when 3D building tiles are missing; a city may temporarily show a 2D base plus the wireframe landmark.
+- All city maps are stylised Orbital Blueprint views, not photo-real. Non-supertall landmarks are deliberately exaggerated where the real structure is low so they read at map scale; the four lock-on cities use the real OSM massing and altitude. Photo-real Google/Amap/Baidu detail would require their platform keys and 3D tiles.
+- OSM building coverage and OpenFreeMap tile availability vary by city. The Esri dark-gray raster base keeps the district readable when 3D building tiles are missing; a city may temporarily show a 2D base plus the blueprint landmark.
 - The view needs network access for raster/vector tiles. If MapLibre fails entirely, the procedural Three.js district is used as a fallback.
 - Shared scores require the NAS API. Without it the board shows offline, keeps optimistic points, and retries queued events when the connection returns.
 - Weather is current conditions at roughly 15-minute resolution; if Open-Meteo is unavailable the panel shows a retry state and the 3D scene falls back to the city's local day/night.
