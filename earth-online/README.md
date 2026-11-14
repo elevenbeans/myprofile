@@ -34,8 +34,8 @@ Every city now opens the same MapLibre/OSM city view instead of a procedural dio
 
 - **MapLibre GL JS** renders a pitched, rotated map of the signature district.
 - **OpenFreeMap / OpenStreetMap** supplies building footprints and `render_height` values, extruded in 3D.
-- **Esri World Dark Gray Base** is used as a no-key raster fallback so a city is still readable when vector tiles are slow or unavailable.
-- **Orbital Blueprint palette:** deep navy land and water, cyan building outlines and roads, cyan grid/scanlines and radar, with amber selected labels and the city score. A `TACTICAL SCHEMATIC` HUD sits over the map. No satellite layer is used.
+- **Esri World Dark Gray / Light Gray Base** is used as a no-key raster fallback so a city is still readable when vector tiles are slow or unavailable.
+- **Orbital Blueprint palette, day and night:** the city's local solar altitude picks the theme. Night keeps deep navy land/water, cyan building outlines and roads, cyan grid/scanlines and radar, with amber labels and score. Daylight switches to pale blue-gray paper, mid-blue buildings, dark teal lines and the same amber accents. The `TACTICAL SCHEMATIC` HUD ends in `DAY` or `NIGHT`. No satellite layer is used.
 - Each city has a **blueprint landmark layer** drawn in a Three.js custom layer. Where the OSM massing already reads as the landmark (Empire State, Burj Khalifa, CN Tower, Ryugyong Hotel, Gateway of India, Bank of China Tower, Taipei 101, Chengdu IFS, Raffles City Chongqing, CITIC Tower, Shanghai Tower, Canton Tower, Tokyo Tower, Big Ben, Arc de Triomphe, Salesforce Tower, N Seoul Tower, Marina Bay Sands, Bitexco Tower, St. Basil's, the Giza pyramids, the Brandenburg Gate, the Royal Palace of Madrid, Istanbul Sapphire, King Power Mahanakhon, Portside Tower, Edifício Itália, Sydney Tower, Westerkerk, Eureka Tower, Ping An Finance Centre, the Colosseum), the map model is the landmark and a real-height **lock-on frame** adds a ground survey ring, tapered guide volume, altitude ruler and amber beacon. Everywhere else a **structural edge wireframe** carries the silhouette that a single-height extrusion cannot: Potala Palace. Xi'an uses a ground **district highlight** for Datang Everbright City instead of a 3D landmark, because the Bell Tower, City Wall and pagoda have no usable OSM building mass.
 - Urumqi uses the same low-rise **district** treatment for the Grand Bazaar / Erdaoqiao: the bazaar model is structural, ALT is hidden, and the district outline is a hand approximation because the OSM footprint is complex and height tags are missing.
 - **No API key** is required at runtime; internet access is required for the raster/vector tiles.
@@ -87,7 +87,7 @@ Drag to pan, scroll or pinch to zoom, right-drag or two fingers rotate/pitch the
 
 ## Screenshots
 
-One city per render mode. All 36 share the MapLibre/OSM basemap; only the landmark overlay differs.
+One city per render mode. All 36 share the MapLibre/OSM basemap; only the landmark overlay differs. These are night captures; daytime cities use the pale daylight variant.
 
 | OSM mass + lock-on — Dubai | Structural wireframe — Lhasa |
 | --- | --- |

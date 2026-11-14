@@ -771,6 +771,139 @@
   .city-view.map-mode .map-road{color:rgba(159,201,216,.62);letter-spacing:.14em}
   .city-view.map-mode .maplibregl-ctrl-group{background:rgba(2,10,16,.9);border-color:rgba(57,208,255,.3)}
   .city-view.map-mode .maplibregl-ctrl-attrib{background:rgba(2,10,16,.82)!important;color:#7f9ba6}
+
+  /* ---------- Daylight city variant ---------- */
+  .city-view.is-day{
+    color-scheme:light;
+    --ink:#0b2b35;
+    --muted:#4e6f7a;
+    --dim:#6f8b94;
+    --line:rgba(9,70,85,.16);
+    --line-strong:rgba(9,70,85,.30);
+    --accent:#b86a08;
+    --accent-soft:rgba(184,106,8,.12);
+    --cyan:#0b7188;
+    --panel:rgba(248,252,252,.86);
+  }
+  .city-view.is-day .map-view{background:#dfeaed}
+  .city-view.is-day.map-mode .map-view canvas{filter:drop-shadow(0 0 3px rgba(11,113,136,.16))}
+  .city-view.is-day.map-mode .city-head{
+    background:linear-gradient(180deg,rgba(246,251,251,.94) 0,rgba(246,251,251,.6) 55%,transparent 100%);
+    border-bottom-color:rgba(11,113,136,.22);
+  }
+  .city-view.is-day .city-back{
+    background:rgba(250,254,254,.8);color:var(--ink);border-color:var(--line-strong);
+  }
+  .city-view.is-day .city-back:hover{
+    background:#fff;color:var(--accent);border-color:rgba(184,106,8,.5);
+  }
+  .city-view.is-day .city-head__names span:first-child{color:#072630}
+  .city-view.is-day .city-head__names span:last-child{color:#56737d}
+  .city-view.is-day .city-head__meta span{
+    background:rgba(250,254,254,.8);color:#3f6370;border-color:var(--line);
+  }
+  .city-view.is-day .city-head__meta .city-sound{
+    background:rgba(250,254,254,.8);color:#0b4b5e;border-color:var(--line-strong);
+  }
+  .city-view.is-day #cityScore{color:#a85f00;border-color:rgba(184,106,8,.4)}
+  .city-view.is-day #cityScore::before{color:#6c8790}
+  .city-view.is-day.map-mode .city-landmark{
+    border-left-color:#b86a08;
+    background:linear-gradient(90deg,rgba(247,252,252,.94),rgba(247,252,252,.4),transparent);
+  }
+  .city-view.is-day .city-landmark span{color:#a85f00}
+  .city-view.is-day .city-landmark b{color:#08252f}
+  .city-view.is-day .city-landmark em#cityAlt{color:#a85f00}
+  .city-view.is-day .city-landmark em{color:#67848e}
+  .city-view.is-day.map-mode .city-hint{
+    color:#365d68;border-color:rgba(11,113,136,.25);background:rgba(248,253,253,.8);
+  }
+  .city-view.is-day .map-loading{
+    background:radial-gradient(circle at 50% 45%,rgba(250,254,254,.96),rgba(226,240,243,.98));
+    color:#456873;
+  }
+  .city-view.is-day .map-loading b{color:#0b2b35}
+  .city-view.is-day .map-loading small{color:#6a858e}
+  .city-view.is-day .map-loading__bar{background:rgba(9,70,85,.14)}
+  .city-view.is-day .ra-grid{
+    opacity:.5;
+    background-image:
+      linear-gradient(rgba(11,113,136,.16) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(11,113,136,.16) 1px,transparent 1px);
+  }
+  .city-view.is-day .ra-scan{opacity:.055;mix-blend-mode:multiply}
+  .city-view.is-day .ra-vignette{
+    background:
+      radial-gradient(ellipse at 50% 46%,transparent 44%,rgba(44,86,100,.18) 100%),
+      linear-gradient(180deg,rgba(173,218,228,.14),transparent 18% 82%,rgba(173,218,228,.10));
+  }
+  .city-view.is-day .ra-badge{
+    background:rgba(250,254,254,.9);border-color:rgba(11,113,136,.55);color:#0b4b5e;
+    box-shadow:0 0 24px rgba(11,113,136,.08) inset;
+  }
+  .city-view.is-day .ra-badge em{color:#9c5b08}
+  .city-view.is-day .ra-dot{background:#0b7188;box-shadow:0 0 9px rgba(11,113,136,.75)}
+  .city-view.is-day .ra-tactical{
+    border-top-color:rgba(184,106,8,.38);border-bottom-color:rgba(11,113,136,.2);
+    background:linear-gradient(90deg,transparent,rgba(248,253,253,.82) 18% 82%,transparent);
+    color:#3e6470;
+  }
+  .city-view.is-day .ra-tactical span+span::before{color:rgba(11,113,136,.35)}
+  .city-view.is-day .ra-radar{
+    border-color:rgba(11,113,136,.42);
+    background:radial-gradient(circle,rgba(255,255,255,.92),rgba(223,239,243,.92));
+    box-shadow:0 0 0 5px rgba(255,255,255,.24),0 0 24px rgba(11,113,136,.1);
+  }
+  .city-view.is-day .ra-radar::before{
+    background:
+      linear-gradient(90deg,transparent 49.4%,rgba(11,113,136,.22) 49.4% 50.6%,transparent 50.6%),
+      linear-gradient(0deg,transparent 49.4%,rgba(11,113,136,.22) 49.4% 50.6%,transparent 50.6%),
+      radial-gradient(circle,transparent 56%,rgba(11,113,136,.16) 57% 58%,transparent 59%);
+  }
+  .city-view.is-day .ra-radar::after{
+    background:conic-gradient(from 0deg,rgba(11,113,136,.55),rgba(11,113,136,.08) 55deg,transparent 90deg,transparent 360deg);
+  }
+  .city-view.is-day .ra-radar i{background:#0b7188;box-shadow:0 0 8px rgba(11,113,136,.8)}
+  .city-view.is-day.map-mode .map-pin__label{
+    background:rgba(250,254,254,.92);color:#365e69;border-color:rgba(11,113,136,.32);
+  }
+  .city-view.is-day.map-mode .map-pin--major .map-pin__label{color:#a85f00;border-color:rgba(184,106,8,.55)}
+  .city-view.is-day.map-mode .map-pin:hover .map-pin__label{
+    background:#fff;border-color:var(--accent);color:#08252f;
+  }
+  .city-view.is-day.map-mode .map-pin__dot{
+    background:#0b7188;box-shadow:0 0 0 3px rgba(11,113,136,.16),0 0 12px rgba(11,113,136,.45);
+  }
+  .city-view.is-day.map-mode .map-pin--minor .map-pin__dot{
+    background:#5e99a6;box-shadow:0 0 0 2px rgba(94,153,166,.18);
+  }
+  .city-view.is-day.map-mode .map-pin--major .map-pin__label::before,
+  .city-view.is-day.map-mode .map-pin--major .map-pin__label::after{border-color:#0b7188}
+  .city-view.is-day.map-mode .map-road{
+    color:rgba(44,90,104,.72);text-shadow:0 1px 2px rgba(255,255,255,.8);
+  }
+  .city-view.is-day.map-mode .maplibregl-ctrl-group{
+    background:rgba(250,254,254,.92);border-color:rgba(11,113,136,.25);
+  }
+  .city-view.is-day.map-mode .maplibregl-ctrl button .maplibregl-ctrl-icon{filter:none;opacity:.72}
+  .city-view.is-day.map-mode .maplibregl-ctrl-attrib{
+    background:rgba(250,254,254,.86)!important;color:#53727c;
+  }
+  .city-view.is-day.map-mode .maplibregl-ctrl-attrib a{color:#2b5b67}
+  body.city-mode.city-day .vignette{
+    background:radial-gradient(122% 92% at 50% 46%,transparent 44%,rgba(44,86,100,.12) 78%,rgba(44,86,100,.24) 100%);
+  }
+  body.city-mode.city-day .vignette::after{opacity:.12;mix-blend-mode:normal}
+  body.city-mode.city-day .guide-entry{
+    background:rgba(250,254,254,.88);border-color:rgba(11,113,136,.28);color:#0b4b5e;
+  }
+  body.city-mode.city-day .guide-entry:hover{
+    background:#fff;border-color:rgba(11,113,136,.5);
+  }
+  body.city-mode.city-day .guide-entry__label{color:#456873}
+  body.city-mode.city-day .guide-entry__mark{
+    border-color:rgba(11,113,136,.4);color:#0b7188;box-shadow:none;
+  }
   @media (max-width:760px){
     .ra-badge{left:14px;top:calc(54px + env(safe-area-inset-top,0px));font-size:8px;padding:5px 7px}
     .ra-tactical{display:none}
@@ -4267,6 +4400,8 @@ const LANDMARK_HEIGHTS = {
   brandenburg: 14, ryugyong: 40, bitexco: 36, cntower: 50, royalpalace: 16, colosseum: 14, ifs: 24, raffles: 30, citic: 52, shanghaitower: 63, arc: 15, salesforce: 40, highroller: 56, bazaar: 32, sapphire: 28, mahanakhon: 31, portside: 14, italia: 17, sydneytower: 31, westerkerk: 8, eureka: 30, datang: 10
 };
 
+let cityPhaseDay = false;
+
 const detail = {
   active: false,
   city: null,
@@ -4928,10 +5063,31 @@ function addRoads(scene, theme, rng, night){
   }
 }
 
-function cityLocalHour(city){
-  try {
-    return Number(new Intl.DateTimeFormat('en-GB', { timeZone: city.tz || 'UTC', hour: '2-digit', hourCycle: 'h23' }).format(new Date()));
-  } catch { return new Date().getHours(); }
+// Local solar elevation, not the visitor's clock: Beijing at 21:00 is night
+// while London at 13:00 is still day. The -0.833° horizon includes refraction.
+function cityIsDay(city){
+  const current = city.weather && city.weather.current;
+  if (current && (current.is_day === 0 || current.is_day === 1)) return current.is_day === 1;
+  const lat = Number(city.lat);
+  const lon = Number(city.lon);
+  if (!Number.isFinite(lat) || !Number.isFinite(lon)) return true;
+  const now = new Date();
+  const start = Date.UTC(now.getUTCFullYear(), 0, 1);
+  const day = Math.floor((Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()) - start) / 86400000) + 1;
+  const hour = now.getUTCHours() + now.getUTCMinutes() / 60 + now.getUTCSeconds() / 3600;
+  const gamma = (Math.PI * 2 / 365) * (day - 1 + (hour - 12) / 24);
+  const eqTime = 229.18 * (0.000075 + 0.001868 * Math.cos(gamma) - 0.032077 * Math.sin(gamma)
+    - 0.014615 * Math.cos(2 * gamma) - 0.040849 * Math.sin(2 * gamma));
+  const decl = 0.006918 - 0.399912 * Math.cos(gamma) + 0.070257 * Math.sin(gamma)
+    - 0.006758 * Math.cos(2 * gamma) + 0.000907 * Math.sin(2 * gamma)
+    - 0.002697 * Math.cos(3 * gamma) + 0.00148 * Math.sin(3 * gamma);
+  const trueSolar = hour * 60 + eqTime + 4 * lon;
+  const hourAngle = ((trueSolar / 4) - 180) * Math.PI / 180;
+  const latRad = lat * Math.PI / 180;
+  const cosZenith = Math.sin(latRad) * Math.sin(decl)
+    + Math.cos(latRad) * Math.cos(decl) * Math.cos(hourAngle);
+  const altitude = 90 - Math.acos(Math.max(-1, Math.min(1, cosZenith))) * 180 / Math.PI;
+  return altitude > -0.833;
 }
 
 function buildCityDetail(city){
@@ -4939,8 +5095,7 @@ function buildCityDetail(city){
   const theme = CITY_THEMES[cfg.theme] || CITY_THEMES.europe;
   const rng = seeded(hashString(city.id + ':city'));
   const current = city.weather && city.weather.current;
-  const localHour = cityLocalHour(city);
-  const isDay = current ? current.is_day === 1 : (localHour >= 6 && localHour < 19);
+  const isDay = cityPhaseDay;
   const code = current ? Number(current.weather_code) : -1;
   const rain = RAIN_CODES.has(code);
   const snow = SNOW_CODES.has(code);
@@ -5579,13 +5734,33 @@ function loadMapLibre(){
   return maplibrePromise;
 }
 
-function shanghaiMapStyle(){
+function shanghaiMapStyle(isDay = cityPhaseDay){
+  const day = !!isDay;
+  const p = day ? {
+    raster: 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}',
+    rasterOpacity: 0.76, brightness: 0.96, saturation: -0.2, contrast: 0.08,
+    bg: '#dfeaed', water: '#a9d7e3', waterway: '#2c869a',
+    roadCasing: '#f7fbfc', road: '#24798b',
+    building: ['#b7d5de', '#a8ccd7', '#93c2cf', '#78b2c3', '#5a9fb4'],
+    outline: '#075e73', outlineWidth: 1, outlineOpacity: 0.82,
+    sky: '#f1f7f7', horizon: '#cfe5e9', fog: '#dfeaed',
+    skyBlend: 0.25, horizonBlend: 0.42, fogBlend: 0.2
+  } : {
+    raster: 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
+    rasterOpacity: 0.92, brightness: 0.82, saturation: -0.45, contrast: 0.1,
+    bg: '#020b16', water: '#041f2e', waterway: '#0b5f74',
+    roadCasing: '#021018', road: '#1e8fa8',
+    building: ['#061a2b', '#072538', '#0a3145', '#0c3b50', '#0e4a61'],
+    outline: '#39d0ff', outlineWidth: 0.9, outlineOpacity: 0.75,
+    sky: '#020b16', horizon: '#0b4354', fog: '#020b16',
+    skyBlend: 0.4, horizonBlend: 0.5, fogBlend: 0.3
+  };
   return {
     version: 8,
     sources: {
       esri: {
         type: 'raster',
-        tiles: ['https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}'],
+        tiles: [p.raster],
         tileSize: 256,
         maxzoom: 16,
         attribution: 'Esri, HERE, Garmin'
@@ -5593,38 +5768,38 @@ function shanghaiMapStyle(){
       omt: { type: 'vector', url: 'https://tiles.openfreemap.org/planet', attribution: '' }
     },
     layers: [
-      { id: 'bg', type: 'background', paint: { 'background-color': '#020b16' } },
+      { id: 'bg', type: 'background', paint: { 'background-color': p.bg } },
       { id: 'esri', type: 'raster', source: 'esri', paint: {
-        'raster-opacity': 0.92,
-        'raster-brightness-max': 0.82,
-        'raster-saturation': -0.45,
-        'raster-contrast': 0.1
+        'raster-opacity': p.rasterOpacity,
+        'raster-brightness-max': p.brightness,
+        'raster-saturation': p.saturation,
+        'raster-contrast': p.contrast
       } },
       { id: 'water', type: 'fill', source: 'omt', 'source-layer': 'water',
         filter: ['!=', ['get', 'brunnel'], 'tunnel'],
-        paint: { 'fill-color': '#041f2e' } },
+        paint: { 'fill-color': p.water } },
       { id: 'waterway', type: 'line', source: 'omt', 'source-layer': 'waterway',
-        paint: { 'line-color': '#0b5f74', 'line-width': ['interpolate', ['linear'], ['zoom'], 12, 1, 18, 5] } },
+        paint: { 'line-color': p.waterway, 'line-width': ['interpolate', ['linear'], ['zoom'], 12, 1, 18, 5] } },
       { id: 'roads-casing', type: 'line', source: 'omt', 'source-layer': 'transportation', minzoom: 12,
         filter: ['match', ['get', 'class'], 'motorway', true, 'trunk', true, 'primary', true, 'secondary', true, 'tertiary', true, false],
-        paint: { 'line-color': '#021018', 'line-width': ['interpolate', ['linear'], ['zoom'], 12, 1.4, 15, 4.4, 18, 13], 'line-opacity': 0.9 } },
+        paint: { 'line-color': p.roadCasing, 'line-width': ['interpolate', ['linear'], ['zoom'], 12, 1.4, 15, 4.4, 18, 13], 'line-opacity': 0.9 } },
       { id: 'roads', type: 'line', source: 'omt', 'source-layer': 'transportation', minzoom: 12,
         filter: ['match', ['get', 'class'], 'motorway', true, 'trunk', true, 'primary', true, 'secondary', true, 'tertiary', true, false],
-        paint: { 'line-color': '#1e8fa8', 'line-width': ['interpolate', ['linear'], ['zoom'], 12, 0.8, 15, 2.2, 18, 9] } },
+        paint: { 'line-color': p.road, 'line-width': ['interpolate', ['linear'], ['zoom'], 12, 0.8, 15, 2.2, 18, 9] } },
       { id: 'buildings-3d', type: 'fill-extrusion', source: 'omt', 'source-layer': 'building', minzoom: 14,
         filter: ['!', ['has', 'hide_3d']],
         paint: {
           'fill-extrusion-height': ['coalesce', ['get', 'render_height'], 12],
           'fill-extrusion-base': ['coalesce', ['get', 'render_min_height'], 0],
           'fill-extrusion-color': ['interpolate', ['linear'], ['coalesce', ['get', 'render_height'], 12],
-            0, '#061a2b', 50, '#072538', 150, '#0a3145', 300, '#0c3b50', 500, '#0e4a61'],
+            0, p.building[0], 50, p.building[1], 150, p.building[2], 300, p.building[3], 500, p.building[4]],
           'fill-extrusion-opacity': 1,
           'fill-extrusion-vertical-gradient': false
         } },
       { id: 'building-outline', type: 'line', source: 'omt', 'source-layer': 'building', minzoom: 15,
-        paint: { 'line-color': '#39d0ff', 'line-width': 0.9, 'line-opacity': 0.75 } }
+        paint: { 'line-color': p.outline, 'line-width': p.outlineWidth, 'line-opacity': p.outlineOpacity } }
     ],
-    sky: { 'sky-color': '#020b16', 'horizon-color': '#0b4354', 'fog-color': '#020b16', 'sky-horizon-blend': 0.4, 'horizon-fog-blend': 0.5, 'fog-ground-blend': 0.3 }
+    sky: { 'sky-color': p.sky, 'horizon-color': p.horizon, 'fog-color': p.fog, 'sky-horizon-blend': p.skyBlend, 'horizon-fog-blend': p.horizonBlend, 'fog-ground-blend': p.fogBlend }
   };
 }
 
@@ -5729,8 +5904,21 @@ function buildTableMountainWire(){
 
 /* ---------------- Orbital Blueprint landmark layer ---------------- */
 
-const BP_CYAN = 0x39d0ff;
-const BP_AMBER = 0xffb347;
+let BP_CYAN = 0x39d0ff;
+let BP_AMBER = 0xffb347;
+let BP_FILL = 0x082432;
+
+function setCityPhase(isDay){
+  cityPhaseDay = !!isDay;
+  BP_CYAN = cityPhaseDay ? 0x0b7188 : 0x39d0ff;
+  BP_AMBER = cityPhaseDay ? 0xb86a08 : 0xffb347;
+  BP_FILL = cityPhaseDay ? 0xd6ebf0 : 0x082432;
+  document.body.classList.toggle('city-day', cityPhaseDay);
+  if (cityViewEl) cityViewEl.classList.toggle('is-day', cityPhaseDay);
+  if (mapViewEl) mapViewEl.classList.toggle('is-day', cityPhaseDay);
+  const phase = document.querySelector('.ra-badge em');
+  if (phase) phase.textContent = cityPhaseDay ? 'SECTOR 07 · DAY' : 'SECTOR 07 · NIGHT';
+}
 
 // Landmarks whose OSM mass already reads as the building: keep the map model
 // and add a lock-on frame instead of a second copy of the landmark.
@@ -5904,9 +6092,9 @@ function buildBlueprintBase(height, radius, opts = {}){
 // triangulated wireframe, plus a dim volume so the shape reads against the map.
 function blueprintize(group, opts = {}){
   const ghost = new THREE.MeshBasicMaterial({
-    color: 0x082432,
+    color: BP_FILL,
     transparent: true,
-    opacity: opts.fill ?? 0.28,
+    opacity: opts.fill ?? (cityPhaseDay ? 0.34 : 0.28),
     depthTest: true,
     depthWrite: false,
     side: THREE.FrontSide
@@ -5954,14 +6142,16 @@ function addDistrictLayer(map, district){
   const fillId = district.id + '-fill';
   const lineId = district.id + '-line';
   const innerId = district.id + '-line-inner';
+  const ink = cityPhaseDay ? '#0b7188' : '#39d0ff';
+  const inner = cityPhaseDay ? '#2b93a5' : '#7fe7ff';
   if (!map.getLayer(fillId)){
-    map.addLayer({ id:fillId, type:'fill', source:src, paint:{ 'fill-color':'#39d0ff', 'fill-opacity':0.055 } });
+    map.addLayer({ id:fillId, type:'fill', source:src, paint:{ 'fill-color':ink, 'fill-opacity':cityPhaseDay ? 0.08 : 0.055 } });
   }
   if (!map.getLayer(lineId)){
-    map.addLayer({ id:lineId, type:'line', source:src, paint:{ 'line-color':'#39d0ff', 'line-width':1.2, 'line-opacity':0.75, 'line-dasharray':[3,2] } });
+    map.addLayer({ id:lineId, type:'line', source:src, paint:{ 'line-color':ink, 'line-width':1.2, 'line-opacity':0.82, 'line-dasharray':[3,2] } });
   }
   if (!map.getLayer(innerId)){
-    map.addLayer({ id:innerId, type:'line', source:src, paint:{ 'line-color':'#7fe7ff', 'line-width':0.5, 'line-opacity':0.35 } });
+    map.addLayer({ id:innerId, type:'line', source:src, paint:{ 'line-color':inner, 'line-width':0.5, 'line-opacity':0.45 } });
   }
 }
 
@@ -6176,6 +6366,7 @@ function enterCity(city, opts = {}){
   detail.active = true;
   detail.city = city;
   activeMapConfig = CITY_MAPS[city.id] || null;
+  setCityPhase(cityIsDay(city));
   detail.mapActive = true;
   detail.scene = null;
   detail.camera = null;
@@ -6231,6 +6422,7 @@ function exitCity(opts = {}){
   detail.mapActive = false;
   detail.mapReady = false;
   document.body.classList.remove('city-mode');
+  setCityPhase(false);
   cityViewEl.classList.remove('is-open', 'map-mode');
   cityViewEl.setAttribute('aria-hidden', 'true');
   if (mapViewEl){ mapViewEl.classList.remove('is-open'); mapViewEl.innerHTML = ''; }
@@ -6490,12 +6682,12 @@ const GUIDE_ITEMS = [
     en: { title: 'Anti-abuse', desc: 'Every score has an idempotent eventId; the server applies per-token/city/action cooldowns and an IP rate limit.', tech: 'Cooldown + IP rate limit' }
   },
   {
-    zh: { title: '城市详情地图', desc: 'MapLibre 加载 OSM 建筑并拉伸为 3D；每城独立相机、地标标签和可点击地图 marker。', tech: 'MapLibre 建筑拉伸' },
-    en: { title: 'City detail map', desc: 'MapLibre loads OSM buildings and extrudes them into 3D; each city has its own camera, labels and clickable map markers.', tech: 'MapLibre + fill-extrusion' }
+    zh: { title: '城市详情地图', desc: 'MapLibre 加载 OSM 建筑并拉伸为 3D；每城独立相机、地标标签和可点击 marker，昼/夜自动换色。', tech: 'MapLibre + 本地太阳高度' },
+    en: { title: 'City detail map', desc: 'MapLibre loads OSM buildings and extrudes them into 3D; each city has its own camera, labels and clickable markers, with an automatic day/night palette.', tech: 'MapLibre + local solar altitude' }
   },
   {
-    zh: { title: '底图兜底', desc: '矢量瓦片不可用时自动使用 Esri 深灰底图，城市、标签和地标仍然可读。', tech: 'OSM 矢量 + Esri 栅格' },
-    en: { title: 'Basemap fallback', desc: 'When vector tiles are unavailable, an Esri dark-gray raster base keeps the city, labels and landmarks readable.', tech: 'OSM vector + Esri raster' }
+    zh: { title: '底图兜底', desc: '矢量瓦片不可用时自动使用 Esri 深灰/浅灰底图，城市、标签和地标仍然可读。', tech: 'OSM 矢量 + Esri 栅格' },
+    en: { title: 'Basemap fallback', desc: 'When vector tiles are unavailable, an Esri dark- or light-gray raster base keeps the city, labels and landmarks readable.', tech: 'OSM vector + Esri raster' }
   },
   {
     zh: { title: '蓝图地标层', desc: '地标用真实高度与 OSM 体量；能直接读出的加瞄准框，其余用结构线框补形体。', tech: 'OSM 体量 + Three.js' },
