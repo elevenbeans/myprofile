@@ -36,7 +36,7 @@ Every city now opens the same MapLibre/OSM city view instead of a procedural dio
 - **OpenFreeMap / OpenStreetMap** supplies building footprints and `render_height` values, extruded in 3D.
 - **Esri World Dark Gray Base** is used as a no-key raster fallback so a city is still readable when vector tiles are slow or unavailable.
 - **Orbital Blueprint palette:** deep navy land and water, cyan building outlines and roads, cyan grid/scanlines and radar, with amber selected labels and the city score. A `TACTICAL SCHEMATIC` HUD sits over the map. No satellite layer is used.
-- Each city has a **blueprint landmark layer** drawn in a Three.js custom layer. Where the OSM massing already reads as the landmark (Empire State, Burj Khalifa, CN Tower, Ryugyong Hotel, Gateway of India), the map model is the landmark and a real-height **lock-on frame** adds a ground survey ring, tapered guide volume, altitude ruler and amber beacon. Everywhere else a **structural edge wireframe** carries the silhouette that a single-height extrusion cannot: Oriental Pearl, Taipei 101, Temple of Heaven, Anshun Bridge, Bank of China, the Giant Wild Goose Pagoda, Hongya Cave, Ping An Finance, Canton Tower, Potala Palace, Tokyo Tower, N Seoul Tower, Marina Bay Sands, St. Basil's, the Giza pyramids, Table Mountain, Big Ben, the Eiffel Tower, the Golden Gate Bridge, MASP, the Sydney Opera House, Amsterdam canal houses, the Brandenburg Gate, Hagia Sophia, Bitexco Tower, Wat Arun, the Royal Palace of Madrid, the Colosseum, and Flinders Street Station.
+- Each city has a **blueprint landmark layer** drawn in a Three.js custom layer. Where the OSM massing already reads as the landmark (Empire State, Burj Khalifa, CN Tower, Ryugyong Hotel, Gateway of India, Bank of China Tower, Taipei 101, Chengdu IFS), the map model is the landmark and a real-height **lock-on frame** adds a ground survey ring, tapered guide volume, altitude ruler and amber beacon. Everywhere else a **structural edge wireframe** carries the silhouette that a single-height extrusion cannot: Oriental Pearl, Temple of Heaven, the Giant Wild Goose Pagoda, Hongya Cave, Ping An Finance, Canton Tower, Potala Palace, Tokyo Tower, N Seoul Tower, Marina Bay Sands, St. Basil's, the Giza pyramids, Table Mountain, Big Ben, the Eiffel Tower, the Golden Gate Bridge, MASP, the Sydney Opera House, Amsterdam canal houses, the Brandenburg Gate, Hagia Sophia, Bitexco Tower, Wat Arun, the Royal Palace of Madrid, the Colosseum, and Flinders Street Station.
 - The Eiffel Tower's OSM footprint is excluded from the building extrusion because a 48×48 m footprint swept to 330 m reads as a skyscraper; the structural lattice is the only Eiffel on the map.
 - **No API key** is required at runtime; internet access is required for the raster/vector tiles.
 
@@ -73,7 +73,7 @@ The city view is the real-map district described above, with a blueprint landmar
 | San Francisco | Golden Gate Bridge |
 | Seoul | N Seoul Tower |
 | Mumbai | Gateway of India |
-| Chengdu | Anshun covered bridge |
+| Chengdu | Chengdu IFS |
 | Xi'an | Giant Wild Goose Pagoda |
 | Chongqing | Hongya Cave |
 | Shenzhen | Ping An Finance Centre |
@@ -95,7 +95,7 @@ Drag to pan, scroll or pinch to zoom, right-drag or two fingers rotate/pitch the
 
 | Blueprint landmark layer — lattice vs OSM lock-on | |
 | --- | --- |
-| ![Paris lattice, New York and Dubai lock-on, Taipei 101 wireframe](preview/blueprint-landmarks.webp) | |
+| ![Paris lattice, New York and Dubai lock-on, Rome wireframe](preview/blueprint-landmarks.webp) | |
 
 | Shanghai | Paris |
 | --- | --- |
@@ -176,7 +176,7 @@ The home page uses an original slow piano piece in A minor: broken chords, a low
 - `vendor/three.module.min.js` is Three.js r160 (MIT), loaded locally with a CDN fallback.
 - `vendor/maplibre-gl.js` + CSS are MapLibre GL JS 4.7 (BSD-3), loaded locally for every city view.
 - Each city's 3D layer is a MapLibre `fill-extrusion` of the `building` source-layer from OpenFreeMap, combined with water/road layers, an Esri dark-gray raster fallback, a blueprint HUD overlay and HTML landmark labels. No building data file is bundled; tiles are fetched at runtime.
-- Each landmark is a separate Three.js custom layer on the MapLibre canvas. The five OSM-readable landmarks get a lock-on frame tied to the map's `building:part` massing; the rest get structural edges (`EdgesGeometry`, not a triangulated wireframe) over a dim volume, scaled to its real height. Every city view shows a real `ALT` readout in the landmark HUD. Both use a ground survey ring and an amber beacon; Shanghai keeps its bespoke Oriental Pearl geometry in the same edge language.
+- Each landmark is a separate Three.js custom layer on the MapLibre canvas. The eight OSM-readable landmarks get a lock-on frame tied to the map's `building:part` massing; the rest get structural edges (`EdgesGeometry`, not a triangulated wireframe) over a dim volume, scaled to its real height. Every city view shows a real `ALT` readout in the landmark HUD. Both use a ground survey ring and an amber beacon; Shanghai keeps its bespoke Oriental Pearl geometry in the same edge language.
 - `textures/` holds NASA day (2048×1024 WebP), night-lights (2048×1024 WebP) and cloud (1024×512 WebP) maps, with the previous 1K files as a local fallback and the Three.js CDN as a second fallback. On desktop, after the camera zooms in (`orbit.dist < 2.75`), a 4K day/night + 2K cloud set loads in the background and swaps in; mobile and WeChat stay on 2K. Textures use `?v=6` (2K) / `?v=7` (4K) and anisotropy 16.
 - The globe uses a custom shader to blend day/night maps at the real subsolar point, with a warm terminator band, atmospheric rim, stars, clouds and great-circle arcs.
 - City markers are HTML buttons projected from 3D positions each frame, so they stay crisp and keyboard accessible.

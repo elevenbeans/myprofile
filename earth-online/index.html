@@ -4152,7 +4152,7 @@ const CITY_THEMES = {
 const LANDMARKS = {
   beijing:      { type:'temple',       name:{zh:'天坛',en:'Temple of Heaven'},       color:0x2f6b5a, accent:0xd9b26f, scale:1.00, theme:'asia' },
   shanghai:     { type:'pearl',        name:{zh:'东方明珠',en:'Oriental Pearl'},      color:0xd8dfe8, accent:0xd94b5b, scale:1.12, theme:'asia' },
-  chengdu:      { type:'coveredbridge', name:{zh:'安顺廊桥',en:'Anshun Bridge'},       color:0x9b5a3c, accent:0xd9b26f, scale:0.92, theme:'asia' },
+  chengdu:      { type:'ifs',         name:{zh:'成都 IFS',en:'Chengdu IFS'},          color:0x9fb6c9, accent:0xd94b5b, scale:1.00, theme:'asia' },
   hongkong:     { type:'bank',         name:{zh:'中银大厦',en:'Bank of China Tower'}, color:0x8fa6b8, accent:0x7fd3ff, scale:1.08, theme:'asia' },
   xian:         { type:'pagoda',       name:{zh:'大雁塔',en:'Giant Wild Goose Pagoda'},color:0xb08a5a, accent:0xf0d9b5, scale:1.00, theme:'asia' },
   chongqing:    { type:'chongqing',    name:{zh:'洪崖洞',en:'Hongya Cave'},           color:0xc9a46a, accent:0xffb347, scale:1.00, theme:'asia' },
@@ -4191,7 +4191,7 @@ const LANDMARK_HEIGHTS = {
   opera: 14, stbasil: 20, pyramid: 13, table: 14, masp: 18, goldengate: 24, seoul: 34, gate: 16, coveredbridge: 11,
   pagoda: 24, chongqing: 22, pingan: 50, canton: 42, potala: 20, taipei101: 48,
   canalhouse: 12, brandenburg: 14, ryugyong: 40, hagia: 18, bitexco: 36, watarun: 26,
-  cntower: 50, royalpalace: 16, colosseum: 14, flinders: 14
+  cntower: 50, royalpalace: 16, colosseum: 14, flinders: 14, ifs: 24
 };
 
 const detail = {
@@ -4336,18 +4336,51 @@ function buildBigBen(cfg){
 }
 function buildTemple(cfg){
   const g = new THREE.Group();
-  lcyl(g, 9.5, 10, 1.2, 0x8c7a5e, 0, 0, 0, 8);
-  lcyl(g, 7.2, 7.6, 2.4, cfg.color, 0, 1.2, 0, 8);
-  lcone(g, 8.4, 2.2, 0x2e5a5a, 0, 3.4, 0, 8);
-  lcyl(g, 5.2, 5.6, 2.4, cfg.color, 0, 5.2, 0, 8);
-  lcone(g, 6.6, 2.1, 0x2e5a5a, 0, 7.2, 0, 8);
-  lcyl(g, 3.2, 3.6, 2, cfg.color, 0, 8.9, 0, 8);
-  lcone(g, 4.2, 2.2, 0x2e5a5a, 0, 10.6, 0, 8);
-  lcyl(g, 0.22, 0.38, 2.6, cfg.accent, 0, 12.4, 0, 8);
-  lsph(g, 0.5, cfg.accent, 0, 15.2, 0, 8);
-  lbox(g, 3, 0.4, 8, 0x8c7a5e, 0, 0, 8.5);
+  const marble = 0xcfc6b0, blue = 0x2e5a7a, red = 0x8c3a32, gold = 0xd9b26f;
+  // Three circular marble terraces with balustrades.
+  const terraces = [[10.5, 0.8], [9.0, 0.8], [7.5, 0.8]];
+  let y = 0;
+  for (const [r, h] of terraces){
+    lcyl(g, r, r * 1.02, h, marble, 0, y, 0, 48);
+    for (let i = 0; i < 24; i++){
+      const a = (i / 24) * Math.PI * 2;
+      lbox(g, 0.1, 0.45, 0.1, marble, Math.cos(a) * (r - 0.25), y + h, Math.sin(a) * (r - 0.25), -a);
+    }
+    lcyl(g, r - 0.25, r - 0.25, 0.1, marble, 0, y + h + 0.32, 0, 32);
+    for (const [dx, dz, rot] of [[1,0,0],[-1,0,Math.PI],[0,1,Math.PI/2],[0,-1,-Math.PI/2]]){
+      lbox(g, 2.2, 0.25, 1.4, marble, dx * (r + 0.6), y + h * 0.35, dz * (r + 0.6), rot);
+    }
+    y += h;
+  }
+  const levels = [
+    { r: 7.0, wh: 2.4, rh: 1.7, roofR: 8.4 },
+    { r: 5.1, wh: 2.0, rh: 1.4, roofR: 6.3 },
+    { r: 3.2, wh: 1.8, rh: 1.8, roofR: 4.2 }
+  ];
+  for (const L of levels){
+    lcyl(g, L.r, L.r, L.wh, red, 0, y, 0, 12);
+    for (let i = 0; i < 12; i++){
+      const a = (i / 12) * Math.PI * 2;
+      lcyl(g, 0.13, 0.13, L.wh + 0.15, red, Math.cos(a) * L.r, y, Math.sin(a) * L.r, 6);
+    }
+    for (let i = 0; i < 4; i++){
+      const a = (i / 4) * Math.PI * 2 + Math.PI / 4;
+      lbox(g, 0.9, L.wh * 0.65, 0.12, gold, Math.cos(a) * L.r, y + L.wh * 0.15, Math.sin(a) * L.r, -a + Math.PI / 2);
+    }
+    for (let i = 0; i < 12; i++){
+      const a = (i / 12) * Math.PI * 2;
+      lbox(g, 0.42, 0.2, 0.28, gold, Math.cos(a) * (L.r + 0.18), y + L.wh, Math.sin(a) * (L.r + 0.18), -a);
+    }
+    lcyl(g, L.roofR, L.roofR, 0.16, gold, 0, y + L.wh + 0.08, 0, 24);
+    lcone(g, L.roofR, L.rh, blue, 0, y + L.wh + 0.18, 0, 24);
+    y += L.wh + L.rh * 0.82;
+  }
+  lcyl(g, 0.1, 0.28, 2.0, gold, 0, y, 0, 8);
+  lsph(g, 0.42, gold, 0, y + 1.9, 0, 10);
+  lsph(g, 0.24, gold, 0, y + 2.55, 0, 8);
   return g;
 }
+
 function buildPearl(cfg){
   const g = new THREE.Group();
   lcyl(g, 0.9, 1.2, 28, cfg.color, 0, 0, 0, 10);
@@ -4531,31 +4564,79 @@ function buildCoveredBridge(cfg){
 }
 function buildPagoda(cfg){
   const g = new THREE.Group();
-  lbox(g, 9, 1, 9, 0x8c7a5e, 0, 0, 0);
-  for (let i = 0; i < 6; i++){
-    const w = 7 - i * 0.8;
-    lbox(g, w, 1.4, w, cfg.color, 0, 1.2 + i * 2.4, 0);
-    lbox(g, w + 1.4, 0.3, w + 1.4, cfg.accent, 0, 2.1 + i * 2.4, 0);
+  const brick = cfg.color, eave = cfg.accent, dark = 0x5a4a3a, stone = 0x8c7a5e;
+  lbox(g, 9.6, 1.2, 9.6, stone, 0, 0, 0);
+  lbox(g, 8.8, 0.35, 8.8, eave, 0, 1.2, 0);
+  lbox(g, 2.2, 0.5, 1.4, stone, 0, 0.25, 5.6);
+  let y = 1.55;
+  for (let i = 0; i < 7; i++){
+    const w = 6.6 - i * 0.5;
+    const h = 2.15;
+    lbox(g, w, h, w, brick, 0, y, 0);
+    for (const [sx, sz] of [[1,1],[1,-1],[-1,1],[-1,-1]]){
+      lbox(g, 0.28, h, 0.28, dark, sx * (w / 2 - 0.16), y, sz * (w / 2 - 0.16));
+    }
+    for (let face = 0; face < 4; face++){
+      const rot = face * Math.PI / 2;
+      const nx = Math.sin(rot), nz = Math.cos(rot);
+      const arch = new THREE.Mesh(new THREE.ExtrudeGeometry((() => {
+        const s = new THREE.Shape();
+        const aw = 0.66, ah = 1.05;
+        s.moveTo(-aw / 2, 0); s.lineTo(-aw / 2, ah - aw / 2);
+        s.absarc(0, ah - aw / 2, aw / 2, Math.PI, 0, true);
+        s.lineTo(aw / 2, 0); s.lineTo(-aw / 2, 0);
+        return s;
+      })(), { depth: 0.1, bevelEnabled: false }), lmMat(dark));
+      arch.position.set(nx * (w / 2 + 0.02), y + 0.55, nz * (w / 2 + 0.02));
+      arch.rotation.y = rot;
+      g.add(arch);
+    }
+    lbox(g, w + 1.2, 0.28, w + 1.2, eave, 0, y + h, 0);
+    lbox(g, w + 0.9, 0.18, w + 0.9, dark, 0, y + h + 0.28, 0);
+    for (let k = 0; k < 4; k++){
+      const a = k * Math.PI / 2;
+      lbox(g, 0.08, 0.5, 0.08, dark, Math.cos(a) * (w / 2 + 0.35), y + h + 0.3, Math.sin(a) * (w / 2 + 0.35));
+    }
+    for (const [sx, sz] of [[1,1],[1,-1],[-1,1],[-1,-1]]){
+      beam(g, new THREE.Vector3(sx * (w / 2 + 0.55), y + h + 0.15, sz * (w / 2 + 0.55)),
+        new THREE.Vector3(sx * (w / 2 + 0.85), y + h + 0.5, sz * (w / 2 + 0.85)), 0.07, eave);
+    }
+    y += h + 0.46;
   }
-  lcyl(g, 0.15, 0.35, 4, cfg.accent, 0, 16, 0, 8);
-  lsph(g, 0.5, cfg.accent, 0, 18, 0, 8);
+  lcyl(g, 0.16, 0.42, 2.4, eave, 0, y, 0, 8);
+  for (let i = 0; i < 5; i++){
+    lcyl(g, 0.42 - i * 0.05, 0.42 - i * 0.05, 0.12, eave, 0, y + 0.55 + i * 0.38, 0, 12);
+  }
+  lsph(g, 0.34, eave, 0, y + 2.6, 0, 8);
   return g;
 }
+
 function buildChongqing(cfg){
   const g = new THREE.Group();
-  lbox(g, 20, 4, 12, 0x3a4a4a, 0, 0, 0);
-  for (let i = 0; i < 5; i++){
-    lbox(g, 3, 6 + (i % 2) * 3, 4, cfg.color, -6 + i * 3, 4, 0);
-    lbox(g, 3.8, 0.4, 4.8, cfg.accent, -6 + i * 3, 7 + (i % 2) * 3, 0);
+  const cliff = 0x3a4a4a, wood = cfg.color, roof = 0x2a2620, stone = 0x8c7a5e, light = 0xffb347;
+  lbox(g, 28, 9, 10, cliff, 0, 0, -3);
+  for (let t = 0; t < 3; t++) lbox(g, 26 - t * 3, 0.6, 9 - t * 2, 0x4a5a5a, 0, 3 + t * 2, -3 + t * 0.5);
+  for (let l = 0; l < 5; l++){
+    const y = 3 + l * 3.1, z = 0.5 + l * 0.55;
+    for (let i = 0; i < 5; i++){
+      const x = -8 + i * 4;
+      const h = 3.2 + (i % 2) * 0.9;
+      lbox(g, 3.4, h, 3.6, i % 2 ? wood : 0x8a6a4a, x, y, z);
+      for (const sx of [-1, 1]) lcyl(g, 0.1, 0.12, y, wood, x + sx * 1.3, 0, z, 6);
+      lbox(g, 4.0, 0.18, 1.3, wood, x, y + h * 0.55, z + 1.9);
+      for (let k = 0; k < 4; k++) lbox(g, 0.08, 0.6, 0.08, wood, x - 1.6 + k * 1.07, y + h * 0.55 + 0.18, z + 2.5);
+      for (let k = 0; k < 2; k++) lbox(g, 0.5, 0.7, 0.08, light, x - 0.7 + k * 1.4, y + 1.1, z + 1.82);
+      const r = new THREE.Mesh(new THREE.ConeGeometry(2.8, 1.3, 4), lmMat(roof));
+      r.rotation.y = Math.PI / 4; r.position.set(x, y + h + 0.65, z); g.add(r);
+      lbox(g, 3.9, 0.1, 0.12, cfg.accent, x, y + h + 0.1, z + 1.8);
+    }
   }
-  lbox(g, 28, 0.8, 3, cfg.accent, 0, 8, 6.5);
-  const line = new THREE.LineBasicMaterial({ color: cfg.accent, transparent:true, opacity:.8 });
-  g.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints([
-    new THREE.Vector3(-12, 8, 6.5), new THREE.Vector3(-4, 11, 6.5),
-    new THREE.Vector3(4, 11, 6.5), new THREE.Vector3(12, 8, 6.5)
-  ]), line));
+  lbox(g, 32, 0.7, 4, cfg.accent, 0, 9, 7);
+  for (let i = 0; i < 16; i++) lbox(g, 0.08, 0.8, 0.08, wood, -14 + i * 1.9, 9.7, 8.8);
+  for (let i = 0; i < 10; i++) lbox(g, 1.4, 0.28, 1.6, stone, -11, 1 + i * 0.85, 1 + i * 0.4);
   return g;
 }
+
 function buildPingan(cfg){
   const g = new THREE.Group();
   lcyl(g, 3.4, 5.6, 44, cfg.color, 0, 22, 0, 8);
@@ -4577,13 +4658,35 @@ function buildCanton(cfg){
 }
 function buildPotala(cfg){
   const g = new THREE.Group();
-  lbox(g, 20, 4, 12, 0x5a4a3a, 0, 0, 0);
-  lbox(g, 15, 8, 8, cfg.color, 0, 4, 0);
-  lbox(g, 10, 7, 9, cfg.accent, 0, 11, 0);
-  lbox(g, 5, 3, 5, cfg.color, 0, 17, 0);
-  for (const x of [-5, 0, 5]) lbox(g, 2.4, 0.4, 2.4, cfg.accent, x, 19.5, 0);
+  const white = cfg.color, red = cfg.accent, gold = 0xd9b26f, rock = 0x5a4a3a, stone = 0x8c7a5e, dark = 0x2e2e2e;
+  lbox(g, 20, 3.5, 12, rock, 0, 0, -1);
+  lbox(g, 18, 0.5, 10.5, stone, 0, 3.5, -1);
+  const whiteLevels = [[15, 3, 9, 0, 4, -1], [12, 3, 8, -0.5, 7, -1], [9, 2.5, 7, -1, 10, -1]];
+  for (const [w, h, d, x0, y0, z0] of whiteLevels){
+    lbox(g, w, h, d, white, x0, y0, z0);
+    for (let row = 0; row < 2; row++) for (let col = 0; col < 4; col++){
+      const wx = x0 - w / 2 + 1 + col * (w - 2) / 3;
+      const wy = y0 + 0.5 + row * (h - 1.0) / 1.6;
+      lbox(g, 0.4, 0.5, 0.08, dark, wx, wy, z0 + d / 2 + 0.04);
+      lbox(g, 0.4, 0.5, 0.08, dark, wx, wy, z0 - d / 2 - 0.04);
+    }
+    lbox(g, w + 0.2, 0.18, d + 0.2, stone, x0, y0 + h, z0);
+  }
+  lbox(g, 5, 8, 5, red, 1.5, 11, -1);
+  for (let row = 0; row < 2; row++) for (let col = 0; col < 3; col++){
+    lbox(g, 0.4, 0.55, 0.08, dark, 1.5 - 1.6 + col * 1.6, 11.5 + row * 1.6, 2.04);
+    lbox(g, 0.4, 0.55, 0.08, dark, 1.5 - 1.6 + col * 1.6, 11.5 + row * 1.6, -4.04);
+  }
+  for (const dx of [-1.5, 0, 1.5]){
+    lbox(g, 1.6, 1.0, 1.6, red, 1.5 + dx, 19, -1);
+    const roof = new THREE.Mesh(new THREE.ConeGeometry(1.7, 1.1, 4), lmMat(gold));
+    roof.rotation.y = Math.PI / 4; roof.position.set(1.5 + dx, 19.8, -1); g.add(roof);
+    lcyl(g, 0.05, 0.1, 1.1, gold, 1.5 + dx, 20.4, -1, 6);
+  }
+  for (let i = 0; i < 12; i++) lbox(g, 1.2, 0.28, 1.7, stone, -9.5, 1 + i * 0.85, -3.5 + i * 0.75);
   return g;
 }
+
 function buildTaipei101(cfg){
   const g = new THREE.Group();
   lcyl(g, 6, 7, 6, cfg.color, 0, 3, 0, 8);
@@ -4691,6 +4794,28 @@ function buildFlinders(cfg){
   return g;
 }
 
+function buildIfs(cfg){
+  const g = new THREE.Group();
+  const glass = cfg.color, accent = cfg.accent, dark = 0x3a3f45;
+  lbox(g, 16, 4.5, 12, dark, 0, 0, 0);
+  lbox(g, 14, 1, 10, accent, 0, 4.5, 0);
+  lbox(g, 5.4, 20, 5.4, glass, -3.4, 4.5, -1.0);
+  lbox(g, 4.6, 16, 4.6, glass, 4.4, 4.5, 0.6);
+  for (const [x, z, top, w, h] of [[-3.4, -1.0, 24.5, 4.9, 20], [4.4, 0.6, 20.5, 4.1, 16]]){
+    lbox(g, w, 1.2, w, glass, x, top, z);
+    lbox(g, w * 0.72, 0.8, w * 0.72, accent, x, top + 1.2, z);
+    lcyl(g, 0.1, 0.32, 3.4, accent, x, top + 2.0, z, 6);
+    for (let i = 0; i < 4; i++){
+      const dx = -w / 2 + 0.45 + i * (w - 0.9) / 3;
+      lbox(g, 0.09, h, 0.09, accent, x + dx, 4.5, z + w / 2 + 0.02);
+      lbox(g, 0.09, h, 0.09, accent, x + dx, 4.5, z - w / 2 - 0.02);
+    }
+    for (let yy = 8; yy < 4.5 + h; yy += 4) lbox(g, w + 0.12, 0.1, 0.12, accent, x, yy, z + w / 2);
+  }
+  lbox(g, 8, 1.2, 2, accent, 0.5, 16, 3.5);
+  return g;
+}
+
 function buildLandmark(cfg){
   switch (cfg.type){
     case 'eiffel': return buildEiffel(cfg);
@@ -4710,6 +4835,7 @@ function buildLandmark(cfg){
     case 'seoul': return buildSeoul(cfg);
     case 'gate': return buildGate(cfg);
     case 'coveredbridge': return buildCoveredBridge(cfg);
+    case 'ifs': return buildIfs(cfg);
     case 'pagoda': return buildPagoda(cfg);
     case 'chongqing': return buildChongqing(cfg);
     case 'pingan': return buildPingan(cfg);
@@ -5019,7 +5145,7 @@ function updateCityMeta(){
 
 const CITY_MAPS = {
   beijing: {
-    center:[116.4066,39.8822], zoom:16.2, pitch:52, bearing:-20, origin:[116.4066,39.8822], height:38,
+    center:[116.4066,39.8822], zoom:17.0, pitch:52, bearing:-20, origin:[116.4066,39.8822], height:38,
     label:{zh:'天坛 · 中轴线',en:'Temple of Heaven · Axis'},
     points:[
       {id:'temple',name:{zh:'天坛',en:'Temple of Heaven'},lng:116.4066,lat:39.8822,height:38,major:true},
@@ -5046,21 +5172,21 @@ const CITY_MAPS = {
     roads:[{zh:'世纪大道',en:'Century Ave',lng:121.5085,lat:31.2358},{zh:'中山东一路',en:'Zhongshan E. 1st Rd',lng:121.4898,lat:31.2365},{zh:'延安东路',en:"Yan'an East Rd",lng:121.4895,lat:31.2305},{zh:'陆家嘴环路',en:'Lujiazui Ring Rd',lng:121.5020,lat:31.2410}]
   },
   chengdu: {
-    center:[104.0872,30.6435], zoom:16.2, pitch:55, bearing:-18, origin:[104.0872,30.6435], height:25,
-    label:{zh:'安顺廊桥 · 锦江',en:'Anshun Bridge · Jin River'},
+    center:[104.0780,30.6564], zoom:15.2, pitch:55, bearing:-18, origin:[104.0780,30.6564], height:248,
+    label:{zh:'成都 IFS · 春熙路',en:'Chengdu IFS · Chunxi'},
     points:[
-      {id:'anshun',name:{zh:'安顺廊桥',en:'Anshun Bridge'},lng:104.0872,lat:30.6435,height:25,major:true},
-      {id:'jiuyan',name:{zh:'九眼桥',en:'Jiuyan Bridge'},lng:104.087,lat:30.642,height:0},
-      {id:'jinjiang',name:{zh:'锦江',en:'Jin River'},lng:104.087,lat:30.641,height:0},
+      {id:'ifs',name:{zh:'成都 IFS',en:'Chengdu IFS'},lng:104.0780,lat:30.6564,height:248,major:true},
+      {id:'taikooli',name:{zh:'太古里',en:'Taikoo Li'},lng:104.0815,lat:30.6535,height:0},
+      {id:'daci',name:{zh:'大慈寺',en:'Daci Temple'},lng:104.0795,lat:30.6585,height:0},
       {id:'chunxi',name:{zh:'春熙路',en:'Chunxi Road'},lng:104.081,lat:30.657,height:0}
     ],
-    roads:[{zh:'锦江',en:'Jin River',lng:104.087,lat:30.641}]
+    roads:[{zh:'红星路三段',en:'Hongxing Rd 3rd Sec',lng:104.078,lat:30.656},{zh:'春熙路',en:'Chunxi Road',lng:104.081,lat:30.657}]
   },
   hongkong: {
-    center:[114.158,22.281], zoom:14.8, pitch:55, bearing:-18, origin:[114.1613,22.2797], height:367,
+    center:[114.158,22.281], zoom:14.8, pitch:55, bearing:-18, origin:[114.16154,22.27914], height:367,
     label:{zh:'中环 · 维多利亚港',en:'Central · Victoria Harbour'},
     points:[
-      {id:'boc',name:{zh:'中银大厦',en:'Bank of China'},lng:114.1613,lat:22.2797,height:367,major:true},
+      {id:'boc',name:{zh:'中银大厦',en:'Bank of China'},lng:114.16154,lat:22.27914,height:367,major:true},
       {id:'central',name:{zh:'中环',en:'Central'},lng:114.158,lat:22.281,height:0},
       {id:'harbour',name:{zh:'维多利亚港',en:'Victoria Harbour'},lng:114.166,lat:22.285,height:0},
       {id:'peak',name:{zh:'太平山',en:'Victoria Peak'},lng:114.145,lat:22.275,height:0}
@@ -5222,7 +5348,7 @@ const CITY_MAPS = {
     roads:[{zh:'环形码头',en:'Circular Quay',lng:151.213,lat:-33.856}]
   },
   xian: {
-    center:[108.9642,34.2186], zoom:16.0, pitch:55, bearing:-18, origin:[108.9642,34.2186], height:64,
+    center:[108.9642,34.2186], zoom:16.8, pitch:55, bearing:-18, origin:[108.9642,34.2186], height:64,
     label:{zh:'大雁塔 · 大唐不夜城',en:'Giant Wild Goose Pagoda · Tang'},
     points:[
       {id:'pagoda',name:{zh:'大雁塔',en:'Giant Wild Goose Pagoda'},lng:108.9642,lat:34.2186,height:64,major:true},
@@ -5233,7 +5359,7 @@ const CITY_MAPS = {
     roads:[{zh:'雁塔路',en:'Yanta Road',lng:108.958,lat:34.23}]
   },
   chongqing: {
-    center:[106.5830,29.5630], zoom:15.8, pitch:58, bearing:-20, origin:[106.5830,29.5630], height:75,
+    center:[106.5830,29.5630], zoom:16.5, pitch:58, bearing:-20, origin:[106.5830,29.5630], height:75,
     label:{zh:'洪崖洞 · 解放碑',en:'Hongya Cave · Jiefangbei'},
     points:[
       {id:'hongya',name:{zh:'洪崖洞',en:'Hongya Cave'},lng:106.5830,lat:29.5630,height:75,major:true},
@@ -5244,10 +5370,10 @@ const CITY_MAPS = {
     roads:[{zh:'嘉陵江滨江路',en:'Jialing River Rd',lng:106.582,lat:29.565}]
   },
   shenzhen: {
-    center:[114.0556,22.5366], zoom:14.7, pitch:55, bearing:-18, origin:[114.0556,22.5366], height:600,
+    center:[114.05034,22.53663], zoom:14.7, pitch:55, bearing:-18, origin:[114.05034,22.53663], height:600,
     label:{zh:'平安金融中心 · 福田',en:'Ping An Finance · Futian'},
     points:[
-      {id:'pingan',name:{zh:'平安金融中心',en:'Ping An Finance'},lng:114.0556,lat:22.5366,height:600,major:true},
+      {id:'pingan',name:{zh:'平安金融中心',en:'Ping An Finance'},lng:114.05034,lat:22.53663,height:600,major:true},
       {id:'civic',name:{zh:'市民中心',en:'Civic Center'},lng:114.057,lat:22.543,height:0},
       {id:'kk100',name:{zh:'京基100',en:'KK100'},lng:114.072,lat:22.545,height:0},
       {id:'lianhua',name:{zh:'莲花山',en:'Lianhua Hill'},lng:114.060,lat:22.555,height:0}
@@ -5255,10 +5381,10 @@ const CITY_MAPS = {
     roads:[{zh:'福华路',en:'Fuhua Road',lng:114.058,lat:22.54}]
   },
   guangzhou: {
-    center:[113.3245,23.1066], zoom:14.6, pitch:55, bearing:-18, origin:[113.3245,23.1066], height:600,
+    center:[113.324362,23.105777], zoom:14.6, pitch:55, bearing:-18, origin:[113.324362,23.105777], height:600,
     label:{zh:'广州塔 · 珠江新城',en:'Canton Tower · Zhujiang'},
     points:[
-      {id:'canton',name:{zh:'广州塔',en:'Canton Tower'},lng:113.3245,lat:23.1066,height:600,major:true},
+      {id:'canton',name:{zh:'广州塔',en:'Canton Tower'},lng:113.324362,lat:23.105777,height:600,major:true},
       {id:'haixinsha',name:{zh:'海心沙',en:'Haixinsha'},lng:113.325,lat:23.112,height:0},
       {id:'zhujiang',name:{zh:'珠江新城',en:'Zhujiang New Town'},lng:113.324,lat:23.118,height:0},
       {id:'lide',name:{zh:'猎德大桥',en:'Liede Bridge'},lng:113.332,lat:23.115,height:0}
@@ -5266,7 +5392,7 @@ const CITY_MAPS = {
     roads:[{zh:'阅江西路',en:'Yuejiang West Rd',lng:113.328,lat:23.11}]
   },
   lhasa: {
-    center:[91.1172,29.6558], zoom:15.5, pitch:50, bearing:-18, origin:[91.1172,29.6558], height:117,
+    center:[91.1172,29.6558], zoom:16.2, pitch:50, bearing:-18, origin:[91.1172,29.6558], height:117,
     label:{zh:'布达拉宫 · 八廓街',en:'Potala Palace · Barkhor'},
     points:[
       {id:'potala',name:{zh:'布达拉宫',en:'Potala Palace'},lng:91.1172,lat:29.6558,height:117,major:true},
@@ -5277,10 +5403,10 @@ const CITY_MAPS = {
     roads:[{zh:'北京中路',en:'Beijing Middle Rd',lng:91.12,lat:29.654}]
   },
   taipei: {
-    center:[121.5645,25.0330], zoom:14.7, pitch:55, bearing:-18, origin:[121.5645,25.0330], height:508,
+    center:[121.56481,25.03367], zoom:14.7, pitch:55, bearing:-18, origin:[121.56481,25.03367], height:508,
     label:{zh:'台北101 · 信义区',en:'Taipei 101 · Xinyi'},
     points:[
-      {id:'taipei101',name:{zh:'台北101',en:'Taipei 101'},lng:121.5645,lat:25.0330,height:508,major:true},
+      {id:'taipei101',name:{zh:'台北101',en:'Taipei 101'},lng:121.56481,lat:25.03367,height:508,major:true},
       {id:'xinyi',name:{zh:'信义区',en:'Xinyi'},lng:121.565,lat:25.033,height:0},
       {id:'sun',name:{zh:'国父纪念馆',en:'Sun Yat-sen Memorial'},lng:121.560,lat:25.040,height:0},
       {id:'elephant',name:{zh:'象山',en:'Elephant Mountain'},lng:121.571,lat:25.027,height:0}
@@ -5583,7 +5709,10 @@ const LANDMARK_BLUEPRINT = {
   burj:      { mode:'osm', alt:828, radius:78 },
   cntower:   { mode:'osm', alt:553, radius:32 },
   ryugyong:  { mode:'osm', alt:330, radius:64 },
-  gate:      { mode:'osm', alt:26, radius:26, taper:0.78 }
+  gate:      { mode:'osm', alt:26, radius:26, taper:0.78 },
+  bank:      { mode:'osm', alt:367, radius:32, taper:0.5 },
+  taipei101: { mode:'osm', alt:508, radius:52, taper:0.34 },
+  ifs:       { mode:'osm', alt:248, radius:55, taper:0.5 }
 };
 
 // OSM building ids that are hidden under a structural wireframe. The Eiffel
@@ -5601,7 +5730,7 @@ const LANDMARK_XZ = {
   colosseum: 3.0,
   royalpalace: 2.4,
   masp: 12.0,
-  temple: 0.75,
+  temple: 1.0,
   marina: 2.0,
   lhasa: 3.4,
   melbourne: 2.0,
