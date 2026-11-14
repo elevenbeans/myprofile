@@ -2353,6 +2353,7 @@ function initRenderer(){
 /* ---------------- textures ---------------- */
 
 let TEX = { day: null, night: null, clouds: null };
+const HD = { state: 'idle', timer: 0, day: null, night: null, clouds: null };
 
 function textureLoader(loader, url, timeout = 25000){
   return new Promise((resolve) => {
@@ -2386,6 +2387,73 @@ async function loadTexture(name, cdnName, fallbackName){
     }
   }
   return null;
+}
+
+function canLoadHD(force){
+  if (FORCE_PROC || !renderer) return false;
+  if (!force && MOBILE) return false;
+  if (renderer.capabilities.maxTextureSize < 4096) return false;
+  if (!force){
+    if (navigator.connection && navigator.connection.saveData) return false;
+    if (typeof navigator.deviceMemory === 'number' && navigator.deviceMemory < 4) return false;
+  }
+  return true;
+}
+
+async function loadHDTexture(name){
+  const loader = new THREE.TextureLoader();
+  loader.setCrossOrigin('anonymous');
+  const tex = await textureLoader(loader, './textures/' + name + '?v=7', 20000);
+  if (!tex) return null;
+  tex.colorSpace = THREE.NoColorSpace;
+  tex.anisotropy = Math.min(16, renderer.capabilities.getMaxAnisotropy());
+  tex.needsUpdate = true;
+  return tex;
+}
+
+async function loadHDTextures(){
+  if (HD.state !== 'idle' || !canLoadHD(params.get('textures') === '4k')) return;
+  HD.state = 'loading';
+  const [day, night, clouds] = await Promise.all([
+    loadHDTexture('earth-day-4k.webp'),
+    loadHDTexture('earth-night-4k.webp'),
+    loadHDTexture('earth-clouds-2k.webp')
+  ]);
+  if (!day || !night || !uniforms){
+    HD.state = 'failed';
+    if (day) day.dispose();
+    if (night) night.dispose();
+    if (clouds) clouds.dispose();
+    return;
+  }
+  const oldDay = TEX.day;
+  const oldNight = TEX.night;
+  const oldClouds = TEX.clouds;
+  HD.day = day; HD.night = night; HD.clouds = clouds;
+  TEX.day = day; TEX.night = night;
+  uniforms.uDay.value = day;
+  uniforms.uNight.value = night;
+  if (clouds && cloudUniforms){
+    TEX.clouds = clouds;
+    cloudUniforms.uMap.value = clouds;
+  }
+  HD.state = 'ready';
+  console.info('[earth] 4K surface loaded');
+  setTimeout(() => {
+    try { oldDay && oldDay.dispose(); } catch (e) {}
+    try { oldNight && oldNight.dispose(); } catch (e) {}
+    if (clouds) { try { oldClouds && oldClouds.dispose(); } catch (e) {} }
+  }, 250);
+}
+
+function queueHDTextures(force){
+  if (HD.state !== 'idle' || !canLoadHD(!!force)) return;
+  if (force){ loadHDTextures(); return; }
+  if (HD.timer) return;
+  HD.timer = setTimeout(() => {
+    HD.timer = 0;
+    if (orbit.dist < 2.75) loadHDTextures();
+  }, 450);
 }
 
 async function loadTextures(){
@@ -4003,6 +4071,7 @@ function updateOrbit(dt, now){
   orbit.theta += wrapAngle(orbit.tTheta - orbit.theta) * k;
   orbit.phi += (orbit.tPhi - orbit.phi) * k;
   orbit.dist += (orbit.tDist - orbit.dist) * k;
+  if (orbit.dist < 2.75) queueHDTextures();
 
   const sp = Math.sin(orbit.phi);
   camera.position.set(
@@ -6576,6 +6645,7 @@ async function start(){
   }
 
   buildScene();
+  if (params.get('textures') === '4k') queueHDTextures(true);
   buildMarkers();
   bindOrbitControls();
   bindCityControls();

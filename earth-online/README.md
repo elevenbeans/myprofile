@@ -177,7 +177,7 @@ The home page uses an original slow piano piece in A minor: broken chords, a low
 - `vendor/maplibre-gl.js` + CSS are MapLibre GL JS 4.7 (BSD-3), loaded locally for every city view.
 - Each city's 3D layer is a MapLibre `fill-extrusion` of the `building` source-layer from OpenFreeMap, combined with water/road layers, an Esri dark-gray raster fallback, a blueprint HUD overlay and HTML landmark labels. No building data file is bundled; tiles are fetched at runtime.
 - Each landmark is a separate Three.js custom layer on the MapLibre canvas. The five OSM-readable landmarks get a lock-on frame tied to the map's `building:part` massing; the rest get structural edges (`EdgesGeometry`, not a triangulated wireframe) over a dim volume, scaled to its real height. Every city view shows a real `ALT` readout in the landmark HUD. Both use a ground survey ring and an amber beacon; Shanghai keeps its bespoke Oriental Pearl geometry in the same edge language.
-- `textures/` holds NASA day (2048×1024 WebP), night-lights (2048×1024 WebP) and cloud (1024×512 WebP) maps, with the previous 1K files as a local fallback and the Three.js CDN as a second fallback. Textures use `?v=6` and anisotropy 16.
+- `textures/` holds NASA day (2048×1024 WebP), night-lights (2048×1024 WebP) and cloud (1024×512 WebP) maps, with the previous 1K files as a local fallback and the Three.js CDN as a second fallback. On desktop, after the camera zooms in (`orbit.dist < 2.75`), a 4K day/night + 2K cloud set loads in the background and swaps in; mobile and WeChat stay on 2K. Textures use `?v=6` (2K) / `?v=7` (4K) and anisotropy 16.
 - The globe uses a custom shader to blend day/night maps at the real subsolar point, with a warm terminator band, atmospheric rim, stars, clouds and great-circle arcs.
 - City markers are HTML buttons projected from 3D positions each frame, so they stay crisp and keyboard accessible.
 - Weather comes from [Open-Meteo](https://open-meteo.com/) with a 10-minute `sessionStorage` cache; the panel shows local clock, current conditions, feels-like, humidity, wind, sunrise/sunset and a three-day forecast.
@@ -194,6 +194,7 @@ The home page uses an original slow piano piece in A minor: broken chords, a low
 - Shared scores require the NAS API. Without it the board shows offline, keeps optimistic points, and retries queued events when the connection returns.
 - Weather is current conditions at roughly 15-minute resolution; if Open-Meteo is unavailable the panel shows a retry state and the 3D scene falls back to the city's local day/night.
 - Air quality is model-based (CAMS via Open-Meteo), not a local monitoring station; the panel shows US AQI, and values can differ from official city readings.
+- 4K Earth textures are desktop-only and load after a close zoom; mobile/WeChat use 2K to avoid GPU memory and thermal pressure. `?textures=4k` forces the 4K set for testing, but is not recommended on phones.
 - The "online" count is simulated.
 - Very rapid repeated clicks can be dropped by the score cooldown; this is intentional anti-abuse behaviour.
 - Audio defaults on, but browsers require one user gesture before sound can play; the first click/key starts the home piano, which continues through city views. The **♪** button mutes/unmutes everything, and the preference is remembered. The soundtrack is original Web Audio synthesis; no copyrighted melody or recording is used.
@@ -204,6 +205,6 @@ The home page uses an original slow piano piece in A minor: broken chords, a low
 - MapLibre GL JS — BSD-3, see `vendor/maplibre-gl.LICENSE`.
 - City building footprints/heights — © OpenStreetMap contributors, rendered via [OpenFreeMap](https://openfreemap.org/).
 - Dark-gray raster fallback — Esri, HERE, Garmin, © OpenStreetMap contributors.
-- Earth imagery — NASA Blue Marble / Black Marble / cloud maps, public domain, via the Three.js example assets.
+- Earth imagery — NASA Blue Marble / Black Marble / cloud maps, public domain, via the Three.js example assets (2K set). 4K/2K detail set — [Solar System Scope](https://www.solarsystemscope.com/textures/), CC BY 4.0, based on NASA imagery; downsampled to 4096×2048 (day/night) and 2048×1024 (clouds).
 - Weather & air quality — [Open-Meteo](https://open-meteo.com/), free for non-commercial use, no key required.
 - Score API — Next.js route handlers in `nas-portal`, with file-backed persistence and in-memory session/rate-limit state.
