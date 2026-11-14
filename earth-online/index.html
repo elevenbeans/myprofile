@@ -634,6 +634,7 @@
     text-shadow:none;
   }
   .city-landmark em[hidden]{display:none!important}
+  .city-landmark em#cityAlt{color:var(--accent);opacity:.85}
   .city-landmark em{display:block;margin-top:5px;font-family:var(--mono);font-size:7px;font-style:normal;letter-spacing:.16em;color:var(--dim);text-transform:uppercase}
   .map-loading{
     position:absolute;inset:0;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
@@ -1093,7 +1094,7 @@
       <div class="city-head__names"><span id="cityName">—</span><span id="cityCountry">—</span></div>
       <div class="city-head__meta"><span id="cityTime">--:--</span><span id="cityWx">—</span><span id="cityScore">0</span><button type="button" class="chip chip--icon city-sound" id="citySoundBtn" aria-pressed="true" data-i18n-title="sound-on" aria-label="Mute sound">🔊</button></div>
     </header>
-    <div class="city-landmark"><span data-i18n="landmark-label">地标</span><b id="cityLandmark">—</b><em id="cityCredit" hidden title="© OpenStreetMap contributors · OpenFreeMap">© OSM 3D · ESRI</em></div>
+    <div class="city-landmark"><span data-i18n="landmark-label">地标</span><b id="cityLandmark">—</b><em id="cityAlt" hidden></em><em id="cityCredit" hidden title="© OpenStreetMap contributors · OpenFreeMap">© OSM 3D · ESRI</em></div>
     <div class="city-hint" id="cityHint" data-i18n="city-hint">拖拽旋转 · 滚轮缩放 · Esc 返回</div>
   </div>
 
@@ -1581,6 +1582,7 @@ const cityTimeEl = $('#cityTime');
 const cityWxEl = $('#cityWx');
 const cityScoreEl = $('#cityScore');
 const cityLandmarkEl = $('#cityLandmark');
+const cityAltEl = $('#cityAlt');
 const cityCreditEl = $('#cityCredit');
 const cityHintEl = $('#cityHint');
 const mapViewEl = $('#mapView');
@@ -3890,28 +3892,29 @@ const THEME_SCALES = {
   tibetan: [0, 2, 3, 5, 7, 9, 10],
   miyako: [0, 1, 5, 7, 8],
   hijaz: [0, 1, 4, 5, 7, 8, 10],
-  bayati: [0, 1, 3, 5, 7, 8, 10]
+  bayati: [0, 1, 3, 5, 7, 8, 10],
+  kuyin: [0, 2, 3, 5, 7, 8, 10]
 };
 
 const T = (root, scale, prog, tempo, style, motif, region) => ({ root, scale, prog, tempo, style, motif, region });
 const CITY_MUSIC_THEMES = {
   beijing:      T(50, 'pentatonicMinor', [0, 3, 4, 0], 72,  'pentatonic', [0, 2, 4, 3, 2, 0, 4], 'jing'),
-  shanghai:     T(50, 'minor',           [0, 5, 3, 4], 102, 'neonjazz',   [4, 2, 0, 1, 3, 4, 2], 'jiangnan'),
+  shanghai:     T(50, 'minor',           [0, 5, 3, 4], 112, 'electronic', [4, 2, 0, 1, 3, 4, 2], 'jiangnan'),
   chengdu:      T(55, 'pentatonicMajor', [0, 4, 5, 3], 88,  'pentatonic', [2, 4, 3, 2, 0, 2, 4], 'chengdu'),
   hongkong:     T(57, 'major',           [0, 4, 5, 3], 112, 'citypop',    [4, 2, 4, 5, 4, 2, 0], 'canto'),
-  xian:         T(50, 'qin',             [0, 3, 4, 0], 80,  'world',      [0, 2, 3, 4, 3, 2, 0], 'qin'),
+  xian:         T(50, 'kuyin',           [0, 3, 4, 0], 72,  'world',      [0, 2, 3, 4, 3, 2, 0], 'qin'),
   chongqing:    T(48, 'minor',           [0, 5, 3, 4], 104, 'electronic', [0, 2, 4, 2, 3, 1, 0], 'chongqing'),
   shenzhen:     T(57, 'major',           [0, 4, 5, 3], 116, 'electronic', [4, 2, 4, 6, 4, 2, 0], 'shenzhen'),
   guangzhou:    T(55, 'pentatonicMajor', [0, 4, 5, 3], 96,  'pentatonic', [2, 4, 3, 2, 4, 5, 4], 'guangzhou'),
-  lhasa:        T(50, 'tibetan',         [0, 4, 0, 3], 60,  'ambient',    [0, 2, 4, 2, 0, 3, 2], 'tibetan'),
+  lhasa:        T(50, 'tibetan',         [0, 4, 0, 3], 56,  'ambient',    [0, 2, 4, 2, 0, 3, 2], 'tibetan'),
   taipei:       T(57, 'major',           [0, 4, 5, 3], 100, 'citypop',    [4, 2, 4, 5, 4, 2, 0], 'taipei'),
-  tokyo:        T(50, 'miyako',          [0, 2, 4, 1], 72,  'citypop',    [4, 2, 4, 6, 4, 2, 0], 'edo'),
+  tokyo:        T(57, 'major',           [0, 4, 5, 3], 112, 'citypop',    [4, 2, 4, 5, 4, 2, 0], 'citypop'),
   seoul:        T(57, 'major',           [0, 5, 3, 4], 96, 'citypop',    [2, 4, 5, 4, 2, 4, 0], 'seoul'),
   singapore:    T(60, 'major',           [0, 4, 5, 3], 108, 'tropical',   [2, 4, 5, 4, 2, 0, 2], 'singapore'),
   mumbai:       T(50, 'phrygianDominant',[0, 1, 4, 0], 100,  'world',      [0, 1, 4, 3, 1, 0, 4], 'mumbai'),
   dubai:        T(50, 'phrygianDominant',[0, 1, 4, 0], 88,  'world',      [0, 4, 3, 1, 0, 1, 4], 'dubai'),
   moscow:       T(45, 'minor',           [0, 5, 3, 4], 68,  'strings',    [0, 2, 4, 3, 2, 0, 1], 'moscow'),
-  cairo:        T(50, 'bayati',          [0, 1, 4, 0], 96,  'world',      [0, 1, 4, 3, 1, 0, 4], 'cairo'),
+  cairo:        T(50, 'bayati',          [0, 1, 4, 0], 88,  'world',      [0, 1, 4, 3, 1, 0, 4], 'cairo'),
   capetown:     T(55, 'major',           [0, 4, 5, 3], 116, 'tropical',   [2, 4, 5, 4, 2, 0, 2], 'capetown'),
   london:       T(45, 'minor',           [0, 3, 5, 4], 104, 'electronic', [0, 3, 2, 4, 3, 0, 2], 'london'),
   paris:        T(55, 'major',           [0, 4, 5, 3], 88,  'bossa',      [2, 4, 5, 4, 2, 0, 2], 'paris'),
@@ -3922,11 +3925,11 @@ const CITY_MUSIC_THEMES = {
   amsterdam:    T(60, 'major',           [0, 4, 5, 3], 104, 'electronic', [4, 2, 4, 5, 4, 2, 0], 'amsterdam'),
   berlin:       T(45, 'minor',           [0, 5, 3, 4], 128, 'techno',     [0, 3, 0, 4, 0, 2, 0], 'berlin'),
   pyongyang:    T(50, 'minor',           [0, 5, 3, 4], 84, 'march',      [0, 2, 4, 4, 2, 0, 4], 'pyongyang'),
-  istanbul:     T(50, 'hijaz',           [0, 1, 4, 0], 84,  'world',      [0, 1, 4, 3, 1, 0, 4], 'istanbul'),
+  istanbul:     T(50, 'hijaz',           [0, 1, 4, 0], 116, 'world',      [0, 1, 4, 3, 1, 0, 4], 'istanbul'),
   hochiminh:    T(57, 'minor',           [0, 3, 5, 4], 108, 'electronic', [0, 3, 2, 4, 3, 0, 2], 'saigon'),
   bangkok:      T(55, 'pentatonicMajor', [0, 4, 5, 3], 100,  'world',      [2, 4, 5, 4, 2, 0, 2], 'bangkok'),
   toronto:      T(57, 'major',           [0, 4, 5, 3], 100,  'indie',      [4, 2, 4, 5, 4, 2, 0], 'toronto'),
-  madrid:       T(52, 'phrygianDominant',[0, 1, 4, 0], 116, 'flamenco',   [0, 1, 4, 3, 1, 0, 4], 'flamenco'),
+  madrid:       T(52, 'phrygianDominant',[0, 1, 4, 0], 120, 'flamenco',   [0, 1, 4, 3, 1, 0, 4], 'flamenco'),
   rome:         T(50, 'minor',           [0, 3, 5, 4], 72,  'strings',    [0, 2, 4, 3, 2, 0, 1], 'rome'),
   melbourne:    T(55, 'major',           [0, 4, 5, 3], 100, 'indie',      [2, 4, 5, 4, 2, 0, 2], 'melbourne')
 };
@@ -4259,6 +4262,41 @@ function startCityTheme(city){
     }
   }
 
+  function jinghu(note, t, dur, vol){
+    tone(note, t, dur, 'sawtooth', vol, 2400, 0.05, 0, 13);
+    tone(note + 12, t, dur * 0.85, 'sine', vol * 0.16, 3000, 0.06, 4, 8);
+  }
+  function banhu(note, t, dur, vol){
+    tone(note, t, dur, 'sawtooth', vol, 2000, 0.07, 0, 11);
+    tone(note + 12, t, dur * 0.9, 'triangle', vol * 0.18, 2600, 0.08, 4, 6);
+  }
+  function dagu(t){
+    tone(45, t, 0.6, 'sine', 0.09, 300, 0.01, 0);
+    noise(t, 0.25, 0.030, 'lowpass', 300, 0.7);
+  }
+  function synthLead(note, t, dur, vol){
+    tone(note, t, dur, 'sawtooth', vol, 2200, 0.01, -4);
+    tone(note, t, dur * 0.95, 'triangle', vol * 0.35, 1800, 0.012, 4);
+  }
+  function synthBass(note, t, dur, vol){
+    tone(note, t, dur, 'sawtooth', vol, 700, 0.006, -3);
+    tone(note - 12, t, dur * 0.9, 'sine', vol * 0.6, 300, 0.008, 0);
+  }
+  function epiano(note, t, dur, vol){
+    tone(note, t, dur, 'sine', vol, 3200, 0.005, 0);
+    tone(note + 12, t, dur * 0.7, 'sine', vol * 0.25, 4200, 0.004, 2);
+    tone(note + 19, t, dur * 0.35, 'sine', vol * 0.08, 5200, 0.003, 0);
+  }
+  function choir(note, t, dur, vol){
+    tone(note, t, dur, 'triangle', vol, 1200, 1.0, -4);
+    tone(note + 7, t, dur * 0.98, 'sine', vol * 0.5, 1000, 1.2, 2);
+    tone(note + 12, t, dur * 0.96, 'triangle', vol * 0.25, 1500, 1.4, 5);
+  }
+  function strings(note, t, dur, vol){
+    tone(note, t, dur, 'sawtooth', vol, 1500, 0.3, -4);
+    tone(note + 7, t, dur * 0.98, 'triangle', vol * 0.4, 1200, 0.4, 3);
+  }
+
   function indieGuitar(note, t, dur, vol){
     tone(note, t, dur, 'triangle', vol, 1900, 0.005, -2);
     tone(note + 12, t, dur * 0.6, 'sine', vol * 0.18, 2500, 0.004, 3);
@@ -4377,87 +4415,131 @@ function startCityTheme(city){
     const low = SAFE_BASS ? chord[0] : chord[0] - 12;
     if (r === 'jing'){
       if (s === 0){
-        padChord(chord, t);
-        bass(chord[0] - 12, t);
-        dizi(motifNote(barIndex, 0, 0), t, beat * 1.8, 0.052);
+        drone(low, t, barDur * 1.1, 0.022);
+        jinghu(motifNote(barIndex, 0, 0), t, beat * 1.9, 0.060);
+        dagu(t);
         if (barIndex % 4 === 0) gong(t);
       }
       if (s === 4){
-        dizi(motifNote(barIndex, 0, 1), t, beat * 1.3, 0.042);
-        erhu(chord[2] + 12, t, beat * 1.5, 0.017);
+        jinghu(motifNote(barIndex, 0, 1), t, beat * 1.4, 0.050);
+        dagu(t);
+        bangu(t);
       }
-      if (s % 2 === 0) guzheng(chord[(s / 2) % chord.length] + 12, t, 0.022, stepDur * 1.4);
-      if (s === 2 || s === 6) bangu(t);
+      if (s === 2 || s === 6){
+        bangu(t);
+        erhu(chord[2] + 12, t, beat * 0.6, 0.014);
+      }
     } else if (r === 'jiangnan'){
       if (s === 0){
         padChord(chord, t);
-        bass(chord[0] - 12, t);
-        dizi(motifNote(barIndex, 0, 0), t, beat * 1.8, 0.048);
-        if (barIndex >= 4) erhu(chord[2] + 12, t, barDur * 0.8, 0.016);
+        synthBass(SAFE_BASS ? chord[0] : chord[0] - 12, t, 0.5, 0.075);
+        synthLead(motifNote(barIndex, 0, 0), t, beat * 1.5, 0.050);
       }
       if (s === 4){
-        bass(chord[0] - 12, t);
-        dizi(motifNote(barIndex, 0, 1), t, beat * 1.2, 0.040);
+        synthBass(SAFE_BASS ? chord[0] : chord[0] - 12, t, 0.5, 0.075);
+        synthLead(motifNote(barIndex, 0, 1), t, beat * 1.2, 0.044);
       }
-      if (s % 2 === 0) guzheng(chord[(s / 2) % chord.length] + 12, t, 0.019, stepDur * 1.3);
-      if (s % 2 === 0) pulse(chord[(s / 2) % chord.length] + 24, t, 0.2, 0.008);
-      if (s === 0 || s === 4) kick(t);
-      if (s === 2 || s === 6) clap(t);
+      if (s % 2 === 0){
+        pulse(chord[(s / 2) % chord.length] + 24, t, 0.2, 0.009);
+        guzheng(chord[(s / 2) % chord.length] + 12, t, 0.012, stepDur * 1.1);
+        kick(t);
+      }
+      if (s === 2 || s === 6){
+        clap(t);
+        dizi(chord[2] + 12, t, 0.3, 0.016);
+      }
       if (s % 2 === 1) hat(t);
     } else if (r === 'qin'){
       if (s === 0){
         bass(chord[0] - 12, t);
-        erhu(motifNote(barIndex, 0, 0), t, beat * 0.9, 0.050);
-        guzheng(chord[1] + 12, t, 0.018, 0.5);
+        banhu(motifNote(barIndex, 0, 0), t, beat * 1.1, 0.058);
         bangu(t);
+        if (barIndex % 4 === 0) dagu(t);
       }
       if (s === 4){
         bass(chord[0] - 12, t);
-        erhu(motifNote(barIndex, 0, 1), t, beat * 0.8, 0.040);
+        banhu(motifNote(barIndex, 0, 1), t, beat * 1.0, 0.048);
         bangu(t);
       }
-      if (s === 2 || s === 6){ guzheng(chord[0] + 12, t, 0.016, 0.4); bangu(t); }
-      if (s === 1 || s === 5) guzheng(chord[2] + 12, t, 0.012, 0.35);
+      if (s === 2 || s === 6){ guzheng(chord[1] + 12, t, 0.013, 0.4); bangu(t); }
+      if (s === 1 || s === 5) guzheng(chord[2] + 12, t, 0.009, 0.3);
     } else if (r === 'tibetan'){
       if (s === 0){
-        drone(low, t, barDur * 1.2, 0.038);
-        dungchen(chord[0] + (SAFE_BASS ? 12 : 0), t, barDur * 0.9, 0.030);
-        if (barIndex % 2 === 0) bowl(t, 0.016);
-        dramyin(motifNote(barIndex, 0, 0), t, beat * 2.2, 0.027);
+        drone(low, t, barDur * 1.2, 0.028);
+        dungchen(chord[0] + (SAFE_BASS ? 12 : 0), t, barDur * 0.9, 0.026);
+        choir(chord[0] + 12, t, barDur * 1.05, 0.020);
+        choir(chord[2] + 12, t, barDur * 1.0, 0.015);
+        if (barIndex % 2 === 0) bowl(t, 0.014);
+        dramyin(motifNote(barIndex, 0, 0), t, beat * 2.0, 0.018);
       }
-      if (s === 4) dramyin(motifNote(barIndex, 0, 1), t, beat * 1.8, 0.022);
+      if (s === 4){
+        dramyin(motifNote(barIndex, 0, 1), t, beat * 1.6, 0.016);
+        choir(chord[3] + 12, t, barDur * 0.8, 0.012);
+      }
+      if (s === 0 || s === 4) kick(t);
       if (s === 2 || s === 6) frame(t);
-    } else if (r === 'edo'){
+    } else if (r === 'citypop'){
       if (s === 0){
-        drone(low, t, barDur * 1.1, 0.024);
-        shakuhachi(motifNote(barIndex, 0, 0), t, beat * 2.2, 0.047);
+        for (const n of chord) epiano(n + 12, t, barDur * 0.9, 0.016);
+        synthBass(SAFE_BASS ? chord[0] : chord[0] - 12, t, 0.5, 0.080);
+        kick(t);
+        epiano(motifNote(barIndex, 0, 0), t, beat * 1.1, 0.030);
       }
-      if (s === 4) shakuhachi(motifNote(barIndex, 0, 1), t, beat * 1.6, 0.038);
-      if (s % 2 === 0) koto(chord[(s / 2) % chord.length] + 24, t, 0.017, stepDur * 1.2);
+      if (s === 4){
+        for (const n of chord) epiano(n + 12, t, barDur * 0.8, 0.014);
+        synthBass(SAFE_BASS ? chord[0] : chord[0] - 12, t, 0.4, 0.070);
+        kick(t);
+        snare(t);
+        epiano(motifNote(barIndex, 0, 1), t, beat * 0.9, 0.026);
+      }
+      if (s === 2 || s === 6){
+        snare(t);
+        nylonGuitar(chord[2] + 24, t, 0.012, 0.4);
+      }
+      if (s % 2 === 1) hat(t);
+      if (s % 2 === 0) pluck(chord[(s / 2) % chord.length] + 24, t, 0.010, 0.35);
     } else if (r === 'istanbul'){
       if (s === 0){
-        drone(low, t, barDur * 1.1, 0.028);
-        ney(motifNote(barIndex, 0, 0), t, beat * 2.0, 0.046);
-        oud(chord[0] + 12, t, 0.026, 0.8);
+        drone(low, t, barDur * 1.05, 0.018);
+        synthBass(SAFE_BASS ? chord[0] : chord[0] - 12, t, 0.45, 0.070);
+        synthLead(motifNote(barIndex, 0, 0), t, beat * 1.5, 0.050);
+        oud(chord[0] + 12, t, 0.022, 0.6);
+        ney(chord[2] + 12, t, barDur * 0.7, 0.012);
+        darbukaDum(t);
       }
-      if (s === 4) ney(motifNote(barIndex, 0, 1), t, beat * 1.5, 0.038);
-      if (s === 2 || s === 6) oud(chord[1] + 12, t, 0.024, 0.6);
-      if (s === 0 || s === 4) darbukaDum(t);
-      if (s === 2 || s === 6) darbukaTek(t);
+      if (s === 4){
+        synthBass(SAFE_BASS ? chord[0] : chord[0] - 12, t, 0.45, 0.070);
+        synthLead(motifNote(barIndex, 0, 1), t, beat * 1.3, 0.044);
+        oud(chord[2] + 12, t, 0.020, 0.5);
+        darbukaDum(t);
+      }
+      if (s === 2 || s === 6){ darbukaTek(t); oud(chord[1] + 12, t, 0.018, 0.4); }
+      if (s % 2 === 1) hat(t);
     } else if (r === 'cairo'){
       if (s === 0){
-        drone(low, t, barDur * 1.1, 0.028);
-        qanun(motifNote(barIndex, 0, 0), t, beat * 2.2, 0.043);
+        strings(chord[0], t, barDur * 1.1, 0.016);
+        strings(chord[2], t, barDur * 1.05, 0.011);
+        qanun(motifNote(barIndex, 0, 0), t, beat * 2.4, 0.045);
+        oud(chord[0] + 12, t, 0.018, 0.7);
+        darbukaDum(t);
       }
-      if (s === 4) qanun(motifNote(barIndex, 0, 1), t, beat * 1.6, 0.036);
-      if (s === 2 || s === 6){ oud(chord[2] + 12, t, 0.023, 0.6); riq(t); }
-      if (s === 0 || s === 4) darbukaDum(t);
+      if (s === 4){
+        qanun(motifNote(barIndex, 0, 1), t, beat * 2.0, 0.038);
+        oud(chord[2] + 12, t, 0.016, 0.5);
+        darbukaDum(t);
+      }
+      if (s === 2 || s === 6){ riq(t); oud(chord[1] + 12, t, 0.014, 0.4); }
     } else if (r === 'flamenco'){
       if (s === 0 || s === 4){
         bass(chord[0] - 12, t);
-        rasgueado(chord, t, 0.038);
-        flamencoGuitar(motifNote(barIndex, 0, s === 4 ? 1 : 0), t, 0.045, beat * 1.1);
+        rasgueado(chord, t, 0.040);
+        flamencoGuitar(motifNote(barIndex, 0, s === 4 ? 1 : 0), t, 0.052, beat * 1.1);
         cajon(t);
+        if (s === 4){
+          [0, 2, 4, 3, 1, 0].forEach((deg, i) => {
+            flamencoGuitar(chord[0] + 12 + scale[deg], t + i * 0.055, 0.012, 0.2);
+          });
+        }
       }
       if (s === 2 || s === 6){
         palmas(t);
@@ -5581,6 +5663,12 @@ function updateCityMeta(){
   if (cityCountryEl) cityCountryEl.textContent = city.country[lang];
   const mapLabel = activeMapConfig && activeMapConfig.label ? activeMapConfig.label[lang] : null;
   if (cityLandmarkEl) cityLandmarkEl.textContent = isMap ? (mapLabel || cfg.name[lang]) : cfg.name[lang];
+  if (cityAltEl){
+    const bp = LANDMARK_BLUEPRINT[cfg.type];
+    const alt = isMap && bp && bp.mode === 'osm' ? bp.alt : 0;
+    cityAltEl.hidden = !alt;
+    cityAltEl.textContent = alt ? 'ALT ' + alt + ' M' : '';
+  }
   if (cityCreditEl){
     cityCreditEl.hidden = !isMap;
     if (isMap) cityCreditEl.textContent = tr('map-credit');
@@ -6141,7 +6229,6 @@ function buildPearlModel(){
   ball(18,352,red,18);
   let y=366;
   for(let i=0;i<6;i++){ const h=16; const seg=new THREE.Mesh(new THREE.CylinderGeometry(1.8,1.8,h,6),i%2?silver:red); seg.position.y=y+h/2; g.add(seg); y+=h; }
-  const beacon=new THREE.Mesh(new THREE.SphereGeometry(3.8,10,8),new THREE.MeshBasicMaterial({color:0xffb347,depthTest:false,depthWrite:false})); beacon.position.y=y+3; g.add(beacon);
   return g;
 }
 function buildTableMountainWire(){
@@ -6161,33 +6248,202 @@ function buildTableMountainWire(){
   return g;
 }
 
+/* ---------------- Orbital Blueprint landmark layer ---------------- */
+
+const BP_CYAN = 0x39d0ff;
+const BP_PALE = 0x7fe7ff;
+const BP_AMBER = 0xffb347;
+
+// Landmarks whose OSM mass already reads as the building: keep the map model
+// and add a lock-on frame instead of a second copy of the landmark.
+// Everything else keeps a structural edge wireframe, because a single-height
+// extrusion cannot express its silhouette (lattice towers, bridges, sails,
+// tiered roofs, terrain).
+const LANDMARK_BLUEPRINT = {
+  empire:    { mode:'osm', alt:443, radius:62 },
+  burj:      { mode:'osm', alt:828, radius:78 },
+  cntower:   { mode:'osm', alt:553, radius:32 },
+  ryugyong:  { mode:'osm', alt:330, radius:64 },
+  taipei101: { mode:'osm', alt:508, radius:52 }
+};
+
+function bpLineMat(color, opacity){
+  return new THREE.LineBasicMaterial({ color, transparent:true, opacity, depthTest:false, depthWrite:false });
+}
+function bpSegments(points, color, opacity){
+  return new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(points), bpLineMat(color, opacity));
+}
+function bpLoop(points, color, opacity){
+  return new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(points), bpLineMat(color, opacity));
+}
+function bpDashed(a, b, color, opacity, dash, gap){
+  const line = new THREE.Line(
+    new THREE.BufferGeometry().setFromPoints([a, b]),
+    new THREE.LineDashedMaterial({ color, transparent:true, opacity, dashSize:dash, gapSize:gap, depthTest:false, depthWrite:false })
+  );
+  line.computeLineDistances();
+  return line;
+}
+
+// Ground survey ring, four corner brackets, optional altitude ruler and beacon.
+// Height/radius use the parent group's own units: metres for an OSM lock-on,
+// native model units for a wireframe landmark.
+function buildBlueprintBase(height, radius, opts = {}){
+  const g = new THREE.Group();
+  const r = Math.max(4, radius);
+  const y0 = Math.max(0.35, Math.min(3, height * 0.005));
+  const ring = (rr, opacity) => {
+    const pts = [];
+    for (let i = 0; i < 72; i++){
+      const a = (i / 72) * Math.PI * 2;
+      pts.push(new THREE.Vector3(Math.cos(a) * rr, y0, Math.sin(a) * rr));
+    }
+    return bpLoop(pts, BP_CYAN, opacity);
+  };
+  g.add(ring(r, 0.4), ring(r * 0.72, 0.2));
+
+  const marks = [];
+  for (const [dx, dz] of [[1,0],[-1,0],[0,1],[0,-1]]){
+    marks.push(new THREE.Vector3(dx * r * 0.86, y0, dz * r * 0.86));
+    marks.push(new THREE.Vector3(dx * r * 1.2, y0, dz * r * 1.2));
+  }
+  marks.push(new THREE.Vector3(-r * 0.55, y0, 0), new THREE.Vector3(r * 0.55, y0, 0));
+  marks.push(new THREE.Vector3(0, y0, -r * 0.55), new THREE.Vector3(0, y0, r * 0.55));
+  g.add(bpSegments(marks, BP_CYAN, 0.3));
+
+  const corners = [[1,1],[-1,1],[-1,-1],[1,-1]];
+  const arm = Math.max(2, r * 0.22);
+  const taper = opts.taper ?? 1;
+  const rt = r * taper;
+  const ground = [], top = [];
+  for (const [sx, sz] of corners){
+    const x = sx * r * 0.94, z = sz * r * 0.94;
+    ground.push(new THREE.Vector3(x, y0, z), new THREE.Vector3(x - sx * arm, y0, z));
+    ground.push(new THREE.Vector3(x, y0, z), new THREE.Vector3(x, y0, z - sz * arm));
+    if (opts.top !== false){
+      const tx = sx * rt * 0.94, tz = sz * rt * 0.94;
+      const tarm = arm * taper;
+      top.push(new THREE.Vector3(tx, height, tz), new THREE.Vector3(tx - sx * tarm, height, tz));
+      top.push(new THREE.Vector3(tx, height, tz), new THREE.Vector3(tx, height, tz - sz * tarm));
+      g.add(bpDashed(
+        new THREE.Vector3(x, y0, z),
+        new THREE.Vector3(tx, height, tz),
+        BP_CYAN, 0.34,
+        Math.max(3, height * 0.018),
+        Math.max(2, height * 0.012)
+      ));
+    }
+  }
+  g.add(bpSegments(ground, BP_CYAN, 0.7));
+  if (opts.top !== false){
+    const cap = [];
+    for (let i = 0; i < 48; i++){
+      const a = (i / 48) * Math.PI * 2;
+      const b = ((i + 1) / 48) * Math.PI * 2;
+      cap.push(new THREE.Vector3(Math.cos(a) * rt, height, Math.sin(a) * rt));
+      cap.push(new THREE.Vector3(Math.cos(b) * rt, height, Math.sin(b) * rt));
+    }
+    g.add(bpSegments(cap, BP_CYAN, 0.55));
+    g.add(bpSegments(top, BP_CYAN, 0.85));
+    const cross = [];
+    const cr = rt * 0.42;
+    cross.push(new THREE.Vector3(-cr, height, 0), new THREE.Vector3(cr, height, 0));
+    cross.push(new THREE.Vector3(0, height, -cr), new THREE.Vector3(0, height, cr));
+    g.add(bpSegments(cross, BP_AMBER, 0.5));
+  }
+
+  if (opts.ruler){
+    const rx = r * 1.18;
+    g.add(bpSegments([new THREE.Vector3(rx, y0, 0), new THREE.Vector3(rx, height, 0)], BP_CYAN, 0.24));
+    const ruler = [];
+    const unit = Math.max(2, r * 0.06);
+    for (let i = 0; i <= 10; i++){
+      const y = y0 + (height - y0) * (i / 10);
+      const len = i % 5 === 0 ? unit * 1.9 : unit;
+      ruler.push(new THREE.Vector3(rx, y, 0), new THREE.Vector3(rx + len, y, 0));
+    }
+    g.add(bpSegments(ruler, BP_CYAN, 0.4));
+  }
+
+  const br = Math.max(0.5, height * 0.011);
+  const beacon = new THREE.Mesh(
+    new THREE.SphereGeometry(br, 10, 8),
+    new THREE.MeshBasicMaterial({ color: BP_AMBER, depthTest:false, depthWrite:false })
+  );
+  beacon.position.y = height + br * 0.5;
+  g.add(beacon);
+  const pulse = new THREE.Mesh(
+    new THREE.RingGeometry(br * 1.5, br * 2.1, 28),
+    new THREE.MeshBasicMaterial({ color: BP_AMBER, transparent:true, opacity:0.5, side:THREE.DoubleSide, depthTest:false, depthWrite:false })
+  );
+  pulse.rotation.x = -Math.PI / 2;
+  pulse.position.copy(beacon.position);
+  pulse.renderOrder = 4;
+  g.add(pulse);
+  g.userData.pulse = pulse;
+  return g;
+}
+
+// Turn a procedural model into a blueprint: clean structural edges instead of
+// triangulated wireframe, plus a dim volume so the shape reads against the map.
+function blueprintize(group, opts = {}){
+  const ghost = new THREE.MeshBasicMaterial({
+    color: 0x082432,
+    transparent: true,
+    opacity: opts.fill ?? 0.28,
+    depthTest: true,
+    depthWrite: false,
+    side: THREE.FrontSide
+  });
+  const edge = bpLineMat(BP_CYAN, 0.85);
+  const meshes = [];
+  group.traverse((obj) => {
+    if (obj.isMesh) meshes.push(obj);
+    else if (obj.isLine){
+      obj.material = edge;
+      obj.renderOrder = 3;
+    }
+  });
+  for (const mesh of meshes){
+    const lines = new THREE.LineSegments(new THREE.EdgesGeometry(mesh.geometry, 12), edge);
+    lines.renderOrder = 3;
+    mesh.add(lines);
+    mesh.material = ghost;
+    mesh.renderOrder = 2;
+  }
+}
+
 function addShanghaiLandmarkLayer(map){
   if (!map || !window.maplibregl || !THREE || !activeMapConfig || !detail.city) return;
   const city = detail.city;
   const cfg = LANDMARKS[city.id] || LANDMARKS.paris;
   const active = activeMapConfig;
+  const blueprint = LANDMARK_BLUEPRINT[cfg.type] || {};
   let group = null;
   let modelScale = 1;
   try {
-    if (city.id === 'shanghai' && typeof buildPearlModel === 'function'){
+    if (blueprint.mode === 'osm'){
+      const alt = blueprint.alt || active.height || 100;
+      group = buildBlueprintBase(alt, blueprint.radius || 50, { ruler: true, taper: 0.34 });
+      modelScale = 1;
+    } else if (city.id === 'shanghai' && typeof buildPearlModel === 'function'){
       group = buildPearlModel();
+      blueprintize(group, { fill: 0.24 });
+      const base = buildBlueprintBase(468, 62, { ruler: true, taper: 0.5 });
+      group.add(base);
+      group.userData.pulse = base.userData.pulse;
+      modelScale = 1;
     } else {
       const isTable = city.id === 'capetown';
       group = isTable ? buildTableMountainWire() : buildLandmark(cfg);
       const native = isTable ? 10 : (LANDMARK_HEIGHTS[cfg.type] || 20);
+      blueprintize(group, { fill: isTable ? 0.18 : 0.28 });
+      const box = new THREE.Box3().setFromObject(group);
+      const span = Math.max(box.max.x - box.min.x, box.max.z - box.min.z);
+      const base = buildBlueprintBase(native, Math.max(native * 0.08, span * 0.52), { top: false });
+      group.add(base);
+      group.userData.pulse = base.userData.pulse;
       modelScale = (active.height || native) / native;
-      const wire = new THREE.MeshBasicMaterial({ color:0x39d0ff, wireframe:true, transparent:true, opacity:0.62, depthTest:false, depthWrite:false });
-      const line = new THREE.LineBasicMaterial({ color:0x7fe7ff, transparent:true, opacity:0.55, depthTest:false, depthWrite:false });
-      group.traverse((obj) => {
-        if (obj.isMesh) obj.material = wire;
-        else if (obj.isLine) obj.material = line;
-      });
-      const beacon = new THREE.Mesh(
-        new THREE.SphereGeometry(0.55, 8, 6),
-        new THREE.MeshBasicMaterial({ color:0xffb347, depthTest:false, depthWrite:false })
-      );
-      beacon.position.y = native;
-      group.add(beacon);
     }
   } catch (e) {
     console.warn('[city-landmark] build failed', e);
@@ -6200,6 +6456,7 @@ function addShanghaiLandmarkLayer(map){
     onAdd(map,gl){
       this.map=map; this.camera=new THREE.Camera(); this.scene=new THREE.Scene();
       this.model=group; this.model.matrixAutoUpdate=false; this.scene.add(this.model);
+      this.pulse=group.userData.pulse || null;
       this.scene.add(new THREE.AmbientLight(0xffffff,1.7));
       const sun=new THREE.DirectionalLight(0xfff1e0,2.3); sun.position.set(1,2,1); this.scene.add(sun);
       this.renderer=new THREE.WebGLRenderer({canvas:map.getCanvas(),context:gl,antialias:true});
@@ -6214,6 +6471,12 @@ function addShanghaiLandmarkLayer(map){
         .multiply(new THREE.Matrix4().makeRotationX(Math.PI/2))
         .scale(new THREE.Vector3(s,s,s));
       this.model.matrix.copy(m); this.model.updateMatrixWorld(true);
+      if (this.pulse){
+        const t=(performance.now()%2400)/2400;
+        const k=1+t*1.7;
+        this.pulse.scale.set(k,k,1);
+        this.pulse.material.opacity=0.5*(1-t);
+      }
       this.camera.projectionMatrix=new THREE.Matrix4().fromArray(args);
       this.renderer.resetState(); this.renderer.render(this.scene,this.camera); this.map.triggerRepaint();
     }
@@ -6290,6 +6553,7 @@ async function openShanghaiMap(city){
       attributionControl: false
     });
     shanghaiMap = map;
+    window.__earthMap = map; // TEMP debug
     map.addControl(new maplibregl.NavigationControl({ visualizePitch: true, showCompass: true }), 'bottom-right');
     map.addControl(new maplibregl.AttributionControl({
       compact: true,
