@@ -4,10 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Earth Online · mini — 地球 Online</title>
-<meta name="description" content="A real-time 3D Earth with 35 cities, live weather, shared city scores, and MapLibre/OSM Orbital Blueprint city views. Focus +5, enter a city +10.">
+<meta name="description" content="A real-time 3D Earth with 36 cities, live weather, shared city scores, and MapLibre/OSM Orbital Blueprint city views. Focus +5, enter a city +10.">
 <meta name="theme-color" content="#04060b">
 <meta property="og:title" content="Earth Online · mini">
-<meta property="og:description" content="A real-time 3D Earth with 35 cities, live weather, shared scores, and Orbital Blueprint city maps.">
+<meta property="og:description" content="A real-time 3D Earth with 36 cities, live weather, shared scores, and Orbital Blueprint city maps.">
 <meta property="og:type" content="website">
 <meta property="og:image" content="https://elevenbeans.me/earth-online/preview/home.webp">
 <meta name="twitter:card" content="summary_large_image">
@@ -989,7 +989,7 @@
       <div class="hud__row"><span>UTC</span><b id="hudUtc">--:--:--</b></div>
       <div class="hud__row"><span>CAM</span><b id="hudCam">—</b></div>
     </div>
-    <div class="hud__meta"><span id="hudCities">35 CITIES</span><span>NASA · OPEN-METEO</span></div>
+    <div class="hud__meta"><span id="hudCities">36 CITIES</span><span>NASA · OPEN-METEO</span></div>
   </aside>
 
   <div class="hint" id="hint">
@@ -1148,6 +1148,7 @@ const CITIES = [
   { id:'shenzhen',     name:{zh:'深圳',en:'Shenzhen'},      country:{zh:'中国',en:'China'},       lat:22.5431,  lon:114.0579,  tz:'Asia/Shanghai' },
   { id:'guangzhou',    name:{zh:'广州',en:'Guangzhou'},     country:{zh:'中国',en:'China'},       lat:23.1291,  lon:113.2644,  tz:'Asia/Shanghai' },
   { id:'lhasa',        name:{zh:'拉萨',en:'Lhasa'},         country:{zh:'中国',en:'China'},       lat:29.6520,  lon:91.1721,   tz:'Asia/Shanghai' },
+  { id:'urumqi',       name:{zh:'乌鲁木齐',en:'Urumqi'},     country:{zh:'中国',en:'China'},       lat:43.7830,  lon:87.6160,   tz:'Asia/Shanghai' },
   { id:'taipei',       name:{zh:'台北',en:'Taipei'},        country:{zh:'中国',en:'China'},       lat:25.0330,  lon:121.5654,  tz:'Asia/Taipei' },
   { id:'tokyo',        name:{zh:'东京',en:'Tokyo'},         country:{zh:'日本',en:'Japan'},       lat:35.6762,  lon:139.6503,  tz:'Asia/Tokyo' },
   { id:'seoul',        name:{zh:'首尔',en:'Seoul'},         country:{zh:'韩国',en:'South Korea'}, lat:37.5665,  lon:126.9780,  tz:'Asia/Seoul' },
@@ -4231,6 +4232,7 @@ const LANDMARKS = {
   shenzhen:     { type:'pingan',       name:{zh:'平安金融中心',en:'Ping An Finance'}, color:0x9fb6c9, accent:0x7fd3ff, scale:1.00, theme:'asia' },
   guangzhou:    { type:'canton',       name:{zh:'广州塔',en:'Canton Tower'},          color:0x9fb6c9, accent:0xff4fd8, scale:1.00, theme:'asia' },
   lhasa:        { type:'potala',       name:{zh:'布达拉宫',en:'Potala Palace'},       color:0xe8e0d0, accent:0xb44a3a, scale:1.00, theme:'asia' },
+  urumqi:       { type:'bazaar',        name:{zh:'新疆国际大巴扎',en:'Xinjiang Grand Bazaar'}, color:0xc9a46a, accent:0xffb347, scale:1.00, theme:'asia' },
   taipei:       { type:'taipei101',    name:{zh:'台北101',en:'Taipei 101'},           color:0x9fb6c9, accent:0x7fd3ff, scale:1.00, theme:'asia' },
   tokyo:        { type:'eiffel',       name:{zh:'东京塔',en:'Tokyo Tower'},           color:0xd94b3a, accent:0xf2e6d8, scale:1.06, theme:'asia' },
   seoul:        { type:'seoul',        name:{zh:'N首尔塔',en:'N Seoul Tower'},        color:0xcfd6dd, accent:0xe04b4b, scale:1.00, theme:'asia' },
@@ -4264,7 +4266,7 @@ const LANDMARK_HEIGHTS = {
   opera: 14, stbasil: 20, pyramid: 13, table: 14, masp: 18, goldengate: 24, seoul: 34, gate: 16, coveredbridge: 11,
   pagoda: 24, chongqing: 22, pingan: 50, canton: 42, potala: 20, taipei101: 48,
   canalhouse: 12, brandenburg: 14, ryugyong: 40, hagia: 18, bitexco: 36, watarun: 26,
-  cntower: 50, royalpalace: 16, colosseum: 14, flinders: 14, ifs: 24, tiananmen: 16, raffles: 30, citic: 52, shanghaitower: 63, arc: 15, salesforce: 40, highroller: 56, sapphire: 28, mahanakhon: 31, portside: 14, italia: 17, sydneytower: 31, westerkerk: 8, eureka: 30
+  cntower: 50, royalpalace: 16, colosseum: 14, flinders: 14, ifs: 24, tiananmen: 16, raffles: 30, citic: 52, shanghaitower: 63, arc: 15, salesforce: 40, highroller: 56, bazaar: 32, sapphire: 28, mahanakhon: 31, portside: 14, italia: 17, sydneytower: 31, westerkerk: 8, eureka: 30
 };
 
 const detail = {
@@ -5106,6 +5108,26 @@ function buildHighRoller(cfg){
   return g;
 }
 
+function buildBazaar(cfg){
+  const g = new THREE.Group();
+  lbox(g, 24, 3, 20, 0x3a3f45, 0, 0, 0);
+  lbox(g, 16, 5, 14, cfg.color, 0, 3, 0);
+  lcyl(g, 2.8, 3.6, 22, cfg.color, 0, 3, 0, 12);
+  lcyl(g, 4.2, 4.2, 0.7, cfg.accent, 0, 20, 0, 16);
+  lcyl(g, 2.2, 2.8, 4, cfg.color, 0, 21, 0, 12);
+  lsph(g, 3.2, cfg.accent, 0, 26, 0, 16);
+  lcyl(g, 0.08, 0.3, 4, cfg.accent, 0, 28, 0, 6);
+  for (const [x, z] of [[-9, -7], [9, -7], [-9, 7], [9, 7]]){
+    lcyl(g, 1.0, 1.3, 14, cfg.color, x, 3, z, 10);
+    lcyl(g, 1.8, 1.8, 0.4, cfg.accent, x, 17, z, 12);
+    lsph(g, 1.2, cfg.accent, x, 18.4, z, 10);
+    lcyl(g, 0.06, 0.2, 2, cfg.accent, x, 19.6, z, 6);
+  }
+  lbox(g, 6, 6, 6, cfg.color, -10, 3, 0, 0.25);
+  lbox(g, 6, 6, 6, cfg.color, 10, 3, 0, -0.25);
+  return g;
+}
+
 function buildLandmark(cfg){
   switch (cfg.type){
     case 'eiffel': return buildEiffel(cfg);
@@ -5118,6 +5140,7 @@ function buildLandmark(cfg){
     case 'arc': return buildArc(cfg);
     case 'salesforce': return buildSalesforce(cfg);
     case 'highroller': return buildHighRoller(cfg);
+    case 'bazaar': return buildBazaar(cfg);
     case 'sapphire': return buildSapphire(cfg);
     case 'mahanakhon': return buildMahanakhon(cfg);
     case 'portside': return buildPortside(cfg);
@@ -5716,6 +5739,18 @@ const CITY_MAPS = {
     ],
     roads:[{zh:'北京中路',en:'Beijing Middle Rd',lng:91.12,lat:29.654}]
   },
+  urumqi: {
+    center:[87.616,43.783], zoom:15.2, pitch:55, bearing:-18, origin:[87.616,43.783], height:70,
+    label:{zh:'新疆国际大巴扎 · 二道桥',en:'Xinjiang Grand Bazaar · Erdaoqiao'},
+    points:[
+      {id:'bazaar',name:{zh:'新疆国际大巴扎',en:'Xinjiang Grand Bazaar'},lng:87.616,lat:43.783,height:70,major:true},
+      {id:'erdaoqiao',name:{zh:'二道桥',en:'Erdaoqiao'},lng:87.615,lat:43.780,height:0},
+      {id:'hongshan',name:{zh:'红山公园',en:'Hong Shan Park'},lng:87.610,lat:43.807,height:0},
+      {id:'museum',name:{zh:'新疆博物馆',en:'Xinjiang Museum'},lng:87.584,lat:43.818,height:0},
+      {id:'square',name:{zh:'人民广场',en:"People's Square"},lng:87.626,lat:43.796,height:0}
+    ],
+    roads:[{zh:'解放南路',en:'Jiefang South Rd',lng:87.615,lat:43.780},{zh:'天山路',en:'Tianshan Rd',lng:87.618,lat:43.79}]
+  },
   taipei: {
     center:[121.56481,25.03367], zoom:14.7, pitch:55, bearing:-18, origin:[121.56481,25.03367], height:508,
     label:{zh:'台北101 · 信义区',en:'Taipei 101 · Xinyi'},
@@ -6042,6 +6077,9 @@ const LANDMARK_BLUEPRINT = {
   pyramid:   { mode:'osm', alt:139, radius:130, taper:0.95 },
   brandenburg:{ mode:'osm', alt:26, radius:40, taper:0.9 },
   royalpalace:{ mode:'osm', alt:33, radius:80, taper:0.9 },
+  pingan:    { mode:'osm', alt:600, radius:45, taper:0.4 },
+  colosseum: { mode:'osm', alt:48, radius:95, taper:0.9 },
+  pagoda:    { mode:'osm', alt:64, radius:30, taper:0.7 },
   sapphire:  { mode:'osm', alt:275, radius:35, taper:0.4 },
   mahanakhon:{ mode:'osm', alt:315, radius:30, taper:0.4 },
   portside:  { mode:'osm', alt:142, radius:25, taper:0.5 },
@@ -6051,10 +6089,6 @@ const LANDMARK_BLUEPRINT = {
   eureka:    { mode:'osm', alt:298, radius:30, taper:0.4 }
 };
 
-// OSM building ids that are hidden under a structural wireframe. The Eiffel
-// Tower's 48x48 m footprint is extruded as a single 330 m column, which reads
-// as a skyscraper, so the OSM 2D/3D mass is removed and the lattice is the only
-// Eiffel on the map. Ids come from the OpenFreeMap z14 building tile.
 // Some landmark models are deliberately narrow. When the real footprint is
 // much wider (Colosseum, Royal Palace, MASP, temple halls), stretch only X/Z so
 // the model sits inside the OSM footprint instead of shrinking into the middle.
@@ -6698,14 +6732,14 @@ const GUIDE_COPY = {
   zh: {
     eyebrow: 'EARTH ONLINE / 系统说明',
     title: '游戏说明',
-    intro: '一个实时共享的 3D 地球：35 座城市、实时天气、共享分数与城市详情。下面按功能说明，并给出每条的实现要点。',
+    intro: '一个实时共享的 3D 地球：36 座城市、实时天气、共享分数与城市详情。下面按功能说明，并给出每条的实现要点。',
     close: '关闭说明',
     foot: '无需账号 · 无需 API Key · 纯静态站点'
   },
   en: {
     eyebrow: 'EARTH ONLINE / SYSTEM',
     title: 'Game Guide',
-    intro: 'A real-time, shared 3D Earth: 35 cities, live weather, shared scores and city detail. Each feature includes a short implementation note.',
+    intro: 'A real-time, shared 3D Earth: 36 cities, live weather, shared scores and city detail. Each feature includes a short implementation note.',
     close: 'Close guide',
     foot: 'NO ACCOUNT · NO API KEY · STATIC SITE'
   }
@@ -6725,8 +6759,8 @@ const GUIDE_ITEMS = [
     en: { title: 'Live weather & air', desc: 'Open-Meteo supplies current conditions, feels-like, humidity, wind, sunrise/sunset and a 3-day forecast; air quality is a separate AQI and PM2.5 request, with local time.', tech: 'Open-Meteo + 10-min cache' }
   },
   {
-    zh: { title: '35 座城市', desc: '每城包含经纬度、时区、地标、标签和详情相机；地球、榜单和城市页共用 CITIES 数据源。', tech: '单一 CITIES 数据源' },
-    en: { title: '35 cities', desc: 'Each city has coordinates, timezone, landmark, labels and a detail camera; globe, board and city view share one CITIES source.', tech: 'Single CITIES source' }
+    zh: { title: '36 座城市', desc: '每城包含经纬度、时区、地标、标签和详情相机；地球、榜单和城市页共用 CITIES 数据源。', tech: '单一 CITIES 数据源' },
+    en: { title: '36 cities', desc: 'Each city has coordinates, timezone, landmark, labels and a detail camera; globe, board and city view share one CITIES source.', tech: 'Single CITIES source' }
   },
   {
     zh: { title: '共享城市分数', desc: '点击城市 +5，进入城市详情 +10；分数全局共享、可重复，左侧榜单按分数实时排序。', tech: 'NAS 会话 + 幂等事件' },
