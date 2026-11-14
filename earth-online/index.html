@@ -4150,12 +4150,12 @@ const CITY_THEMES = {
 };
 
 const LANDMARKS = {
-  beijing:      { type:'temple',       name:{zh:'天坛',en:'Temple of Heaven'},       color:0x2f6b5a, accent:0xd9b26f, scale:1.00, theme:'asia' },
+  beijing:      { type:'tiananmen',    name:{zh:'天安门',en:'Tiananmen'},             color:0x9b3b32, accent:0xd9b26f, scale:1.00, theme:'asia' },
   shanghai:     { type:'pearl',        name:{zh:'东方明珠',en:'Oriental Pearl'},      color:0xd8dfe8, accent:0xd94b5b, scale:1.12, theme:'asia' },
   chengdu:      { type:'ifs',         name:{zh:'成都 IFS',en:'Chengdu IFS'},          color:0x9fb6c9, accent:0xd94b5b, scale:1.00, theme:'asia' },
   hongkong:     { type:'bank',         name:{zh:'中银大厦',en:'Bank of China Tower'}, color:0x8fa6b8, accent:0x7fd3ff, scale:1.08, theme:'asia' },
   xian:         { type:'pagoda',       name:{zh:'大雁塔',en:'Giant Wild Goose Pagoda'},color:0xb08a5a, accent:0xf0d9b5, scale:1.00, theme:'asia' },
-  chongqing:    { type:'chongqing',    name:{zh:'洪崖洞',en:'Hongya Cave'},           color:0xc9a46a, accent:0xffb347, scale:1.00, theme:'asia' },
+  chongqing:    { type:'raffles',      name:{zh:'重庆来福士',en:'Raffles City'},       color:0x9fb6c9, accent:0xffb347, scale:1.00, theme:'asia' },
   shenzhen:     { type:'pingan',       name:{zh:'平安金融中心',en:'Ping An Finance'}, color:0x9fb6c9, accent:0x7fd3ff, scale:1.00, theme:'asia' },
   guangzhou:    { type:'canton',       name:{zh:'广州塔',en:'Canton Tower'},          color:0x9fb6c9, accent:0xff4fd8, scale:1.00, theme:'asia' },
   lhasa:        { type:'potala',       name:{zh:'布达拉宫',en:'Potala Palace'},       color:0xe8e0d0, accent:0xb44a3a, scale:1.00, theme:'asia' },
@@ -4191,7 +4191,7 @@ const LANDMARK_HEIGHTS = {
   opera: 14, stbasil: 20, pyramid: 13, table: 14, masp: 18, goldengate: 24, seoul: 34, gate: 16, coveredbridge: 11,
   pagoda: 24, chongqing: 22, pingan: 50, canton: 42, potala: 20, taipei101: 48,
   canalhouse: 12, brandenburg: 14, ryugyong: 40, hagia: 18, bitexco: 36, watarun: 26,
-  cntower: 50, royalpalace: 16, colosseum: 14, flinders: 14, ifs: 24
+  cntower: 50, royalpalace: 16, colosseum: 14, flinders: 14, ifs: 24, tiananmen: 16, raffles: 30
 };
 
 const detail = {
@@ -4816,6 +4816,68 @@ function buildIfs(cfg){
   return g;
 }
 
+function buildTiananmen(cfg){
+  const g = new THREE.Group();
+  const red = 0x9b3b32, gold = 0xd9b26f, stone = 0xd8d0c0, dark = 0x3a1e1a;
+  const arch = (w, h) => {
+    const s = new THREE.Shape();
+    s.moveTo(-w / 2, 0); s.lineTo(-w / 2, h - w / 2);
+    s.absarc(0, h - w / 2, w / 2, Math.PI, 0, true);
+    s.lineTo(w / 2, 0); s.lineTo(-w / 2, 0);
+    return new THREE.ExtrudeGeometry(s, { depth: 0.12, bevelEnabled: false });
+  };
+  lbox(g, 26, 5, 8, red, 0, 0, 0);
+  for (const z of [4.03, -4.03]){
+    for (let i = 0; i < 5; i++){
+      const w = i === 2 ? 2.6 : 2.0, h = i === 2 ? 4.2 : 3.5;
+      const m = new THREE.Mesh(arch(w, h), lmMat(dark));
+      m.position.set(-8 + i * 4, 0.35, z);
+      m.rotation.y = z > 0 ? 0 : Math.PI;
+      g.add(m);
+    }
+  }
+  lbox(g, 22, 0.8, 10, stone, 0, 5, 0);
+  for (let i = 0; i < 20; i++){
+    const x = -10 + i * 1.05;
+    lbox(g, 0.1, 0.5, 0.1, stone, x, 5.8, 4.8);
+    lbox(g, 0.1, 0.5, 0.1, stone, x, 5.8, -4.8);
+  }
+  lbox(g, 18, 3.5, 6, red, 0, 5.8, 0);
+  for (let i = 0; i < 10; i++){
+    lbox(g, 0.28, 3.5, 0.28, dark, -8.1 + i * 1.8, 5.8, 3.05);
+    lbox(g, 0.28, 3.5, 0.28, dark, -8.1 + i * 1.8, 5.8, -3.05);
+  }
+  for (let i = 0; i < 9; i++) lbox(g, 1.2, 2.2, 0.08, dark, -7.2 + i * 1.8, 6.4, 3.12);
+  lbox(g, 10, 0.6, 6.4, gold, 0, 9.3, 0);
+  const lower = new THREE.Mesh(new THREE.ConeGeometry(12, 1.8, 4), lmMat(gold));
+  lower.rotation.y = Math.PI / 4; lower.scale.z = 0.55; lower.position.set(0, 10.5, 0); g.add(lower);
+  lbox(g, 12, 2.5, 5, red, 0, 10.4, 0);
+  for (let i = 0; i < 7; i++) lbox(g, 0.24, 2.5, 0.24, dark, -5.4 + i * 1.8, 10.4, 2.55);
+  const upper = new THREE.Mesh(new THREE.ConeGeometry(9, 2.0, 4), lmMat(gold));
+  upper.rotation.y = Math.PI / 4; upper.scale.z = 0.6; upper.position.set(0, 13.5, 0); g.add(upper);
+  lbox(g, 8, 0.25, 0.3, gold, 0, 14.45, 0);
+  for (const [sx, sz] of [[1,1],[1,-1],[-1,1],[-1,-1]]){
+    const x = sx * 8.4, z = sz * 5.2;
+    beam(g, new THREE.Vector3(x, 13.3, z), new THREE.Vector3(x + sx * 1.2, 14.2, z + sz * 0.7), 0.12, gold);
+  }
+  lbox(g, 3.4, 0.25, 1.6, stone, 0, 0.1, 4.9);
+  lbox(g, 3.4, 0.25, 1.6, stone, 0, 0.1, -4.9);
+  return g;
+}
+
+function buildRaffles(cfg){
+  const g = new THREE.Group();
+  lbox(g, 26, 4, 14, 0x3a3f45, 0, 0, 0);
+  const towers = [[-8, -3, 30], [7, -3, 28], [-5, 5, 26], [6, 5, 24]];
+  for (const [x, z, h] of towers){
+    lbox(g, 4.6, h, 4.6, cfg.color, x, 4, z);
+    lbox(g, 3.8, 1.2, 3.8, cfg.accent, x, 4 + h, z);
+    lcyl(g, 0.1, 0.3, 3, cfg.accent, x, 5 + h, z, 6);
+  }
+  lbox(g, 20, 1.6, 3, 0xd9dde0, 0, 26, 2);
+  return g;
+}
+
 function buildLandmark(cfg){
   switch (cfg.type){
     case 'eiffel': return buildEiffel(cfg);
@@ -4823,6 +4885,8 @@ function buildLandmark(cfg){
     case 'burj': return buildBurj(cfg);
     case 'bigben': return buildBigBen(cfg);
     case 'temple': return buildTemple(cfg);
+    case 'tiananmen': return buildTiananmen(cfg);
+    case 'raffles': return buildRaffles(cfg);
     case 'pearl': return buildPearl(cfg);
     case 'bank': return buildBank(cfg);
     case 'marina': return buildMarina(cfg);
@@ -5145,21 +5209,21 @@ function updateCityMeta(){
 
 const CITY_MAPS = {
   beijing: {
-    center:[116.4066,39.8822], zoom:17.0, pitch:52, bearing:-20, origin:[116.4066,39.8822], height:38,
-    label:{zh:'天坛 · 中轴线',en:'Temple of Heaven · Axis'},
+    center:[116.3975,39.9087], zoom:16.8, pitch:52, bearing:-20, origin:[116.3975,39.9087], height:35,
+    label:{zh:'天安门 · 长安街',en:"Tiananmen · Chang'an Ave"},
     points:[
-      {id:'temple',name:{zh:'天坛',en:'Temple of Heaven'},lng:116.4066,lat:39.8822,height:38,major:true},
-      {id:'tiananmen',name:{zh:'天安门',en:'Tiananmen'},lng:116.3975,lat:39.9087,height:0},
+      {id:'tiananmen',name:{zh:'天安门',en:'Tiananmen'},lng:116.3975,lat:39.9087,height:35,major:true},
       {id:'forbidden',name:{zh:'故宫',en:'Forbidden City'},lng:116.397,lat:39.916,height:0},
-      {id:'changan',name:{zh:'长安街',en:"Chang'an Ave"},lng:116.397,lat:39.907,height:0}
+      {id:'square',name:{zh:'天安门广场',en:'Tiananmen Square'},lng:116.3975,lat:39.903,height:0},
+      {id:'museum',name:{zh:'国家博物馆',en:'National Museum'},lng:116.401,lat:39.905,height:0}
     ],
     roads:[{zh:'长安街',en:"Chang'an Ave",lng:116.397,lat:39.907}]
   },
   shanghai: {
-    center:[121.4975,31.2395], zoom:15.05, pitch:60, bearing:-18, origin:[121.49976,31.23972], height:468,
+    center:[121.498994,31.23921], zoom:15.05, pitch:60, bearing:-18, origin:[121.498994,31.23921], height:468,
     label:{zh:'陆家嘴 · 外滩',en:'Lujiazui · The Bund'},
     points:[
-      {id:'pearl',name:{zh:'东方明珠',en:'Oriental Pearl'},lng:121.49976,lat:31.23972,height:468,major:true,zoom:16.2,pitch:66,bearing:-14},
+      {id:'pearl',name:{zh:'东方明珠',en:'Oriental Pearl'},lng:121.498994,lat:31.23921,height:468,major:true,zoom:16.2,pitch:66,bearing:-14},
       {id:'shanghai-tower',name:{zh:'上海中心',en:'Shanghai Tower'},lng:121.5055,lat:31.2336,height:632,major:true,zoom:16.3,pitch:68,bearing:-16},
       {id:'swfc',name:{zh:'环球金融中心',en:'SWFC'},lng:121.5046,lat:31.2346,height:492,zoom:16.3,pitch:68,bearing:-16},
       {id:'jinmao',name:{zh:'金茂大厦',en:'Jin Mao'},lng:121.5017,lat:31.2375,height:421,zoom:16.3,pitch:68,bearing:-16},
@@ -5359,15 +5423,15 @@ const CITY_MAPS = {
     roads:[{zh:'雁塔路',en:'Yanta Road',lng:108.958,lat:34.23}]
   },
   chongqing: {
-    center:[106.5830,29.5630], zoom:16.5, pitch:58, bearing:-20, origin:[106.5830,29.5630], height:75,
-    label:{zh:'洪崖洞 · 解放碑',en:'Hongya Cave · Jiefangbei'},
+    center:[106.583935,29.56869], zoom:15.2, pitch:55, bearing:-18, origin:[106.583935,29.56869], height:350,
+    label:{zh:'重庆来福士 · 朝天门',en:'Raffles City · Chaotianmen'},
     points:[
-      {id:'hongya',name:{zh:'洪崖洞',en:'Hongya Cave'},lng:106.5830,lat:29.5630,height:75,major:true},
-      {id:'jiefangbei',name:{zh:'解放碑',en:'Jiefangbei'},lng:106.577,lat:29.557,height:0},
-      {id:'qiansimen',name:{zh:'千厮门大桥',en:'Qiansimen Bridge'},lng:106.581,lat:29.566,height:0},
-      {id:'raffles',name:{zh:'来福士',en:'Raffles City'},lng:106.588,lat:29.565,height:0}
+      {id:'raffles',name:{zh:'重庆来福士',en:'Raffles City'},lng:106.583935,lat:29.56869,height:350,major:true},
+      {id:'chaotianmen',name:{zh:'朝天门',en:'Chaotianmen'},lng:106.5855,lat:29.5670,height:0},
+      {id:'hongya',name:{zh:'洪崖洞',en:'Hongya Cave'},lng:106.5830,lat:29.5630,height:0},
+      {id:'jiefangbei',name:{zh:'解放碑',en:'Jiefangbei'},lng:106.577,lat:29.560,height:0}
     ],
-    roads:[{zh:'嘉陵江滨江路',en:'Jialing River Rd',lng:106.582,lat:29.565}]
+    roads:[{zh:'嘉陵江滨江路',en:'Jialing River Rd',lng:106.585,lat:29.565}]
   },
   shenzhen: {
     center:[114.05034,22.53663], zoom:14.7, pitch:55, bearing:-18, origin:[114.05034,22.53663], height:600,
@@ -5712,7 +5776,8 @@ const LANDMARK_BLUEPRINT = {
   gate:      { mode:'osm', alt:26, radius:26, taper:0.78 },
   bank:      { mode:'osm', alt:367, radius:32, taper:0.5 },
   taipei101: { mode:'osm', alt:508, radius:52, taper:0.34 },
-  ifs:       { mode:'osm', alt:248, radius:55, taper:0.5 }
+  ifs:       { mode:'osm', alt:248, radius:55, taper:0.5 },
+  raffles:   { mode:'osm', alt:350, radius:75, taper:0.5 }
 };
 
 // OSM building ids that are hidden under a structural wireframe. The Eiffel
@@ -5736,7 +5801,8 @@ const LANDMARK_XZ = {
   melbourne: 2.0,
   berlin: 1.6,
   stbasil: 1.7,
-  opera: 1.9
+  opera: 1.9,
+  tiananmen: 1.15
 };
 
 function bpLineMat(color, opacity){
