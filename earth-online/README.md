@@ -11,7 +11,7 @@ A real-time, shareable Earth for [elevenbeans.me](https://elevenbeans.me) — NA
 - **Focus a city — +5.** Click or tap a marker dot **or its label**. The camera flies in, the weather panel opens, and the shared city score increments.
 - **Enter the city — +10.** The panel's **进入城市 · +10** button opens a full-screen Orbital Blueprint map of the city's signature district, with OSM building footprints/heights, a blueprint landmark layer, and local labels. Repeatable: come back and enter again for another +10.
 - **Shared city score.** The left board lists all 34 cities, highest first, with the total shared across every visitor. On mobile the same board opens from the **▤** button in the top bar.
-- **First-visit continent intro.** The globe infers the visitor's continent from the browser timezone (no location permission prompt), centers on it, and shows a small continent chip. A `?city=` deep link skips the intro.
+- **First-visit continent intro.** The globe infers the visitor's continent from the browser timezone (no location permission prompt), centers on it, and shows a small continent chip. A city hash or `?city=` deep link skips the intro.
 - **No economy.** There are no credits, contracts, levels, combos, ranks, stability or demolition/rebuild. The visit itself is the score.
 - **Technical game guide.** A bottom-right **? / GUIDE** entry opens a complete, bilingual feature list; each feature includes a one-line implementation note capped at 20 characters.
 
@@ -162,9 +162,12 @@ The home page uses an original slow piano piece in A minor: broken chords, a low
 | Game guide | **? / GUIDE** at the bottom-right; scrollable technical feature list |
 | Keyboard orbit | Arrow keys while the globe is focused |
 
-## URL flags
+## Routes / URL flags
 
-- `?city=paris` — focus a city on load (does not award points)
+- `#/city/paris` — open the city panel on load
+- `#/city/paris/detail` — open the city detail directly on load, without awarding points
+- `?city=paris` — legacy alias for the city panel; the app rewrites it to a hash route
+- Browser Back steps detail → panel → globe; Esc does the same
 - `?lang=en` — force a language for this visit
 - `?proc=1` — skip textures and render the procedural night-lights globe
 - `?shot=1` — screenshot mode: no intro zoom, no auto-rotation

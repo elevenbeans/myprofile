@@ -3195,8 +3195,75 @@ function focusCamera(city, instant = false){
   }
 }
 
+function routeHashPanel(id){
+  return '#/city/' + encodeURIComponent(id);
+}
+function routeHashDetail(id){
+  return routeHashPanel(id) + '/detail';
+}
+function routeHref(hash){
+  const u = new URL(location.href);
+  u.searchParams.delete('city');
+  u.hash = hash || '';
+  return u.pathname + u.search + u.hash;
+}
+function parseRoute(){
+  const raw = location.hash || '';
+  const m = raw.match(/^#\/city\/([^/]+)(?:\/(detail))?\/?$/);
+  if (m){
+    let id = '';
+    try { id = decodeURIComponent(m[1]); } catch (e) { return null; }
+    if (!CITIES.some((c) => c.id === id)) return null;
+    return { id, detail: !!m[2] };
+  }
+  if (raw && raw !== '#' && !raw.startsWith('#/')){
+    let id = '';
+    try { id = decodeURIComponent(raw.slice(1)); } catch (e) { return null; }
+    if (CITIES.some((c) => c.id === id)) return { id, detail: false };
+  }
+  const q = params.get('city');
+  if (q && CITIES.some((c) => c.id === q)) return { id: q, detail: false };
+  return null;
+}
+let routeLock = false;
+function applyRoute(){
+  if (routeLock) return;
+  routeLock = true;
+  try {
+    const route = parseRoute();
+    if (!route){
+      if (detail.active) exitCity({ fromRoute: true });
+      if (world.selected) closePanel({ fromRoute: true });
+      return;
+    }
+    const city = CITIES.find((c) => c.id === route.id);
+    if (!city) return;
+    if (route.detail){
+      if (detail.active && detail.city && detail.city.id === city.id) return;
+      if (detail.active) exitCity({ fromRoute: true });
+      if (!world.selected || world.selected.id !== city.id) selectCity(city, { instant: true, fromRoute: true });
+      if (!history.state || history.state.detail !== city.id){
+        history.replaceState({ panel: city.id }, '', routeHref(routeHashPanel(city.id)));
+        history.pushState({ detail: city.id }, '', routeHref(routeHashDetail(city.id)));
+      }
+      enterCity(city, { fromRoute: true, award: false });
+    } else {
+      if (detail.active) exitCity({ fromRoute: true });
+      if (!world.selected || world.selected.id !== city.id) selectCity(city, { instant: true, fromRoute: true });
+      if (!history.state || history.state.panel !== city.id){
+        history.replaceState({ panel: city.id }, '', routeHref(routeHashPanel(city.id)));
+      }
+    }
+  } catch (err){
+    console.warn('[earth] route failed', err);
+  } finally {
+    routeLock = false;
+  }
+}
+
 function selectCity(city, opts = {}){
   const instant = !!opts.instant;
+  const wasOpen = !!world.selected;
   world.selected = city;
   panelEl.classList.add('is-open');
   panelEl.setAttribute('aria-hidden', 'false');
@@ -3209,7 +3276,14 @@ function selectCity(city, opts = {}){
   updatePanelScore();
   updateHudCity();
   autoPauseUntil = performance.now() + 1000 * 60 * 60;
-  try { history.replaceState(null, '', '#' + city.id); } catch {}
+  if (!opts.fromRoute){
+    try {
+      const state = { panel: city.id };
+      const href = routeHref(routeHashPanel(city.id));
+      if (wasOpen) history.replaceState(state, '', href);
+      else history.pushState(state, '', href);
+    } catch (err) { /* ignore */ }
+  }
   if (city.weather) applyWeather(city, city.weather);
   else {
     setPanelLoading();
@@ -3222,7 +3296,7 @@ function selectCity(city, opts = {}){
   }
 }
 
-function closePanel(){
+function closePanel(opts = {}){
   if (!world.selected) return;
   sfx('tick');
   world.selected = null;
@@ -3233,12 +3307,9 @@ function closePanel(){
   updateHudCity();
   autoPauseUntil = performance.now() + 1600;
   if (!hintTimedOut) hintEl.classList.remove('is-hidden');
-  try {
-    const url = new URL(location.href);
-    url.searchParams.delete('city');
-    url.hash = '';
-    history.replaceState(null, '', url.pathname + url.search);
-  } catch {}
+  if (!opts.fromRoute){
+    try { history.replaceState(null, '', routeHref('')); } catch (err) { /* ignore */ }
+  }
 }
 
 /* ---------------- score / destroy / rebuild ---------------- */
@@ -6185,9 +6256,9 @@ async function openShanghaiMap(city){
   }
 }
 
-function enterCity(city){
+function enterCity(city, opts = {}){
   if (!city || detail.active) return;
-  awardScore(city, 'detail');
+  if (opts.award !== false) awardScore(city, 'detail');
   detail.active = true;
   detail.city = city;
   activeMapConfig = CITY_MAPS[city.id] || null;
@@ -6200,6 +6271,9 @@ function enterCity(city){
   document.body.classList.add('city-mode');
   cityViewEl.classList.add('is-open', 'map-mode');
   cityViewEl.setAttribute('aria-hidden', 'false');
+  if (!opts.fromRoute){
+    try { history.pushState({ detail: city.id }, '', routeHref(routeHashDetail(city.id))); } catch (err) { /* ignore */ }
+  }
   if (cityBackEl) cityBackEl.focus({ preventScroll: true });
   playSceneMusic();
   openShanghaiMap(city);
@@ -6225,8 +6299,12 @@ function disposeCityDetail(){
   detail.active = false;
 }
 
-function exitCity(){
+function exitCity(opts = {}){
   if (!detail.active) return;
+  if (!opts.fromRoute && history.state && history.state.detail && history.length > 1){
+    history.back();
+    return;
+  }
   const city = detail.city;
   if (detail.mapActive) closeShanghaiMap();
   else disposeCityDetail();
@@ -6245,6 +6323,9 @@ function exitCity(){
   if (cityCreditEl) cityCreditEl.hidden = true;
   if (cityHintEl) cityHintEl.textContent = tr('city-hint');
   if (enterCityBtn) enterCityBtn.focus({ preventScroll: true });
+  if (!opts.fromRoute && city){
+    try { history.replaceState({ panel: city.id }, '', routeHref(routeHashPanel(city.id))); } catch (err) { /* ignore */ }
+  }
   if (city) updatePanelScore();
   playSceneMusic(true);
   sfx('tick');
@@ -6519,8 +6600,8 @@ const GUIDE_ITEMS = [
     en: { title: 'HUD & mobile', desc: 'Orbital Blueprint grid, scanlines, radar and target brackets; responsive layouts for desktop, tablet and phone.', tech: 'CSS HUD + responsive' }
   },
   {
-    zh: { title: '深链与快捷键', desc: '支持 ?city=、?lang=、?api=、?shot= 等 URL 参数；Esc 返回，键盘可操作。', tech: 'URL 参数 + History' },
-    en: { title: 'Deep links & keys', desc: 'Supports ?city=, ?lang=, ?api= and ?shot= URL flags; Esc returns and keyboard controls work.', tech: 'URLSearchParams + History' }
+    zh: { title: '深链与快捷键', desc: '支持 #/city/beijing、#/city/beijing/detail、?lang=、?api= 等；Esc 和浏览器后退可逐层返回。', tech: 'Hash 路由 + History' },
+    en: { title: 'Deep links & keys', desc: 'Supports #/city/beijing and #/city/beijing/detail plus ?lang= and ?api=; Esc and browser Back step back through the view.', tech: 'Hash routes + History' }
   },
   {
     zh: { title: '技术栈', desc: '单页原生 HTML/CSS/ES Module；Three.js 与 MapLibre 使用本地 vendor；无构建，GitHub Pages 静态托管。', tech: '原生 ESM + 静态托管' },
@@ -6625,6 +6706,8 @@ function bindUI(){
 
   window.addEventListener('pointerdown', unlockAudio, { once: true, capture: true });
   window.addEventListener('keydown', unlockAudio, { once: true, capture: true });
+  window.addEventListener('popstate', applyRoute);
+  window.addEventListener('hashchange', applyRoute);
 
   const boardCityClick = (event) => {
     const row = event.target.closest('.board__row[data-city]');
@@ -6876,9 +6959,9 @@ async function start(){
   initScores();
   applySun();
 
-  const deepId = params.get('city') || decodeURIComponent((location.hash || '').replace(/^#/, ''));
+  const initialRoute = parseRoute();
   initInitialView();
-  if (!deepId && !SHOT) applyContinentView(detectContinent());
+  if (!initialRoute && !SHOT) applyContinentView(detectContinent());
   lastFrame = performance.now();
   updateOrbit(0.016, lastFrame);
   updateMarkerPositions();
@@ -6886,14 +6969,11 @@ async function start(){
   renderer.setAnimationLoop(frame);
 
   finishBoot();
-  if (!deepId && !SHOT) showContinentIntro();
+  if (!initialRoute && !SHOT) showContinentIntro();
   prefetchTemps();
 
-  // deep link / screenshot state
-  if (deepId){
-    const city = CITIES.find((c) => c.id === deepId);
-    if (city) setTimeout(() => selectCity(city, { instant: true }), 480);
-  }
+  // hash route / ?city= restore
+  if (initialRoute) setTimeout(applyRoute, 480);
 
   console.info('[earth] ready', CITIES.length + ' cities');
 }
