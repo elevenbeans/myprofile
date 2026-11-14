@@ -3784,39 +3784,39 @@ const THEME_SCALES = {
 const T = (root, scale, prog, tempo, style, motif, region) => ({ root, scale, prog, tempo, style, motif, region });
 const CITY_MUSIC_THEMES = {
   beijing:      T(50, 'pentatonicMinor', [0, 3, 4, 0], 72,  'pentatonic', [0, 2, 4, 3, 2, 0, 4], 'jing'),
-  shanghai:     T(50, 'minor',           [0, 5, 3, 4], 96,  'neonjazz',   [4, 2, 0, 1, 3, 4, 2], 'jiangnan'),
-  chengdu:      T(55, 'pentatonicMajor', [0, 4, 5, 3], 84,  'pentatonic', [2, 4, 3, 2, 0, 2, 4]),
-  hongkong:     T(57, 'major',           [0, 4, 5, 3], 108, 'citypop',    [4, 2, 4, 5, 4, 2, 0]),
-  xian:         T(50, 'qin',             [0, 3, 4, 0], 76,  'world',      [0, 2, 3, 4, 3, 2, 0], 'qin'),
-  chongqing:    T(48, 'minor',           [0, 5, 3, 4], 100, 'electronic', [0, 2, 4, 2, 3, 1, 0]),
-  shenzhen:     T(57, 'major',           [0, 4, 5, 3], 112, 'electronic', [4, 2, 4, 6, 4, 2, 0]),
-  guangzhou:    T(55, 'pentatonicMajor', [0, 4, 5, 3], 92,  'pentatonic', [2, 4, 3, 2, 4, 5, 4]),
+  shanghai:     T(50, 'minor',           [0, 5, 3, 4], 102, 'neonjazz',   [4, 2, 0, 1, 3, 4, 2], 'jiangnan'),
+  chengdu:      T(55, 'pentatonicMajor', [0, 4, 5, 3], 88,  'pentatonic', [2, 4, 3, 2, 0, 2, 4], 'chengdu'),
+  hongkong:     T(57, 'major',           [0, 4, 5, 3], 112, 'citypop',    [4, 2, 4, 5, 4, 2, 0], 'canto'),
+  xian:         T(50, 'qin',             [0, 3, 4, 0], 80,  'world',      [0, 2, 3, 4, 3, 2, 0], 'qin'),
+  chongqing:    T(48, 'minor',           [0, 5, 3, 4], 104, 'electronic', [0, 2, 4, 2, 3, 1, 0], 'chongqing'),
+  shenzhen:     T(57, 'major',           [0, 4, 5, 3], 116, 'electronic', [4, 2, 4, 6, 4, 2, 0], 'shenzhen'),
+  guangzhou:    T(55, 'pentatonicMajor', [0, 4, 5, 3], 96,  'pentatonic', [2, 4, 3, 2, 4, 5, 4], 'guangzhou'),
   lhasa:        T(50, 'tibetan',         [0, 4, 0, 3], 60,  'ambient',    [0, 2, 4, 2, 0, 3, 2], 'tibetan'),
-  taipei:       T(57, 'major',           [0, 4, 5, 3], 104, 'citypop',    [4, 2, 4, 5, 4, 2, 0]),
+  taipei:       T(57, 'major',           [0, 4, 5, 3], 100, 'citypop',    [4, 2, 4, 5, 4, 2, 0], 'taipei'),
   tokyo:        T(50, 'miyako',          [0, 2, 4, 1], 72,  'citypop',    [4, 2, 4, 6, 4, 2, 0], 'edo'),
-  seoul:        T(57, 'major',           [0, 5, 3, 4], 100, 'citypop',    [2, 4, 5, 4, 2, 4, 0]),
-  singapore:    T(60, 'major',           [0, 4, 5, 3], 104, 'tropical',   [2, 4, 5, 4, 2, 0, 2]),
-  mumbai:       T(50, 'phrygianDominant',[0, 1, 4, 0], 96,  'world',      [0, 1, 4, 3, 1, 0, 4]),
-  dubai:        T(50, 'phrygianDominant',[0, 1, 4, 0], 84,  'world',      [0, 4, 3, 1, 0, 1, 4]),
-  moscow:       T(45, 'minor',           [0, 5, 3, 4], 72,  'strings',    [0, 2, 4, 3, 2, 0, 1]),
+  seoul:        T(57, 'major',           [0, 5, 3, 4], 96, 'citypop',    [2, 4, 5, 4, 2, 4, 0], 'seoul'),
+  singapore:    T(60, 'major',           [0, 4, 5, 3], 108, 'tropical',   [2, 4, 5, 4, 2, 0, 2], 'singapore'),
+  mumbai:       T(50, 'phrygianDominant',[0, 1, 4, 0], 100,  'world',      [0, 1, 4, 3, 1, 0, 4], 'mumbai'),
+  dubai:        T(50, 'phrygianDominant',[0, 1, 4, 0], 88,  'world',      [0, 4, 3, 1, 0, 1, 4], 'dubai'),
+  moscow:       T(45, 'minor',           [0, 5, 3, 4], 68,  'strings',    [0, 2, 4, 3, 2, 0, 1], 'moscow'),
   cairo:        T(50, 'bayati',          [0, 1, 4, 0], 96,  'world',      [0, 1, 4, 3, 1, 0, 4], 'cairo'),
-  capetown:     T(55, 'major',           [0, 4, 5, 3], 112, 'tropical',   [2, 4, 5, 4, 2, 0, 2]),
-  london:       T(45, 'minor',           [0, 3, 5, 4], 100, 'electronic', [0, 3, 2, 4, 3, 0, 2]),
-  paris:        T(55, 'major',           [0, 4, 5, 3], 90,  'bossa',      [2, 4, 5, 4, 2, 0, 2]),
-  newyork:      T(50, 'blues',           [0, 3, 4, 0], 110, 'jazz',       [0, 3, 5, 3, 0, 2, 4]),
-  sanfrancisco:T(55, 'major',           [0, 4, 5, 3], 96,  'indie',      [2, 4, 5, 4, 2, 0, 2]),
-  saopaulo:     T(55, 'major',           [0, 4, 5, 3], 92,  'bossa',      [2, 4, 5, 4, 2, 0, 2]),
-  sydney:       T(57, 'major',           [0, 4, 5, 3], 104, 'indie',      [4, 2, 4, 5, 4, 2, 0]),
-  amsterdam:    T(60, 'major',           [0, 4, 5, 3], 100, 'electronic', [4, 2, 4, 5, 4, 2, 0]),
-  berlin:       T(45, 'minor',           [0, 5, 3, 4], 124, 'techno',     [0, 3, 0, 4, 0, 2, 0]),
-  pyongyang:    T(50, 'minor',           [0, 5, 3, 4], 100, 'march',      [0, 2, 4, 4, 2, 0, 4]),
+  capetown:     T(55, 'major',           [0, 4, 5, 3], 116, 'tropical',   [2, 4, 5, 4, 2, 0, 2], 'capetown'),
+  london:       T(45, 'minor',           [0, 3, 5, 4], 104, 'electronic', [0, 3, 2, 4, 3, 0, 2], 'london'),
+  paris:        T(55, 'major',           [0, 4, 5, 3], 88,  'bossa',      [2, 4, 5, 4, 2, 0, 2], 'paris'),
+  newyork:      T(50, 'blues',           [0, 3, 4, 0], 112, 'jazz',       [0, 3, 5, 3, 0, 2, 4], 'newyork'),
+  sanfrancisco:T(55, 'major',           [0, 4, 5, 3], 100, 'indie',      [2, 4, 5, 4, 2, 0, 2], 'sf'),
+  saopaulo:     T(55, 'major',           [0, 4, 5, 3], 96,  'bossa',      [2, 4, 5, 4, 2, 0, 2], 'saopaulo'),
+  sydney:       T(57, 'major',           [0, 4, 5, 3], 112, 'indie',      [4, 2, 4, 5, 4, 2, 0], 'sydney'),
+  amsterdam:    T(60, 'major',           [0, 4, 5, 3], 104, 'electronic', [4, 2, 4, 5, 4, 2, 0], 'amsterdam'),
+  berlin:       T(45, 'minor',           [0, 5, 3, 4], 128, 'techno',     [0, 3, 0, 4, 0, 2, 0], 'berlin'),
+  pyongyang:    T(50, 'minor',           [0, 5, 3, 4], 84, 'march',      [0, 2, 4, 4, 2, 0, 4], 'pyongyang'),
   istanbul:     T(50, 'hijaz',           [0, 1, 4, 0], 84,  'world',      [0, 1, 4, 3, 1, 0, 4], 'istanbul'),
-  hochiminh:    T(57, 'minor',           [0, 3, 5, 4], 104, 'electronic', [0, 3, 2, 4, 3, 0, 2]),
-  bangkok:      T(55, 'pentatonicMajor', [0, 4, 5, 3], 96,  'world',      [2, 4, 5, 4, 2, 0, 2]),
-  toronto:      T(57, 'major',           [0, 4, 5, 3], 98,  'indie',      [4, 2, 4, 5, 4, 2, 0]),
-  madrid:       T(52, 'phrygianDominant',[0, 1, 4, 0], 108, 'flamenco',   [0, 1, 4, 3, 1, 0, 4], 'flamenco'),
-  rome:         T(50, 'minor',           [0, 3, 5, 4], 76,  'strings',    [0, 2, 4, 3, 2, 0, 1]),
-  melbourne:    T(55, 'major',           [0, 4, 5, 3], 104, 'indie',      [2, 4, 5, 4, 2, 0, 2])
+  hochiminh:    T(57, 'minor',           [0, 3, 5, 4], 108, 'electronic', [0, 3, 2, 4, 3, 0, 2], 'saigon'),
+  bangkok:      T(55, 'pentatonicMajor', [0, 4, 5, 3], 100,  'world',      [2, 4, 5, 4, 2, 0, 2], 'bangkok'),
+  toronto:      T(57, 'major',           [0, 4, 5, 3], 100,  'indie',      [4, 2, 4, 5, 4, 2, 0], 'toronto'),
+  madrid:       T(52, 'phrygianDominant',[0, 1, 4, 0], 116, 'flamenco',   [0, 1, 4, 3, 1, 0, 4], 'flamenco'),
+  rome:         T(50, 'minor',           [0, 3, 5, 4], 72,  'strings',    [0, 2, 4, 3, 2, 0, 1], 'rome'),
+  melbourne:    T(55, 'major',           [0, 4, 5, 3], 100, 'indie',      [2, 4, 5, 4, 2, 0, 2], 'melbourne')
 };
 
 const THEME_STYLES = {
@@ -3835,6 +3835,38 @@ const THEME_STYLES = {
   flamenco:    { pad: true,  arp: false, hat: false, drums: 'clap',  melody: 'pluck',   comp: true,  bass: true,  riser: false },
   march:       { pad: true,  arp: false, hat: false, drums: 'march', melody: 'trumpet', comp: true,  bass: true,  riser: false }
 };
+
+/* Data-driven palettes for the remaining 26 cities. Each uses the city's own
+   scale, tempo and motif, but a distinct lead/pluck/percussion pairing. */
+const REGIONAL_PALETTES = {
+  chengdu:    { lead:'dizi',      pluck:'guzheng', perc:'wood',       pad:true,  bass:true },
+  canto:      { lead:'erhu',      pluck:'guzheng', perc:'pop',        pad:true,  bass:true, leadSteps:[0,3,6] },
+  chongqing:  { lead:'erhu',      pluck:'pulse',   perc:'four',       pad:true,  bass:true, arpVol:0.012 },
+  shenzhen:   { lead:'pulse',     pluck:'pulse',   perc:'four',       pad:true,  bass:true, arpVol:0.014 },
+  guangzhou:  { lead:'guzheng',   pluck:'dizi',    perc:'brush',      pad:true,  bass:true },
+  taipei:     { lead:'guzheng',   pluck:'guzheng', perc:'pop',        pad:true,  bass:true, arpOct:24 },
+  seoul:      { lead:'gayageum',  pluck:'gayageum',perc:'janggu',     pad:true,  bass:true, leadSteps:[0,3,6] },
+  singapore:  { lead:'steelDrum', pluck:'marimba', perc:'hand',       pad:true,  bass:true, arpSteps:[1,3,5,7] },
+  mumbai:     { lead:'sitar',     pluck:'sitar',   perc:'tabla',      pad:false, bass:true, drone:true, droneVol:0.018, leadSteps:[0,3,6] },
+  dubai:      { lead:'oud',       pluck:'qanun',   perc:'darbuka',    pad:false, bass:true, drone:true, droneVol:0.018 },
+  moscow:     { lead:'balalaika', pluck:'guzheng', perc:'low',        pad:true,  bass:true, arpSteps:[0,3,6] },
+  capetown:   { lead:'marimba',   pluck:'indie',   perc:'hand',       pad:true,  bass:true, leadSteps:[0,2,4,6] },
+  london:     { lead:'pulse',     pluck:'keys',    perc:'electronic', pad:true,  bass:true, arpVol:0.012 },
+  paris:      { lead:'accordion', pluck:'nylon',   perc:'brush',      pad:true,  bass:true },
+  newyork:    { lead:'trumpet',   pluck:'keys',    perc:'brush',      pad:true,  bass:true },
+  sf:         { lead:'indie',     pluck:'keys',    perc:'indie',      pad:true,  bass:true },
+  saopaulo:   { lead:'nylon',     pluck:'marimba', perc:'bossa',      pad:true,  bass:true },
+  sydney:     { lead:'indie',     pluck:'indie',   perc:'bossa',      pad:true,  bass:true, leadSteps:[0,2,4,6] },
+  amsterdam:  { lead:'pulse',     pluck:'pulse',   perc:'four',       pad:true,  bass:true, arpVol:0.012 },
+  berlin:     { lead:'pulse',     pluck:'pulse',   perc:'techno',     pad:false, bass:true, arpVol:0.010 },
+  pyongyang:  { lead:'daegeum',   pluck:'gayageum',perc:'low',        pad:true,  bass:true },
+  saigon:     { lead:'guzheng',   pluck:'guzheng', perc:'electronic', pad:true,  bass:true, leadSteps:[0,3,6] },
+  bangkok:    { lead:'guzheng',   pluck:'marimba', perc:'hand',       pad:true,  bass:true },
+  toronto:    { lead:'indie',     pluck:'pulse',   perc:'indie',      pad:true,  bass:true, arpSteps:[1,3,5,7] },
+  rome:       { lead:'mandolin',  pluck:'nylon',   perc:'brush',      pad:true,  bass:true },
+  melbourne:  { lead:'indie',     pluck:'indie',   perc:'brush',      pad:true,  bass:true, arpSteps:[0,3,6] }
+};
+const DRY_REGIONS = new Set(['qin']);
 
 let cityMusic = null;
 let cityNoiseBuffer = null;
@@ -3878,7 +3910,7 @@ function startCityTheme(city){
     hp.connect(limiter);
     limiter.connect(ac.destination);
   }
-  if (theme.region){
+  if (theme.region && !DRY_REGIONS.has(theme.region)){
     const wet = ac.createGain();
     wet.gain.value = SAFE_BASS ? 0.10 : 0.16;
     const delay = ac.createDelay(1.2);
@@ -4114,6 +4146,115 @@ function startCityTheme(city){
       flamencoGuitar(chord[i] + 12, t + i * 0.018, vol / (1 + i * 0.32), 0.42);
     }
   }
+
+  function indieGuitar(note, t, dur, vol){
+    tone(note, t, dur, 'triangle', vol, 1900, 0.005, -2);
+    tone(note + 12, t, dur * 0.6, 'sine', vol * 0.18, 2500, 0.004, 3);
+  }
+  function nylonGuitar(note, t, dur, vol){
+    tone(note, t, dur, 'triangle', vol, 1700, 0.005, -2);
+    tone(note + 12, t, dur * 0.55, 'sine', vol * 0.20, 2300, 0.004, 2);
+  }
+  function marimba(note, t, dur, vol){
+    tone(note, t, dur, 'sine', vol, 2800, 0.003, 0);
+    tone(note + 12, t, dur * 0.55, 'sine', vol * 0.24, 3800, 0.002, 0);
+  }
+  function sitar(note, t, dur, vol){
+    tone(note, t, dur, 'sawtooth', vol, 1900, 0.004, -4, 7);
+    tone(note + 12, t, dur * 0.7, 'triangle', vol * 0.22, 2800, 0.003, 4);
+  }
+  function gayageum(note, t, dur, vol){
+    tone(note, t, dur, 'triangle', vol, 2200, 0.004, 0, 9);
+    tone(note + 12, t, dur * 0.55, 'sine', vol * 0.24, 3200, 0.003, 4);
+  }
+  function daegeum(note, t, dur, vol){
+    tone(note, t, dur, 'sine', vol, 1700, 0.08, 0, 7);
+    tone(note + 12, t, dur * 0.75, 'triangle', vol * 0.14, 2200, 0.09, 5, 4);
+    noise(t, 0.10, vol * 0.12, 'bandpass', 2100, 1.0);
+  }
+  function balalaika(note, t, dur, vol){
+    tone(note, t, dur, 'triangle', vol, 2400, 0.003, -2);
+    tone(note + 12, t, dur * 0.45, 'sine', vol * 0.20, 3200, 0.002, 4);
+  }
+  function accordion(note, t, dur, vol){
+    tone(note, t, dur, 'sawtooth', vol, 1600, 0.06, -3);
+    tone(note, t, dur * 0.95, 'triangle', vol * 0.34, 1800, 0.08, 4);
+  }
+  function mandolin(note, t, dur, vol){
+    tone(note, t, dur, 'triangle', vol, 2600, 0.003, 0);
+    tone(note + 12, t, dur * 0.4, 'sine', vol * 0.20, 3500, 0.002, 0);
+  }
+  function keys(note, t, dur, vol){
+    tone(note, t, dur, 'triangle', vol, 1900, 0.008, 0);
+    tone(note + 12, t, dur * 0.6, 'sine', vol * 0.20, 2600, 0.006, 0);
+  }
+  function steelDrum(note, t, dur, vol){
+    tone(note, t, dur, 'sine', vol, 4200, 0.003, 0);
+    tone(note + 12, t, dur * 0.7, 'sine', vol * 0.48, 5200, 0.002, 0);
+    tone(note + 19, t, dur * 0.32, 'sine', vol * 0.18, 6000, 0.002, 0);
+  }
+  function janggu(t, high){
+    if (high) bangu(t); else frame(t);
+  }
+  function tabla(t, high){
+    tone(high ? 57 : 45, t, 0.12, 'sine', high ? 0.055 : 0.075, 900, 0.003, 0);
+    noise(t, 0.05, high ? 0.020 : 0.014, 'bandpass', high ? 2600 : 900, 1.2);
+  }
+  function shaker(t){ noise(t, 0.05, 0.012, 'highpass', 6500, 0.8); }
+  function playVoice(name, note, t, dur, vol){
+    if (name === 'dizi') dizi(note, t, dur, vol);
+    else if (name === 'erhu') erhu(note, t, dur, vol);
+    else if (name === 'shakuhachi') shakuhachi(note, t, dur, vol);
+    else if (name === 'gayageum') gayageum(note, t, dur, vol);
+    else if (name === 'daegeum') daegeum(note, t, dur, vol);
+    else if (name === 'sitar') sitar(note, t, dur, vol);
+    else if (name === 'balalaika') balalaika(note, t, dur, vol);
+    else if (name === 'accordion') accordion(note, t, dur, vol);
+    else if (name === 'mandolin') mandolin(note, t, dur, vol);
+    else if (name === 'keys') keys(note, t, dur, vol);
+    else if (name === 'steelDrum') steelDrum(note, t, dur, vol);
+    else if (name === 'marimba') marimba(note, t, dur, vol);
+    else if (name === 'indie') indieGuitar(note, t, dur, vol);
+    else if (name === 'nylon') nylonGuitar(note, t, dur, vol);
+    else if (name === 'trumpet') trumpet(note, t, dur);
+    else if (name === 'pulse') pulse(note, t, dur, vol);
+    else if (name === 'oud') oud(note, t, vol, dur);
+    else if (name === 'qanun') qanun(note, t, vol, dur);
+    else if (name === 'guzheng') guzheng(note, t, vol, dur);
+    else if (name === 'koto') koto(note, t, vol, dur);
+    else if (name === 'flamencoGuitar') flamencoGuitar(note, t, vol, dur);
+    else if (name === 'dramyin') dramyin(note, t, vol, dur);
+    else guzheng(note, t, vol, dur);
+  }
+  function percFor(kind, t, s){
+    if (kind === 'wood'){ if (s === 2 || s === 6) bangu(t); }
+    else if (kind === 'pop'){ if (s === 0 || s === 4) kick(t); if (s === 2 || s === 6) clap(t); if (s % 2 === 1) hat(t); }
+    else if (kind === 'four'){ if (s % 2 === 0) kick(t); if (s % 2 === 1) hat(t); }
+    else if (kind === 'electronic'){ if (s % 2 === 0) kick(t); if (s % 2 === 1) hat(t); if (s === 2 || s === 6) clap(t); }
+    else if (kind === 'techno'){ if (s % 2 === 0) kick(t); if (s % 4 === 1) hat(t); if (s === 6) hat(t); }
+    else if (kind === 'hand'){ if (s === 0 || s === 4) kick(t); if (s === 2 || s === 6) frame(t); }
+    else if (kind === 'tabla'){ if (s % 2 === 0) tabla(t, s === 2 || s === 6); }
+    else if (kind === 'darbuka'){ if (s === 0 || s === 4) darbukaDum(t); if (s === 2 || s === 6) darbukaTek(t); }
+    else if (kind === 'janggu'){ if (s % 2 === 0) janggu(t, s === 2 || s === 6); }
+    else if (kind === 'bossa'){ if (s === 2 || s === 6) brush(t); if (s % 2 === 1) shaker(t); }
+    else if (kind === 'indie'){ if (s === 0 || s === 4) kick(t); if (s === 2 || s === 6) snare(t); if (s % 2 === 1) hat(t); }
+    else if (kind === 'brush'){ if (s === 0 || s === 4) kick(t); if (s === 2 || s === 6) brush(t); }
+    else if (kind === 'low'){ if (s === 0 || s === 4) kick(t); if (s === 2 || s === 6) frame(t); }
+  }
+  function genericRegionalStep(p, chord, t, barIndex, s){
+    const low = SAFE_BASS ? chord[0] : chord[0] - 12;
+    if (s === 0 && p.pad) padChord(chord, t);
+    if (p.bass && (p.bassSteps || [0, 4]).includes(s)) bass(chord[0] - 12, t);
+    if (p.drone && s === 0) drone(low, t, barDur * 1.05, p.droneVol || 0.020);
+    const leadPos = (p.leadSteps || [0, 4]).indexOf(s);
+    if (leadPos >= 0){
+      playVoice(p.lead, motifNote(barIndex, 0, leadPos > 0 ? 1 : 0), t, beat * (leadPos > 0 ? 1.25 : 1.8), p.leadVol || 0.045);
+    }
+    if ((p.arpSteps || [0, 2, 4, 6]).includes(s)){
+      playVoice(p.pluck, chord[((s / 2) | 0) % chord.length] + (p.arpOct || 12), t, stepDur * 1.25, p.arpVol || 0.018);
+    }
+    percFor(p.perc, t, s);
+  }
   function motifNote(barIndex, octave, offset){
     const degree = (theme.motif[barIndex % theme.motif.length] || 0) + (offset || 0);
     const oct = Math.floor(degree / scale.length);
@@ -4142,17 +4283,29 @@ function startCityTheme(city){
         dizi(motifNote(barIndex, 0, 0), t, beat * 1.8, 0.048);
         if (barIndex >= 4) erhu(chord[2] + 12, t, barDur * 0.8, 0.016);
       }
-      if (s === 4) dizi(motifNote(barIndex, 0, 1), t, beat * 1.2, 0.040);
+      if (s === 4){
+        bass(chord[0] - 12, t);
+        dizi(motifNote(barIndex, 0, 1), t, beat * 1.2, 0.040);
+      }
       if (s % 2 === 0) guzheng(chord[(s / 2) % chord.length] + 12, t, 0.019, stepDur * 1.3);
-      if (s === 2 || s === 6) brush(t);
+      if (s % 2 === 0) pulse(chord[(s / 2) % chord.length] + 24, t, 0.2, 0.008);
+      if (s === 0 || s === 4) kick(t);
+      if (s === 2 || s === 6) clap(t);
+      if (s % 2 === 1) hat(t);
     } else if (r === 'qin'){
       if (s === 0){
-        drone(low, t, barDur * 1.05, 0.030);
-        erhu(motifNote(barIndex, 0, 0), t, beat * 2.0, 0.052);
+        bass(chord[0] - 12, t);
+        erhu(motifNote(barIndex, 0, 0), t, beat * 0.9, 0.050);
+        guzheng(chord[1] + 12, t, 0.018, 0.5);
+        bangu(t);
       }
-      if (s === 4) erhu(motifNote(barIndex, 0, 1), t, beat * 1.5, 0.042);
-      if (s === 2 || s === 6){ guzheng(chord[1] + 12, t, 0.019, 0.7); bangu(t); }
-      if (s === 0 || s === 4) kick(t);
+      if (s === 4){
+        bass(chord[0] - 12, t);
+        erhu(motifNote(barIndex, 0, 1), t, beat * 0.8, 0.040);
+        bangu(t);
+      }
+      if (s === 2 || s === 6){ guzheng(chord[0] + 12, t, 0.016, 0.4); bangu(t); }
+      if (s === 1 || s === 5) guzheng(chord[2] + 12, t, 0.012, 0.35);
     } else if (r === 'tibetan'){
       if (s === 0){
         drone(low, t, barDur * 1.2, 0.038);
@@ -4188,20 +4341,20 @@ function startCityTheme(city){
       if (s === 2 || s === 6){ oud(chord[2] + 12, t, 0.023, 0.6); riq(t); }
       if (s === 0 || s === 4) darbukaDum(t);
     } else if (r === 'flamenco'){
-      if (s === 0){
+      if (s === 0 || s === 4){
         bass(chord[0] - 12, t);
-        rasgueado(chord, t, 0.030);
-        if (barIndex % 2 === 0) cajon(t);
-      }
-      if (s === 4){
-        flamencoGuitar(motifNote(barIndex, 0, 1), t, 0.042, beat * 1.2);
+        rasgueado(chord, t, 0.038);
+        flamencoGuitar(motifNote(barIndex, 0, s === 4 ? 1 : 0), t, 0.045, beat * 1.1);
         cajon(t);
       }
       if (s === 2 || s === 6){
         palmas(t);
-        flamencoGuitar(chord[2] + 12, t, 0.019, 0.45);
+        flamencoGuitar(chord[2] + 12, t, 0.022, 0.45);
       }
+      if (s === 3 || s === 7) palmas(t);
     }
+    const palette = REGIONAL_PALETTES[r];
+    if (palette) genericRegionalStep(palette, chord, t, barIndex, s);
   }
   function melodyFor(chord, t, barIndex, s){
     if (!preset.melody || (s !== 0 && s !== 4)) return;
@@ -6406,8 +6559,8 @@ const GUIDE_ITEMS = [
     en: { title: 'Continent intro', desc: 'First visit infers a continent from the browser timezone, centers the globe and shows a chip; no location permission is requested.', tech: 'Timezone + camera target' }
   },
   {
-    zh: { title: '首页与城市音乐', desc: 'Web Audio 合成首页原创钢琴与 34 城主题；首批 8 城加入地域乐器，微信内自动避开低频，进出城市交叉淡化。', tech: 'Web Audio + 地域音色' },
-    en: { title: 'Home & city music', desc: 'Web Audio synthesizes an original home piano and 34 city themes; the first 8 cities use regional instruments, with a low-frequency-safe WeChat mix and crossfades.', tech: 'Web Audio + regional voices' }
+    zh: { title: '首页与城市音乐', desc: 'Web Audio 合成首页原创钢琴与 34 城地域主题；每城使用自己的音阶、乐器与节奏，微信内自动避开低频，进出城市交叉淡化。', tech: 'Web Audio + 地域音色' },
+    en: { title: 'Home & city music', desc: 'Web Audio synthesizes an original home piano and 34 regional city themes; each city has its own scale, instruments and rhythm, with a low-frequency-safe WeChat mix and crossfades.', tech: 'Web Audio + regional voices' }
   },
   {
     zh: { title: 'HUD 与移动端', desc: 'Orbital Blueprint 网格、扫描线、雷达和目标括号；桌面、平板与手机布局自适应。', tech: 'CSS HUD + 响应式' },
