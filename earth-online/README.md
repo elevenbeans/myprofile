@@ -135,12 +135,13 @@ The page itself is static; publish `myprofile/earth-online/` as usual.
 
 ## City themes
 
-Entering a city detail crossfades the globe ambient pad into a short, original Web Audio theme for that city, and fades back on exit:
+Entering a city detail crossfades the home piano piece into a short, original Web Audio theme for that city, and fades back on exit:
 
 - 34 compact `CITY_MUSIC_THEMES` configs: root, scale/mode, 4-chord progression, tempo, 7-note motif, and a style preset (jazz, city-pop, pentatonic, electronic, techno, ambient, strings, world, bossa, indie, flamenco, march).
 - The synth engine renders pluck, pulse arp, bass, pad, muted trumpet/flute/bell, brush/kick/hat/clap/frame drums, and occasional risers. No audio files, samples, or extra network requests.
+- The home page uses an original slow piano piece in A minor: broken chords, a low root, a soft string pad and a long dark echo. It is generated live with Web Audio and uses no samples or copyrighted melody.
 - Each theme is original; **no 《夜上海》 melody** or other copyrighted tune is used.
-- In WeChat's WebView the ambient and city mix is high-passed at 88–95 Hz, the 55/82 Hz drone is removed, and the compressor is bypassed. This avoids the low-frequency hum some WeChat/iOS audio paths add to Web Audio. Use `?audio-debug=1` for a small readout of mode, context state, sample rate and active track.
+- In WeChat's WebView the home piano is high-passed at 72 Hz and the city mix at 88 Hz; sub-bass notes are raised or trimmed and the compressor is bypassed. This avoids the low-frequency hum some WeChat/iOS audio paths add to Web Audio. Use `?audio-debug=1` for a small readout of mode, context state, sample rate and active track.
 - The **♪** button in the city header (and the globe top bar) mutes/unmutes both the theme and UI effects.
 
 ## Controls
@@ -179,7 +180,7 @@ Entering a city detail crossfades the globe ambient pad into a short, original W
 - City markers are HTML buttons projected from 3D positions each frame, so they stay crisp and keyboard accessible.
 - Weather comes from [Open-Meteo](https://open-meteo.com/) with a 10-minute `sessionStorage` cache; the panel shows local clock, current conditions, feels-like, humidity, wind, sunrise/sunset and a three-day forecast.
 - The 3D detail scene is built from `BoxGeometry`, `CylinderGeometry`, `ConeGeometry`, `SphereGeometry`, `ExtrudeGeometry` and `Line` primitives; no external models. A seeded PRNG keeps each district deterministic.
-- Web Audio synthesises the UI cues, the globe ambient pad, and 34 per-city themes. The first pointer/key creates/resumes the AudioContext; entering a city crossfades ambient to that city's theme, and exiting crossfades back. The **♪** button in the city header or top bar mutes/unmutes everything; no audio files are loaded.
+- Web Audio synthesises the UI cues, the home piano piece, and 34 per-city themes. The first pointer/key creates/resumes the AudioContext; entering a city crossfades the piano to that city's theme, and exiting crossfades back. The **♪** button in the city header or top bar mutes/unmutes everything; no audio files are loaded.
 - The score API is implemented in `nas-portal/app/api/earth-score/route.ts` and `session/route.ts`, with shared state in `lib/earth-score.ts`.
 
 ## Known limitations
@@ -191,7 +192,7 @@ Entering a city detail crossfades the globe ambient pad into a short, original W
 - Weather is current conditions at roughly 15-minute resolution; if Open-Meteo is unavailable the panel shows a retry state and the 3D scene falls back to the city's local day/night.
 - The "online" count is simulated.
 - Very rapid repeated clicks can be dropped by the score cooldown; this is intentional anti-abuse behaviour.
-- Audio defaults on, but browsers require one user gesture before sound can play; the first click/key starts ambient audio, then a city detail crossfades to its theme. The **♪** button mutes/unmutes everything, and the preference is remembered. All themes are original Web Audio synthesis; no copyrighted melody or recording is used.
+- Audio defaults on, but browsers require one user gesture before sound can play; the first click/key starts the home piano, then a city detail crossfades to its theme. The **♪** button mutes/unmutes everything, and the preference is remembered. All themes are original Web Audio synthesis; no copyrighted melody or recording is used.
 
 ## Credits
 

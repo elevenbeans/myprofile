@@ -3508,8 +3508,8 @@ function updateBursts(dt){
 
 let audioCtx = null;
 
-/* Phones (especially WeChat's WebView) turn the 55–82 Hz ambient drone into
-   a constant hum. Keep the same pad an octave up and trim the sub-bass. */
+/* WeChat's WebView can turn sustained sub-bass into a constant hum. Its
+   home/city mix is high-passed and avoids the lowest octave. */
 const WECHAT_AUDIO = /MicroMessenger/i.test(navigator.userAgent) &&
   /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
 const SAFE_BASS = WECHAT_AUDIO;
@@ -3552,75 +3552,217 @@ function unlockAudio(){
 }
 
 let music = null;
+
+/* Home theme: an original slow piano piece in A minor. Repeated broken
+   chords, a low root, a soft string pad and a long dark echo; no samples. */
+const HOME_CHORDS = [
+  [45, 52, 57, 60, 64],  // Am
+  [41, 48, 53, 57, 60],  // F
+  [48, 55, 60, 64, 67],  // C
+  [43, 50, 55, 59, 62]   // G
+];
+const HOME_BARS = [0, 1, 2, 3, 0, 1, 2, 3];
+const HOME_ARP = [0, 2, 0, 2, 1, 3, 1, 3];
+const HOME_MELODY = [
+  [],
+  [[76, 1.5, 2.0]],
+  [[72, 0.5, 1.4], [67, 2.5, 1.8]],
+  [[74, 1.0, 2.2]],
+  [[69, 1.0, 2.6]],
+  [[76, 0.5, 1.6], [74, 2.0, 1.8]],
+  [[72, 1.5, 2.2]],
+  [[67, 0.5, 2.0], [76, 2.5, 1.6]]
+];
+
 function startMusic(fade = 4){
   if (!world.sound || music) return;
   const ac = ensureAudio();
   if (!ac) return;
   try {
+    const now = ac.currentTime;
     const master = ac.createGain();
-    const filter = ac.createBiquadFilter();
-    filter.type = 'lowpass';
-    filter.frequency.value = SAFE_BASS ? 900 : 520;
-    filter.Q.value = 0.7;
     const hp = ac.createBiquadFilter();
     hp.type = 'highpass';
-    hp.frequency.value = SAFE_BASS ? 95 : 32;
+    hp.frequency.value = SAFE_BASS ? 72 : 28;
     hp.Q.value = 0.7;
-    const oscs = [];
-    const notes = SAFE_BASS ? [110, 164.81, 220, 329.63] : [55, 82.41, 110, 164.81, 220];
-    notes.forEach((freq, index) => {
-      const osc = ac.createOscillator();
-      osc.type = index === 0 ? 'sine' : (index % 2 ? 'triangle' : 'sine');
-      osc.frequency.value = freq;
-      osc.detune.value = (index - 2) * (SAFE_BASS ? 1.2 : 3);
+    const tone = ac.createBiquadFilter();
+    tone.type = 'lowpass';
+    tone.frequency.value = SAFE_BASS ? 3800 : 5400;
+    tone.Q.value = 0.45;
+    master.connect(hp);
+    hp.connect(tone);
+
+    const dry = ac.createGain();
+    dry.gain.value = 0.78;
+    tone.connect(dry);
+    dry.connect(ac.destination);
+
+    const wet = ac.createGain();
+    wet.gain.value = SAFE_BASS ? 0.18 : 0.24;
+    const delayA = ac.createDelay(1.5);
+    const delayB = ac.createDelay(1.5);
+    delayA.delayTime.value = 0.34;
+    delayB.delayTime.value = 0.53;
+    const dampA = ac.createBiquadFilter();
+    const dampB = ac.createBiquadFilter();
+    dampA.type = dampB.type = 'lowpass';
+    dampA.frequency.value = 1600;
+    dampB.frequency.value = 1200;
+    const fbA = ac.createGain();
+    const fbB = ac.createGain();
+    fbA.gain.value = 0.30;
+    fbB.gain.value = 0.22;
+    tone.connect(delayA); delayA.connect(dampA); dampA.connect(fbA); fbA.connect(delayA);
+    tone.connect(delayB); delayB.connect(dampB); dampB.connect(fbB); fbB.connect(delayB);
+    dampA.connect(wet);
+    dampB.connect(wet);
+    wet.connect(ac.destination);
+
+    master.gain.setValueAtTime(0.0001, now);
+    master.gain.exponentialRampToValueAtTime(SAFE_BASS ? 0.20 : 0.24, now + fade);
+
+    const active = [];
+    const tempo = 66;
+    const beat = 60 / tempo;
+    const stepDur = beat / 2;
+    const barDur = beat * 4;
+    const bars = 8;
+    const totalSteps = bars * 8;
+    let index = 0;
+    let nextTime = now + 0.18;
+    const state = { ac, master, active, timer: 0, lastClock: ac.currentTime, lastWall: performance.now() };
+    music = state;
+
+    function track(node, end) { node.__end = end; active.push(node); return node; }
+    function prune(){
+      for (let i = active.length - 1; i >= 0; i--){
+        const node = active[i];
+        if (node.__end && node.__end < ac.currentTime - 0.35){
+          try { node.stop(); } catch (err) {}
+          active.splice(i, 1);
+        }
+      }
+    }
+
+    function piano(midiNote, t, dur, vel){
+      const note = SAFE_BASS && midiNote < 40 ? midiNote + 12 : midiNote;
+      const end = t + Math.max(0.3, dur);
+      const freq = 440 * Math.pow(2, (note - 69) / 12);
       const gain = ac.createGain();
-      gain.gain.value = (SAFE_BASS ? 0.30 : 0.5) / (index + 1);
-      osc.connect(gain);
-      gain.connect(filter);
-      osc.start();
-      oscs.push(osc);
-    });
-    const shimmer = ac.createOscillator();
-    shimmer.type = 'sine';
-    shimmer.frequency.value = SAFE_BASS ? 659.25 : 523.25;
-    const shimmerGain = ac.createGain();
-    shimmerGain.gain.value = SAFE_BASS ? 0.007 : 0.012;
-    shimmer.connect(shimmerGain);
-    shimmerGain.connect(filter);
-    shimmer.start();
-    oscs.push(shimmer);
-    const lfo = ac.createOscillator();
-    lfo.frequency.value = SAFE_BASS ? 0.055 : 0.035;
-    const lfoGain = ac.createGain();
-    lfoGain.gain.value = SAFE_BASS ? 120 : 180;
-    lfo.connect(lfoGain);
-    lfoGain.connect(filter.frequency);
-    lfo.start();
-    filter.connect(hp);
-    hp.connect(master);
-    master.connect(ac.destination);
-    master.gain.setValueAtTime(0.0001, ac.currentTime);
-    master.gain.exponentialRampToValueAtTime(SAFE_BASS ? 0.016 : 0.028, ac.currentTime + fade);
-    music = { ac, master, filter, hp, oscs, lfo };
-    audioInfo.key = 'ambient';
+      const lp = ac.createBiquadFilter();
+      lp.type = 'lowpass';
+      lp.frequency.value = Math.min(4200, 1800 + (note - 40) * 28);
+      lp.Q.value = 0.35;
+      const o1 = track(ac.createOscillator(), end + 0.1);
+      const o2 = track(ac.createOscillator(), end + 0.1);
+      const o3 = track(ac.createOscillator(), end + 0.1);
+      o1.type = 'triangle';
+      o2.type = 'sine';
+      o3.type = 'sine';
+      o1.frequency.setValueAtTime(freq, t);
+      o2.frequency.setValueAtTime(freq * 2.002, t);
+      o3.frequency.setValueAtTime(freq * 3.004, t);
+      const g1 = ac.createGain();
+      const g2 = ac.createGain();
+      const g3 = ac.createGain();
+      g1.gain.value = 0.72;
+      g2.gain.value = 0.17;
+      g3.gain.value = 0.055;
+      o1.connect(g1); o2.connect(g2); o3.connect(g3);
+      g1.connect(lp); g2.connect(lp); g3.connect(lp);
+      lp.connect(gain);
+      gain.connect(master);
+      gain.gain.setValueAtTime(0.0001, t);
+      gain.gain.linearRampToValueAtTime(Math.max(0.0002, vel), t + 0.009);
+      gain.gain.exponentialRampToValueAtTime(Math.max(0.0002, vel * 0.40), t + 0.18);
+      gain.gain.exponentialRampToValueAtTime(0.0001, end);
+      o1.start(t); o2.start(t); o3.start(t);
+      o1.stop(end + 0.04); o2.stop(end + 0.04); o3.stop(end + 0.04);
+    }
+
+    function pad(midiNote, t, dur, vel){
+      const note = SAFE_BASS && midiNote < 45 ? midiNote + 12 : midiNote;
+      const freq = 440 * Math.pow(2, (note - 69) / 12);
+      const end = t + dur;
+      const o = track(ac.createOscillator(), end + 0.2);
+      const o2 = track(ac.createOscillator(), end + 0.2);
+      const lp = ac.createBiquadFilter();
+      lp.type = 'lowpass';
+      lp.frequency.value = 1150;
+      lp.Q.value = 0.4;
+      const g = ac.createGain();
+      o.type = 'triangle';
+      o2.type = 'sine';
+      o.frequency.setValueAtTime(freq, t);
+      o2.frequency.setValueAtTime(freq * 1.005, t);
+      o.detune.value = -3;
+      o2.detune.value = 4;
+      o.connect(lp); o2.connect(lp);
+      lp.connect(g); g.connect(master);
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.linearRampToValueAtTime(vel, t + Math.min(1.2, dur * 0.3));
+      g.gain.setValueAtTime(vel, t + dur * 0.66);
+      g.gain.exponentialRampToValueAtTime(0.0001, end);
+      o.start(t); o2.start(t);
+      o.stop(end + 0.05); o2.stop(end + 0.05);
+    }
+
+    function scheduleStep(barIndex, s, t){
+      const chord = HOME_CHORDS[HOME_BARS[barIndex]];
+      if (s === 0){
+        piano(chord[0] - (SAFE_BASS ? 0 : 12), t, barDur * 1.5, 0.12);
+        if (!SAFE_BASS) piano(chord[0] + 7, t, barDur * 1.2, 0.035);
+        for (const n of chord.slice(0, 3)) pad(n + 12, t, barDur * 1.08, 0.011);
+        for (const [note, offset, dur] of HOME_MELODY[barIndex]){
+          piano(note, t + offset * beat, dur * beat, 0.075);
+        }
+      }
+      const lift = barIndex >= 4 && s >= 4 ? 12 : 0;
+      piano(chord[HOME_ARP[s]] + 12 + lift, t, stepDur * 2.6, barIndex >= 4 ? 0.052 : 0.044);
+      if (s === 4) piano(chord[0] + 12, t, beat * 1.2, 0.038);
+    }
+
+    function schedule(){
+      if (music !== state) return;
+      if (ac.state !== 'running') return;
+      const now = ac.currentTime;
+      const wall = performance.now();
+      if (Math.abs(now - state.lastClock) < 0.0005){
+        if (wall - state.lastWall > 700) return;
+      } else {
+        state.lastClock = now;
+        state.lastWall = wall;
+      }
+      if (nextTime < now - stepDur) nextTime = now + 0.18;
+      prune();
+      while (nextTime < now + 0.25){
+        const barIndex = Math.floor(index / 8) % bars;
+        const s = index % 8;
+        scheduleStep(barIndex, s, nextTime);
+        nextTime += stepDur;
+        index = (index + 1) % totalSteps;
+      }
+    }
+    state.timer = setInterval(schedule, 25);
+    schedule();
+    audioInfo.key = 'home:piano';
   } catch (err){ /* audio is a bonus */ }
 }
 
 function stopMusic(){
   if (!music) return;
-  const { ac, master, oscs, lfo } = music;
+  const { ac, master, active, timer } = music;
   music = null;
   audioInfo.key = '';
+  clearInterval(timer);
   try {
     master.gain.cancelScheduledValues(ac.currentTime);
     master.gain.setTargetAtTime(0.0001, ac.currentTime, 0.35);
     setTimeout(() => {
-      oscs.forEach((osc) => { try { osc.stop(); } catch (err) {} });
-      try { lfo.stop(); } catch (err) {}
-    }, 700);
+      active.forEach((node) => { try { node.stop(); } catch (err) {} });
+    }, 900);
   } catch (err){ /* ignore */ }
 }
-
 
 /* ---------------- city themes ---------------- */
 
@@ -3952,7 +4094,7 @@ function playSceneMusic(quick){
     startCityTheme(detail.city);
   } else {
     stopCityTheme();
-    startMusic(quick ? 1.4 : 4);
+    startMusic(quick ? 1.4 : 2.8);
   }
 }
 
@@ -6073,8 +6215,8 @@ const GUIDE_ITEMS = [
     en: { title: 'Continent intro', desc: 'First visit infers a continent from the browser timezone, centers the globe and shows a chip; no location permission is requested.', tech: 'Timezone + camera target' }
   },
   {
-    zh: { title: '城市音乐', desc: 'Web Audio 合成环境 pad 与 34 城主题；微信内自动去掉低频 drone，进入城市交叉淡化，退出恢复 ambient。', tech: 'Web Audio + 微信安全混音' },
-    en: { title: 'City music', desc: 'Web Audio synthesizes the ambient pad and 34 city themes; WeChat gets a sub-bass-safe mix, with crossfades in and out of each city.', tech: 'Web Audio + WeChat-safe mix' }
+    zh: { title: '首页与城市音乐', desc: 'Web Audio 合成首页原创钢琴与 34 城主题；微信内自动避开低频，进入城市交叉淡化，退出恢复钢琴。', tech: 'Web Audio + 钢琴主题' },
+    en: { title: 'Home & city music', desc: 'Web Audio synthesizes an original home piano piece and 34 city themes; WeChat gets a low-frequency-safe mix, with crossfades in and out of each city.', tech: 'Web Audio + piano theme' }
   },
   {
     zh: { title: 'HUD 与移动端', desc: 'Orbital Blueprint 网格、扫描线、雷达和目标括号；桌面、平板与手机布局自适应。', tech: 'CSS HUD + 响应式' },
