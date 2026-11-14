@@ -2368,18 +2368,19 @@ function textureLoader(loader, url, timeout = 25000){
   });
 }
 
-async function loadTexture(name, cdnName){
+async function loadTexture(name, cdnName, fallbackName){
   const loader = new THREE.TextureLoader();
   loader.setCrossOrigin('anonymous');
   const urls = [
-    './textures/' + name + '?v=5',
-    'https://threejs.org/examples/textures/planets/' + cdnName
+    './textures/' + name + '?v=6'
   ];
+  if (fallbackName) urls.push('./textures/' + fallbackName + '?v=6');
+  urls.push('https://threejs.org/examples/textures/planets/' + cdnName);
   for (const url of urls){
     const tex = await textureLoader(loader, url);
     if (tex){
       tex.colorSpace = THREE.NoColorSpace;
-      tex.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy());
+      tex.anisotropy = Math.min(16, renderer.capabilities.getMaxAnisotropy());
       tex.needsUpdate = true;
       return tex;
     }
@@ -2397,9 +2398,9 @@ async function loadTextures(){
   }
   setBootStatus('boot-textures');
   const [day, night, clouds] = await Promise.all([
-    loadTexture('earth-day-v2.jpg', 'earth_atmos_2048.jpg'),
-    loadTexture('earth-night-v2.jpg', 'earth_lights_2048.png'),
-    loadTexture('earth-clouds-v2.webp', 'earth_clouds_1024.png')
+    loadTexture('earth-day-2k.webp', 'earth_atmos_2048.jpg', 'earth-day-v2.jpg'),
+    loadTexture('earth-night-2k.webp', 'earth_lights_2048.png', 'earth-night-v2.jpg'),
+    loadTexture('earth-clouds-1k.webp', 'earth_clouds_1024.png', 'earth-clouds-v2.webp')
   ]);
   TEX.day = day || proceduralTexture('day');
   TEX.night = night || proceduralTexture('night');
@@ -2505,7 +2506,7 @@ function proceduralTexture(kind){
 
   const tex = new THREE.CanvasTexture(cv);
   tex.colorSpace = THREE.NoColorSpace;
-  tex.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy());
+  tex.anisotropy = Math.min(16, renderer.capabilities.getMaxAnisotropy());
   tex.needsUpdate = true;
   return tex;
 }
