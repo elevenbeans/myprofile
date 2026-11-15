@@ -505,8 +505,6 @@
   .board-btn{display:none}
   .board{
     position:fixed;left:calc(26px + env(safe-area-inset-left,0px));top:calc(98px + env(safe-area-inset-top,0px));
-    /* 45 rows scroll inside .board__list. -300px reserves the bottom HUD plus
-       a gap so the footer can never be covered; re-check when the HUD changes. */
     width:282px;max-height:calc(100dvh - 300px);z-index:30;display:flex;flex-direction:column;
     padding:14px 14px 10px;border:1px solid var(--line);border-radius:14px;
     background:linear-gradient(180deg,rgba(9,14,23,.66),rgba(6,9,15,.48));
