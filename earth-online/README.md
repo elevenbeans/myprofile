@@ -190,6 +190,13 @@ The home page uses an original slow piano piece in A minor: broken chords, a low
 - Web Audio synthesises the UI cues and the home piano piece, which also plays in every city view. The first pointer/key creates/resumes the AudioContext; opening or leaving a city does not change the soundtrack. The **♪** button in the city header or top bar mutes/unmutes everything; no audio files are loaded.
 - The score API is implemented in `nas-portal/app/api/earth-score/route.ts` and `session/route.ts`, with shared state in `lib/earth-score.ts`.
 
+## Layout invariants
+
+- **A city-count change is a layout change.** The left board is a fixed-height flex column; going from 36 to 45 rows pushed its footer into the bottom HUD at 1600×1000 even though the list itself could scroll.
+- **Never size a fixed panel with a magic `100dvh - N` tuned for the old content.** Reserve the actual bottom HUD height plus a gap (`100dvh - 300px` here), keep the list as the only scroll container, and pin the footer outside it.
+- **A scrollable list needs an affordance.** A clipped row is not enough: keep a visible scrollbar, show the row count (`45 CITIES`), and label the list (`SCROLL`).
+- **Verify with real data at several heights.** Check `1280×800`, `1440×900` and `1600×1000`; assert `list.scrollHeight > list.clientHeight` and `board.bottom < hud.top`, not just “it looks fine” at one size.
+
 ## Known limitations
 
 - All city maps are stylised Orbital Blueprint views, not photo-real. Landmarks use their real structural height and altitude; low landmarks get a closer default zoom rather than an exaggerated scale, so very low monuments (MASP, the Brandenburg Gate, Amsterdam canal houses) can still be small at district scale. Photo-real Google/Amap/Baidu detail would require their platform keys and 3D tiles.
