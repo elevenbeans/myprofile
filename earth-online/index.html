@@ -17,6 +17,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="vendor/maplibre-gl.css">
+<link rel="preconnect" href="https://tiles.openfreemap.org" crossorigin>
+<link rel="preconnect" href="https://server.arcgisonline.com" crossorigin>
+<link rel="preconnect" href="https://api.open-meteo.com" crossorigin>
 <style>
   :root{
     --bg:#04060b;
@@ -3445,10 +3448,13 @@ function selectCity(city, opts = {}){
     setAirLoading();
     loadAir(city);
   }
+  clearTimeout(maplibrePrefetchTimer);
+  maplibrePrefetchTimer = setTimeout(prefetchMapLibre, 800);
 }
 
 function closePanel(opts = {}){
   if (!world.selected) return;
+  clearTimeout(maplibrePrefetchTimer);
   sfx('tick');
   world.selected = null;
   panelEl.classList.remove('is-open');
@@ -5948,6 +5954,20 @@ let shanghaiPins = [];
 let shanghaiRoadLabels = [];
 let shanghaiLoadEl = null;
 let maplibrePromise = null;
+let maplibrePrefetched = false;
+let maplibrePrefetchTimer = 0;
+
+function prefetchMapLibre(){
+  if (maplibrePrefetched || window.maplibregl) return;
+  maplibrePrefetched = true;
+  const conn = navigator.connection;
+  if (conn && (conn.saveData || /(^|-)2g$/.test(conn.effectiveType || ''))) return;
+  const link = document.createElement('link');
+  link.rel = 'prefetch';
+  link.as = 'script';
+  link.href = 'vendor/maplibre-gl.js';
+  document.head.appendChild(link);
+}
 
 function loadMapLibre(){
   if (window.maplibregl) return Promise.resolve(window.maplibregl);
@@ -7173,7 +7193,11 @@ function bindUI(){
   }
 
   $('#closeBtn').addEventListener('click', closePanel);
-  if (enterCityBtn) enterCityBtn.addEventListener('click', () => { if (world.selected) enterCity(world.selected); });
+  if (enterCityBtn){
+    enterCityBtn.addEventListener('click', () => { if (world.selected) enterCity(world.selected); });
+    enterCityBtn.addEventListener('pointerenter', prefetchMapLibre, { once: true });
+    enterCityBtn.addEventListener('focus', prefetchMapLibre, { once: true });
+  }
   if (cityBackEl) cityBackEl.addEventListener('click', exitCity);
   $('#wxRetry').addEventListener('click', () => { if (world.selected){ loadWeather(world.selected, true); loadAir(world.selected, true); } });
   $('#bootReload').addEventListener('click', () => location.reload());
