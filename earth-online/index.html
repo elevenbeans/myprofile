@@ -505,7 +505,7 @@
   .board-btn{display:none}
   .board{
     position:fixed;left:calc(26px + env(safe-area-inset-left,0px));top:calc(98px + env(safe-area-inset-top,0px));
-    width:282px;max-height:calc(100dvh - 220px);z-index:30;display:flex;flex-direction:column;
+    width:282px;max-height:calc(100dvh - 300px);z-index:30;display:flex;flex-direction:column;
     padding:14px 14px 10px;border:1px solid var(--line);border-radius:14px;
     background:linear-gradient(180deg,rgba(9,14,23,.66),rgba(6,9,15,.48));
     -webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);font-family:var(--mono);
@@ -517,9 +517,12 @@
   .board__total{display:flex;align-items:baseline;gap:8px;margin:7px 0 9px;padding-bottom:9px;border-bottom:1px solid var(--line)}
   .board__total b{font-family:var(--mono);font-size:33px;font-weight:300;line-height:1;letter-spacing:-.03em;color:#fff;font-variant-numeric:tabular-nums;text-shadow:0 0 26px rgba(212,163,115,.2)}
   .board__total span{font-family:var(--mono);font-size:8.5px;letter-spacing:.14em;color:var(--dim);text-transform:uppercase}
-  .board__list{min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:1px;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.14) transparent}
-  .board__list::-webkit-scrollbar{width:3px}
-  .board__list::-webkit-scrollbar-thumb{background:rgba(255,255,255,.14);border-radius:3px}
+  .board__count{margin-left:auto;color:var(--dim);font-size:8px;letter-spacing:.12em;white-space:nowrap}
+  .board__list{flex:1 1 auto;min-height:0;overflow-y:scroll;display:flex;flex-direction:column;gap:1px;scrollbar-gutter:stable;overscroll-behavior:contain}
+  .board__list::-webkit-scrollbar{width:6px}
+  .board__list::-webkit-scrollbar-track{background:rgba(255,255,255,.035);border-radius:6px}
+  .board__list::-webkit-scrollbar-thumb{background:rgba(255,255,255,.26);border-radius:6px}
+  .board__list::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.40)}
   .board__row{display:grid;grid-template-columns:18px 1fr auto;align-items:center;gap:7px;width:100%;padding:4px 5px;border:0;border-radius:5px;background:transparent;font:inherit;font-size:11.5px;line-height:1.45;color:var(--muted);text-align:left;cursor:pointer;transition:background .2s,color .2s}
   .board__row .rank{font-size:8.5px;color:var(--dim);text-align:right;font-variant-numeric:tabular-nums}
   .board__row .name{color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -534,9 +537,10 @@
   .board__row.is-first:hover{background:rgba(212,163,115,.14)}
   .board__row:focus-visible{outline:1px solid var(--accent);outline-offset:-1px;background:rgba(255,255,255,.06)}
   .board__empty{padding:18px 4px;font-size:10px;color:var(--dim);line-height:1.7}
-  .board__foot{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:8px;padding-top:8px;border-top:1px solid var(--line);font-size:8px;letter-spacing:.06em;color:var(--dim)}
+  .board__foot{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:8px;padding-top:8px;border-top:1px solid var(--line);font-size:8px;letter-spacing:.06em;color:var(--dim)}
   .board__foot button{border:0;background:none;padding:0;color:var(--muted);font:inherit;font-size:8.5px;letter-spacing:.05em;cursor:pointer;text-transform:uppercase}
   .board__foot button:hover{color:var(--accent)}
+  .board__scroll{font-size:7px;letter-spacing:.16em;color:rgba(232,238,248,.42);text-transform:uppercase;white-space:nowrap}
 
   .city-scoreline{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-top:11px;font-family:var(--mono);font-size:8.5px;letter-spacing:.14em;color:var(--dim);text-transform:uppercase}
   .city-scoreline b{font-size:18px;font-weight:400;letter-spacing:0;color:var(--accent);font-variant-numeric:tabular-nums}
@@ -1105,10 +1109,11 @@
 
   <aside class="board" id="board" aria-label="CITY SCORE" data-i18n-aria="board-label">
     <div class="board__head"><span data-i18n="board-label">CITY SCORE</span><span id="boardStatus" class="board__status">SYNCING</span></div>
-    <div class="board__total"><b id="boardTotal">0</b><span data-i18n="board-total">总分</span></div>
+    <div class="board__total"><b id="boardTotal">0</b><span data-i18n="board-total">总分</span><span class="board__count" id="boardCount">45 CITIES</span></div>
     <div class="board__list" id="boardList" aria-live="polite"></div>
     <div class="board__foot">
       <button type="button" id="boardRefresh" data-i18n="board-refresh">刷新</button>
+      <span class="board__scroll" aria-hidden="true">SCROLL</span>
       <span id="boardUpdated">—</span>
     </div>
   </aside>
@@ -1321,6 +1326,8 @@ const CITIES = [
 
 const hudCitiesEl = document.getElementById('hudCities');
 if (hudCitiesEl) hudCitiesEl.textContent = CITIES.length + ' CITIES';
+const boardCountEl = document.getElementById('boardCount');
+if (boardCountEl) boardCountEl.textContent = CITIES.length + ' CITIES';
 
 const I18N = {
   zh: {
