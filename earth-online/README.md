@@ -1,6 +1,6 @@
 # Earth Online · mini
 
-A real-time, shareable Earth for [elevenbeans.me](https://elevenbeans.me) — NASA globe, live weather, a shared city score board, and a MapLibre/OSM **Orbital Blueprint** 3D city view for **all 36 cities**.
+A real-time, shareable Earth for [elevenbeans.me](https://elevenbeans.me) — NASA globe, live weather, a shared city score board, and a MapLibre/OSM **Orbital Blueprint** 3D city view for **all 45 cities**.
 
 > Homepage project: https://elevenbeans.me/earth-online/. Self-contained under `earth-online/`. No build step and no framework. The shared score API lives on the NAS in `nas/nas-portal`; this README is also the `earth-online` project doc read by the NAS profile-chat assistant.
 
@@ -10,7 +10,7 @@ A real-time, shareable Earth for [elevenbeans.me](https://elevenbeans.me) — NA
 
 - **Focus a city — +5.** Click or tap a marker dot **or its label**. The camera flies in, the weather panel opens, and the shared city score increments.
 - **Enter the city — +10.** The panel's **进入城市 · +10** button opens a full-screen Orbital Blueprint map of the city's signature district, with OSM building footprints/heights, a blueprint landmark layer, and local labels. Repeatable: come back and enter again for another +10.
-- **Shared city score.** The left board lists all 36 cities, highest first, with the total shared across every visitor. On mobile the same board opens from the **▤** button in the top bar.
+- **Shared city score.** The left board lists all 45 cities, highest first, with the total shared across every visitor. On mobile the same board opens from the **▤** button in the top bar.
 - **First-visit continent intro.** The globe infers the visitor's continent from the browser timezone (no location permission prompt), centers on it, and shows a small continent chip. A city hash or `?city=` deep link skips the intro.
 - **No economy.** There are no credits, contracts, levels, combos, ranks, stability or demolition/rebuild. The visit itself is the score.
 - **Technical game guide.** A bottom-right **? / GUIDE** entry opens a complete, bilingual feature list; each feature includes a one-line implementation note capped at 20 characters.
@@ -22,7 +22,7 @@ A real-time, shareable Earth for [elevenbeans.me](https://elevenbeans.me) — NA
 | Focus a city (marker click) | +5 |
 | Enter the 3D city detail | +10 |
 
-- Scores are **global**, not per user; all visitors share the same counters. The board is sorted descending and always shows all 36 cities. Clicking a board row is a navigation shortcut: it focuses the city and opens the panel, but does **not** add points; only globe marker focus (+5) and entering the city (+10) score.
+- Scores are **global**, not per user; all visitors share the same counters. The board is sorted descending and always shows all 45 cities. Clicking a board row is a navigation shortcut: it focuses the city and opens the panel, but does **not** add points; only globe marker focus (+5) and entering the city (+10) score.
 - The client updates optimistically, sends a session-token event immediately, and queues failed events in `localStorage` for retry. The board shows `SYNCING`, `离线 · N`, or `LIVE`.
 - The NAS issues short-lived session tokens and applies a small per-token/city/action cooldown (0.8 s focus, 1.5 s detail) plus an IP rate limit. Very rapid repeats may show **操作太快 · 本次未计分**.
 - Events carry an idempotency `eventId`, so a retry after a lost response does not double-count.
@@ -36,7 +36,7 @@ Every city now opens the same MapLibre/OSM city view instead of a procedural dio
 - **OpenFreeMap / OpenStreetMap** supplies building footprints and `render_height` values, extruded in 3D.
 - **Esri World Dark Gray / Light Gray Base** is used as a no-key raster fallback so a city is still readable when vector tiles are slow or unavailable.
 - **Orbital Blueprint palette, day and night:** the city's local solar altitude picks the theme. Night keeps deep navy land/water, cyan building outlines and roads, cyan grid/scanlines and radar, with amber labels and score. Daylight switches to pale blue-gray paper, mid-blue buildings, dark teal lines and the same amber accents. The `TACTICAL SCHEMATIC` HUD ends in `DAY` or `NIGHT`. The phase is re-checked while a city stays open, so sunrise/sunset repaints the map in place. No satellite layer is used.
-- Each city has a **blueprint landmark layer** drawn in a Three.js custom layer. Where the OSM massing already reads as the landmark (Empire State, Burj Khalifa, CN Tower, Ryugyong Hotel, Gateway of India, Bank of China Tower, Taipei 101, Chengdu IFS, Raffles City Chongqing, CITIC Tower, Shanghai Tower, Canton Tower, Tokyo Tower, Big Ben, Arc de Triomphe, Salesforce Tower, N Seoul Tower, Marina Bay Sands, Bitexco Tower, St. Basil's, the Giza pyramids, the Brandenburg Gate, the Royal Palace of Madrid, Istanbul Sapphire, King Power Mahanakhon, Portside Tower, Edifício Itália, Sydney Tower, Westerkerk, Eureka Tower, Ping An Finance Centre, the Colosseum), the map model is the landmark and a real-height **lock-on frame** adds a ground survey ring, tapered guide volume, altitude ruler and amber beacon. Everywhere else a **structural edge wireframe** carries the silhouette that a single-height extrusion cannot: Potala Palace. Xi'an uses a ground **district highlight** for Datang Everbright City instead of a 3D landmark, because the Bell Tower, City Wall and pagoda have no usable OSM building mass.
+- Each city has a **blueprint landmark layer** drawn in a Three.js custom layer. Where the OSM massing already reads as the landmark (Empire State, Burj Khalifa, CN Tower, Ryugyong Hotel, Gateway of India, Bank of China Tower, Taipei 101, Chengdu IFS, Raffles City Chongqing, CITIC Tower, Shanghai Tower, Canton Tower, Tokyo Tower, Big Ben, Arc de Triomphe, Salesforce Tower, N Seoul Tower, Marina Bay Sands, Bitexco Tower, St. Basil's, the Giza pyramids, the Brandenburg Gate, the Royal Palace of Madrid, Istanbul Sapphire, King Power Mahanakhon, Portside Tower, Edifício Itália, Sydney Tower, Westerkerk, Eureka Tower, Ping An Finance Centre, the Colosseum, Petronas Towers, Willis Tower, Sagrada Família, Gran Torre Santiago, Hassan II Mosque, Abeno Harukas, Monas, Zifeng Tower), the map model is the landmark and a real-height **lock-on frame** adds a ground survey ring, tapered guide volume, altitude ruler and amber beacon. Everywhere else a **structural edge wireframe** carries the silhouette that a single-height extrusion cannot: Potala Palace and the Las Vegas High Roller. Xi'an uses a ground **district highlight** for Datang Everbright City instead of a 3D landmark, because the Bell Tower, City Wall and pagoda have no usable OSM building mass. Marrakech uses the same ground highlight for Jemaa el-Fna / Koutoubia; Casablanca stays on OSM because the Hassan II minaret has a usable mass.
 - Urumqi uses the same low-rise **district** treatment for the Grand Bazaar / Erdaoqiao: the bazaar model is structural, ALT is hidden, and the district outline is a hand approximation because the OSM footprint is complex and height tags are missing.
 - **No API key** is required at runtime; internet access is required for the raster/vector tiles.
 
@@ -80,6 +80,15 @@ The city view is the real-map district described above, with a blueprint landmar
 | Chongqing | Raffles City |
 | Shenzhen | Ping An Finance Centre |
 | Guangzhou | Canton Tower |
+| Kuala Lumpur | Petronas Towers |
+| Chicago | Willis Tower |
+| Barcelona | Sagrada Família |
+| Santiago | Gran Torre Santiago |
+| Casablanca | Hassan II Mosque |
+| Osaka | Abeno Harukas |
+| Jakarta | Monas |
+| Nanjing | Zifeng Tower |
+| Marrakech | Jemaa el-Fna (district) |
 | Lhasa | Potala Palace |
 | Taipei | Taipei 101 |
 
@@ -87,7 +96,7 @@ Drag to pan, scroll or pinch to zoom, right-drag or two fingers rotate/pitch the
 
 ## Screenshots
 
-One city per render mode. All 36 share the MapLibre/OSM basemap; only the landmark overlay differs. These are night captures; daytime cities use the pale daylight variant.
+One city per render mode. All 45 share the MapLibre/OSM basemap; only the landmark overlay differs. These are night captures; daytime cities use the pale daylight variant.
 
 | OSM mass + lock-on — Dubai | Structural wireframe — Lhasa |
 | --- | --- |
@@ -171,7 +180,7 @@ The home page uses an original slow piano piece in A minor: broken chords, a low
 - `vendor/three.module.min.js` is Three.js r160 (MIT), loaded locally with a CDN fallback.
 - `vendor/maplibre-gl.js` + CSS are MapLibre GL JS 4.7 (BSD-3), loaded locally for every city view.
 - Each city's 3D layer is a MapLibre `fill-extrusion` of the `building` source-layer from OpenFreeMap, combined with water/road layers, an Esri dark-gray raster fallback, a blueprint HUD overlay and HTML landmark labels. No building data file is bundled; tiles are fetched at runtime.
-- Each landmark is a separate Three.js custom layer on the MapLibre canvas. The thirty-two OSM-readable landmarks get a lock-on frame tied to the map's `building:part` massing; the rest get structural edges (`EdgesGeometry`, not a triangulated wireframe) over a dim volume, scaled to its real height. Every city view shows a real `ALT` readout in the landmark HUD. Both use a ground survey ring and an amber beacon.
+- Each landmark is a separate Three.js custom layer on the MapLibre canvas. The forty OSM-readable landmarks get a lock-on frame tied to the map's `building:part` massing; the rest get structural edges (`EdgesGeometry`, not a triangulated wireframe) over a dim volume, scaled to its real height. Every city view shows a real `ALT` readout in the landmark HUD. Both use a ground survey ring and an amber beacon.
 - `textures/` holds NASA day (2048×1024 WebP), night-lights (2048×1024 WebP) and cloud (1024×512 WebP) maps, with the previous 1K files as a local fallback and the Three.js CDN as a second fallback. On desktop, after the camera zooms in (`orbit.dist < 2.75`), a 4K day/night + 2K cloud set loads in the background and swaps in; mobile and WeChat stay on 2K. Textures use `?v=6` (2K) / `?v=7` (4K) and anisotropy 16.
 - The globe uses a custom shader to blend day/night maps at the real subsolar point, with a warm terminator band, atmospheric rim, stars, clouds and great-circle arcs.
 - City markers are HTML buttons projected from 3D positions each frame, so they stay crisp and keyboard accessible.

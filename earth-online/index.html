@@ -4,10 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Earth Online · mini — 地球 Online</title>
-<meta name="description" content="A real-time 3D Earth with 36 cities, live weather, shared city scores, and MapLibre/OSM Orbital Blueprint city views. Focus +5, enter a city +10.">
+<meta name="description" content="A real-time 3D Earth with 45 cities, live weather, shared city scores, and MapLibre/OSM Orbital Blueprint city views. Focus +5, enter a city +10.">
 <meta name="theme-color" content="#04060b">
 <meta property="og:title" content="Earth Online · mini">
-<meta property="og:description" content="A real-time 3D Earth with 36 cities, live weather, shared scores, and Orbital Blueprint city maps.">
+<meta property="og:description" content="A real-time 3D Earth with 45 cities, live weather, shared scores, and Orbital Blueprint city maps.">
 <meta property="og:type" content="website">
 <meta property="og:image" content="https://elevenbeans.me/earth-online/preview/home.webp">
 <meta name="twitter:card" content="summary_large_image">
@@ -1307,7 +1307,16 @@ const CITIES = [
   { id:'toronto',      name:{zh:'多伦多',en:'Toronto'},     country:{zh:'加拿大',en:'Canada'},    lat:43.6532,  lon:-79.3832,  tz:'America/Toronto' },
   { id:'madrid',       name:{zh:'马德里',en:'Madrid'},      country:{zh:'西班牙',en:'Spain'},     lat:40.4168,  lon:-3.7038,   tz:'Europe/Madrid' },
   { id:'rome',         name:{zh:'罗马',en:'Rome'},          country:{zh:'意大利',en:'Italy'},     lat:41.9028,  lon:12.4964,   tz:'Europe/Rome' },
-  { id:'melbourne',    name:{zh:'墨尔本',en:'Melbourne'},   country:{zh:'澳大利亚',en:'Australia'},lat:-37.8136, lon:144.9631,  tz:'Australia/Melbourne' }
+  { id:'melbourne',    name:{zh:'墨尔本',en:'Melbourne'},   country:{zh:'澳大利亚',en:'Australia'},lat:-37.8136, lon:144.9631,  tz:'Australia/Melbourne' },
+  { id:'kualalumpur',  name:{zh:'吉隆坡',en:'Kuala Lumpur'},country:{zh:'马来西亚',en:'Malaysia'},lat:3.1579,  lon:101.7117,  tz:'Asia/Kuala_Lumpur' },
+  { id:'chicago',      name:{zh:'芝加哥',en:'Chicago'},     country:{zh:'美国',en:'USA'},         lat:41.8789,  lon:-87.6359,  tz:'America/Chicago' },
+  { id:'barcelona',    name:{zh:'巴塞罗那',en:'Barcelona'}, country:{zh:'西班牙',en:'Spain'},     lat:41.4036,  lon:2.1744,    tz:'Europe/Madrid' },
+  { id:'santiago',     name:{zh:'圣地亚哥',en:'Santiago'},  country:{zh:'智利',en:'Chile'},       lat:-33.4166, lon:-70.6067,  tz:'America/Santiago' },
+  { id:'casablanca',   name:{zh:'卡萨布兰卡',en:'Casablanca'},country:{zh:'摩洛哥',en:'Morocco'}, lat:33.6086,  lon:-7.6325,   tz:'Africa/Casablanca' },
+  { id:'osaka',        name:{zh:'大阪',en:'Osaka'},         country:{zh:'日本',en:'Japan'},       lat:34.6458,  lon:135.5140,  tz:'Asia/Tokyo' },
+  { id:'jakarta',      name:{zh:'雅加达',en:'Jakarta'},     country:{zh:'印度尼西亚',en:'Indonesia'},lat:-6.1754, lon:106.8272, tz:'Asia/Jakarta' },
+  { id:'nanjing',      name:{zh:'南京',en:'Nanjing'},       country:{zh:'中国',en:'China'},       lat:32.0617,  lon:118.7778,  tz:'Asia/Shanghai' },
+  { id:'marrakech',    name:{zh:'马拉喀什',en:'Marrakech'}, country:{zh:'摩洛哥',en:'Morocco'},   lat:31.6250,  lon:-7.9900,   tz:'Africa/Casablanca' }
 ];
 
 const hudCitiesEl = document.getElementById('hudCities');
@@ -4391,13 +4400,22 @@ const LANDMARKS = {
   toronto:      { type:'cntower',      name:{zh:'CN塔',en:'CN Tower'},                color:0x9aa8b5, accent:0x7fd3ff, scale:1.00, theme:'americas' },
   madrid:       { type:'royalpalace',  name:{zh:'马德里王宫',en:'Royal Palace'},      color:0xc9a46a, accent:0xf0d9b5, scale:1.00, theme:'europe' },
   rome:         { type:'colosseum',    name:{zh:'斗兽场',en:'Colosseum'},             color:0xd9b26f, accent:0xb98a4a, scale:1.00, theme:'europe' },
-  melbourne:    { type:'eureka',       name:{zh:'Eureka 大厦',en:'Eureka Tower'},     color:0x9fb6c9, accent:0xd9b26f, scale:1.00, theme:'oceania' }
+  melbourne:    { type:'eureka',       name:{zh:'Eureka 大厦',en:'Eureka Tower'},     color:0x9fb6c9, accent:0xd9b26f, scale:1.00, theme:'oceania' },
+  kualalumpur:  { type:'petronas',     name:{zh:'双子塔',en:'Petronas Towers'},        color:0x9fb6c9, accent:0x7fd3ff, scale:1.00, theme:'tropical' },
+  chicago:      { type:'willis',       name:{zh:'Willis 大厦',en:'Willis Tower'},      color:0x9aa8b5, accent:0x7fd3ff, scale:1.00, theme:'americas' },
+  barcelona:    { type:'sagrada',      name:{zh:'圣家堂',en:'Sagrada Família'},       color:0xd9b26f, accent:0xf0d9b5, scale:1.00, theme:'europe' },
+  santiago:     { type:'grantorre',    name:{zh:'大圣地亚哥塔',en:'Gran Torre Santiago'},color:0x9fb6c9, accent:0x7fd3ff, scale:1.00, theme:'americas' },
+  casablanca:   { type:'hassan',       name:{zh:'哈桑二世清真寺',en:'Hassan II Mosque'},color:0xd9b26f, accent:0xf0d9b5, scale:1.00, theme:'africa' },
+  osaka:        { type:'abeno',        name:{zh:'阿倍野 Harukas',en:'Abeno Harukas'},  color:0x9fb6c9, accent:0xffb347, scale:1.00, theme:'asia' },
+  jakarta:      { type:'monas',        name:{zh:'独立纪念碑',en:'Monas'},             color:0xcfd6dd, accent:0xffb347, scale:1.00, theme:'tropical' },
+  nanjing:      { type:'zifeng',       name:{zh:'紫峰大厦',en:'Zifeng Tower'},         color:0x9fb6c9, accent:0x7fd3ff, scale:1.00, theme:'asia' },
+  marrakech:    { type:'marrakech',    name:{zh:'Jemaa el-Fna',en:'Jemaa el-Fna'},     color:0xc9a46a, accent:0xffb347, scale:1.00, theme:'africa' }
 };
 
 const LANDMARK_HEIGHTS = {
   eiffel: 33, empire: 36, burj: 64, bigben: 26, bank: 28, marina: 27,
   stbasil: 20, pyramid: 13, seoul: 34, gate: 16, pingan: 50, canton: 42, potala: 20, taipei101: 48,
-  brandenburg: 14, ryugyong: 40, bitexco: 36, cntower: 50, royalpalace: 16, colosseum: 14, ifs: 24, raffles: 30, citic: 52, shanghaitower: 63, arc: 15, salesforce: 40, highroller: 56, bazaar: 32, sapphire: 28, mahanakhon: 31, portside: 14, italia: 17, sydneytower: 31, westerkerk: 8, eureka: 30, datang: 10
+  brandenburg: 14, ryugyong: 40, bitexco: 36, cntower: 50, royalpalace: 16, colosseum: 14, ifs: 24, raffles: 30, citic: 52, shanghaitower: 63, arc: 15, salesforce: 40, highroller: 56, bazaar: 32, sapphire: 28, mahanakhon: 31, portside: 14, italia: 17, sydneytower: 31, westerkerk: 8, eureka: 30, datang: 10, petronas: 45, willis: 44, sagrada: 18, grantorre: 30, hassan: 21, abeno: 30, monas: 13, zifeng: 45, marrakech: 10
 };
 
 let cityPhaseDay = false;
@@ -4960,6 +4978,102 @@ function buildDatang(cfg){
   return g;
 }
 
+
+function buildPetronas(cfg){
+  const g = new THREE.Group();
+  for (const x of [-3.6, 3.6]){
+    for (let i = 0; i < 7; i++){
+      const w = 3.0 - i * 0.18;
+      lbox(g, w, 5, w, cfg.color, x, 2 + i * 5, 0);
+      lbox(g, w + 0.1, 0.16, w + 0.1, cfg.accent, x, 2 + i * 5 + 4.9, 0);
+    }
+    lcyl(g, 0.2, 0.5, 6, cfg.accent, x, 38, 0, 8);
+  }
+  lbox(g, 7.4, 0.45, 0.6, cfg.accent, 0, 23, 0);
+  return g;
+}
+function buildWillis(cfg){
+  const g = new THREE.Group();
+  lbox(g, 12, 3, 12, 0x3a3f45, 0, 0, 0);
+  for (let i = 0; i < 6; i++){
+    const w = 8.2 - i * 0.7;
+    lbox(g, w, 6.4, w, cfg.color, 0, 3 + i * 6.4, 0);
+    lbox(g, w + 0.15, 0.14, w + 0.15, cfg.accent, 0, 3 + i * 6.4 + 6.25, 0);
+  }
+  lcyl(g, 0.2, 0.5, 5, cfg.accent, 0, 41.5, 0, 6);
+  return g;
+}
+function buildSagrada(cfg){
+  const g = new THREE.Group();
+  lbox(g, 12, 3, 9, 0x6b6256, 0, 0, 0);
+  lbox(g, 9, 6, 7, cfg.color, 0, 3, 0);
+  for (const [x, z] of [[-3.6,-2.6],[3.6,-2.6],[-3.6,2.6],[3.6,2.6]]){
+    lcone(g, 1.3, 9, cfg.color, x, 9, z, 6);
+    lbox(g, 1.2, 1.2, 1.2, cfg.accent, x, 18, z);
+  }
+  lcone(g, 2.2, 8, cfg.accent, 0, 9, 0, 8);
+  return g;
+}
+function buildGranTorre(cfg){
+  const g = new THREE.Group();
+  lbox(g, 10, 3, 10, 0x3a3f45, 0, 0, 0);
+  lbox(g, 6.4, 25, 6.4, cfg.color, 0, 3, 0);
+  for (let i = 0; i < 6; i++) lbox(g, 6.6, 0.14, 6.6, cfg.accent, 0, 5 + i * 4, 0);
+  lbox(g, 7.2, 1.4, 7.2, cfg.accent, 0, 28, 0);
+  lcyl(g, 0.2, 0.5, 3, cfg.accent, 0, 29.4, 0, 6);
+  return g;
+}
+function buildHassan(cfg){
+  const g = new THREE.Group();
+  lbox(g, 13, 3, 9, 0x8c7a5e, 0, 0, 0);
+  lbox(g, 8, 4, 6, cfg.color, 0, 3, 0);
+  lbox(g, 1.6, 18, 1.6, cfg.color, 0, 3, 0);
+  lbox(g, 2.0, 0.5, 2.0, cfg.accent, 0, 21, 0);
+  lcone(g, 1.6, 2.2, cfg.accent, 0, 21.5, 0, 4);
+  lcyl(g, 0.1, 0.3, 2, cfg.accent, 0, 23.7, 0, 6);
+  return g;
+}
+function buildAbeno(cfg){
+  const g = new THREE.Group();
+  lbox(g, 10, 3, 10, 0x3a3f45, 0, 0, 0);
+  lbox(g, 6.8, 25, 6.8, cfg.color, 0, 3, 0);
+  for (let i = 0; i < 7; i++) lbox(g, 7.0, 0.12, 7.0, cfg.accent, 0, 4.5 + i * 3.4, 0);
+  lbox(g, 7.4, 1.4, 7.4, cfg.accent, 0, 28, 0);
+  lcyl(g, 0.2, 0.4, 3, cfg.accent, 0, 29.4, 0, 6);
+  return g;
+}
+function buildMonas(cfg){
+  const g = new THREE.Group();
+  lbox(g, 10, 3, 10, 0x3a3f45, 0, 0, 0);
+  lcyl(g, 1.6, 2.6, 10, cfg.color, 0, 3, 0, 8);
+  lbox(g, 3.2, 0.5, 3.2, cfg.accent, 0, 13, 0);
+  lcone(g, 1.4, 2.4, cfg.accent, 0, 13.5, 0, 8);
+  return g;
+}
+function buildZifeng(cfg){
+  const g = new THREE.Group();
+  lbox(g, 11, 3, 11, 0x3a3f45, 0, 0, 0);
+  for (let i = 0; i < 7; i++){
+    const w = 6.8 - i * 0.55;
+    lbox(g, w, 5.6, w, cfg.color, 0, 3 + i * 5.6, 0);
+    lbox(g, w + 0.12, 0.14, w + 0.12, cfg.accent, 0, 3 + i * 5.6 + 5.5, 0);
+  }
+  lcyl(g, 0.2, 0.5, 4, cfg.accent, 0, 42, 0, 6);
+  return g;
+}
+function buildMarrakech(cfg){
+  const g = new THREE.Group();
+  for (let i = 0; i < 8; i++){
+    const x = (i % 4 - 1.5) * 3.2, z = (Math.floor(i / 4) - 0.5) * 4.5;
+    lbox(g, 2.6, 2.2, 3.2, cfg.color, x, 0, z);
+    lbox(g, 3.2, 0.4, 3.8, cfg.accent, x, 2.2, z);
+  }
+  lbox(g, 2.0, 9, 2.0, cfg.color, -6, 0, 0);
+  lbox(g, 2.4, 0.5, 2.4, cfg.accent, -6, 9, 0);
+  lcone(g, 1.8, 2.4, cfg.accent, -6, 9.5, 0, 4);
+  return g;
+}
+
 function buildLandmark(cfg){
   switch (cfg.type){
     case 'eiffel': return buildEiffel(cfg);
@@ -4998,6 +5112,15 @@ function buildLandmark(cfg){
     case 'cntower': return buildCnTower(cfg);
     case 'royalpalace': return buildRoyalPalace(cfg);
     case 'colosseum': return buildColosseum(cfg);
+    case 'petronas': return buildPetronas(cfg);
+    case 'willis': return buildWillis(cfg);
+    case 'sagrada': return buildSagrada(cfg);
+    case 'grantorre': return buildGranTorre(cfg);
+    case 'hassan': return buildHassan(cfg);
+    case 'abeno': return buildAbeno(cfg);
+    case 'monas': return buildMonas(cfg);
+    case 'zifeng': return buildZifeng(cfg);
+    case 'marrakech': return buildMarrakech(cfg);
     default: return buildEmpire(cfg);
   }
 }
@@ -5710,6 +5833,105 @@ const CITY_MAPS = {
       {id:'yarra',name:{zh:'雅拉河',en:'Yarra River'},lng:144.965,lat:-37.82,height:0}
     ],
     roads:[{zh:'南岸大道',en:'Southbank Blvd',lng:144.965,lat:-37.821}]
+  },
+  kualalumpur: {
+    center:[101.711792,3.157921], zoom:14.8, pitch:55, bearing:18, origin:[101.711792,3.157921], height:452,
+    label:{zh:'双子塔 · KLCC',en:'Petronas Towers · KLCC'},
+    points:[
+      {id:'petronas',name:{zh:'双子塔',en:'Petronas Towers'},lng:101.711792,lat:3.157921,height:452,major:true},
+      {id:'klcc',name:{zh:'KLCC 公园',en:'KLCC Park'},lng:101.713,lat:3.156,height:0},
+      {id:'suria',name:{zh:'阳光广场',en:'Suria KLCC'},lng:101.712,lat:3.158,height:0},
+      {id:'menara',name:{zh:'吉隆坡塔',en:'KL Tower'},lng:101.7037,lat:3.1528,height:421}
+    ],
+    roads:[{zh:'安邦路',en:'Jalan Ampang',lng:101.713,lat:3.159},{zh:'P. Ramlee 路',en:'Jalan P. Ramlee',lng:101.710,lat:3.156}]
+  },
+  chicago: {
+    center:[-87.635985,41.878905], zoom:14.6, pitch:55, bearing:20, origin:[-87.635985,41.878905], height:442,
+    label:{zh:'Willis 大厦 · 卢普区',en:'Willis Tower · The Loop'},
+    points:[
+      {id:'willis',name:{zh:'Willis 大厦',en:'Willis Tower'},lng:-87.635985,lat:41.878905,height:442,major:true},
+      {id:'riverwalk',name:{zh:'芝加哥河滨',en:'Chicago Riverwalk'},lng:-87.637,lat:41.888,height:0},
+      {id:'cloudgate',name:{zh:'云门',en:'Cloud Gate'},lng:-87.623,lat:41.8827,height:0},
+      {id:'hancock',name:{zh:'875 N Michigan',en:'875 N Michigan'},lng:-87.6238,lat:41.8986,height:344}
+    ],
+    roads:[{zh:'Wacker 大道',en:'Wacker Dr',lng:-87.637,lat:41.886},{zh:'Adams 街',en:'Adams St',lng:-87.636,lat:41.879}]
+  },
+  barcelona: {
+    center:[2.174348,41.40359], zoom:15.6, pitch:55, bearing:-18, origin:[2.174348,41.40359], height:185,
+    label:{zh:'圣家堂 · 扩展区',en:'Sagrada Família · Eixample'},
+    points:[
+      {id:'sagrada',name:{zh:'圣家堂',en:'Sagrada Família'},lng:2.174348,lat:41.40359,height:185,major:true},
+      {id:'gracia',name:{zh:'米拉之家',en:'Casa Milà'},lng:2.1619,lat:41.3954,height:0},
+      {id:'batllo',name:{zh:'巴特罗之家',en:'Casa Batlló'},lng:2.1649,lat:41.3917,height:0},
+      {id:'glories',name:{zh:'荣耀广场',en:'Glòries'},lng:2.187,lat:41.403,height:0}
+    ],
+    roads:[{zh:'马略卡街',en:'Carrer de Mallorca',lng:2.174,lat:41.404},{zh:'对角线大道',en:'Avinguda Diagonal',lng:2.180,lat:41.398}]
+  },
+  santiago: {
+    center:[-70.606797,-33.416927], zoom:14.8, pitch:55, bearing:18, origin:[-70.606797,-33.416927], height:300,
+    label:{zh:'Gran Torre · 圣地亚哥',en:'Gran Torre Santiago'},
+    points:[
+      {id:'grantorre',name:{zh:'大圣地亚哥塔',en:'Gran Torre Santiago'},lng:-70.606797,lat:-33.416927,height:300,major:true},
+      {id:'santalucia',name:{zh:'圣卢西亚山',en:'Santa Lucía Hill'},lng:-70.642,lat:-33.440,height:0},
+      {id:'moneda',name:{zh:'拉莫内达宫',en:'La Moneda'},lng:-70.653,lat:-33.442,height:0},
+      {id:'plaza',name:{zh:'武器广场',en:'Plaza de Armas'},lng:-70.650,lat:-33.437,height:0}
+    ],
+    roads:[{zh:'解放者大道',en:'Av. Libertador',lng:-70.607,lat:-33.417},{zh:'阿拉梅达',en:'Alameda',lng:-70.640,lat:-33.440}]
+  },
+  casablanca: {
+    center:[-7.632787,33.608011], zoom:15.2, pitch:50, bearing:-20, origin:[-7.632787,33.608011], height:210,
+    label:{zh:'哈桑二世清真寺 · 大西洋',en:'Hassan II Mosque · Atlantic'},
+    points:[
+      {id:'hassan',name:{zh:'哈桑二世清真寺',en:'Hassan II Mosque'},lng:-7.632787,lat:33.608011,height:210,major:true},
+      {id:'medina',name:{zh:'老城',en:'Old Medina'},lng:-7.620,lat:33.600,height:0},
+      {id:'corniche',name:{zh:'海滨大道',en:'Corniche'},lng:-7.640,lat:33.595,height:0},
+      {id:'anfa',name:{zh:'安法',en:'Anfa'},lng:-7.660,lat:33.590,height:0}
+    ],
+    roads:[{zh:'海滨大道',en:'Blvd de la Corniche',lng:-7.638,lat:33.596},{zh:'Sidi Mohammed Ben Abdallah',en:'Blvd Sidi Mohammed Ben Abdallah',lng:-7.630,lat:33.604}]
+  },
+  osaka: {
+    center:[135.513498,34.645994], zoom:15.0, pitch:55, bearing:-18, origin:[135.513498,34.645994], height:300,
+    label:{zh:'阿倍野 Harukas · 天王寺',en:'Abeno Harukas · Tennoji'},
+    points:[
+      {id:'abeno',name:{zh:'阿倍野 Harukas',en:'Abeno Harukas'},lng:135.513498,lat:34.645994,height:300,major:true},
+      {id:'tennoji',name:{zh:'天王寺公园',en:'Tennoji Park'},lng:135.514,lat:34.647,height:0},
+      {id:'tsutenkaku',name:{zh:'通天阁',en:'Tsutenkaku'},lng:135.506,lat:34.652,height:0},
+      {id:'shitennoji',name:{zh:'四天王寺',en:'Shitennoji'},lng:135.516,lat:34.654,height:0}
+    ],
+    roads:[{zh:'御堂筋',en:'Midosuji',lng:135.510,lat:34.650},{zh:'阿倍野筋',en:'Abenosuji',lng:135.514,lat:34.645}]
+  },
+  jakarta: {
+    center:[106.82717,-6.175405], zoom:16.0, pitch:55, bearing:-18, origin:[106.82717,-6.175405], height:132,
+    label:{zh:'独立纪念碑 · 独立广场',en:'Monas · Merdeka Square'},
+    points:[
+      {id:'monas',name:{zh:'独立纪念碑',en:'Monas'},lng:106.82717,lat:-6.175405,height:132,major:true},
+      {id:'istiqlal',name:{zh:'独立清真寺',en:'Istiqlal Mosque'},lng:106.831,lat:-6.170,height:0},
+      {id:'cathedral',name:{zh:'雅加达大教堂',en:'Jakarta Cathedral'},lng:106.833,lat:-6.169,height:0},
+      {id:'merdeka',name:{zh:'独立广场',en:'Merdeka Square'},lng:106.827,lat:-6.175,height:0}
+    ],
+    roads:[{zh:'独立广场路',en:'Jl. Medan Merdeka',lng:106.827,lat:-6.177},{zh:'谭林路',en:'Jl. Thamrin',lng:106.823,lat:-6.180}]
+  },
+  nanjing: {
+    center:[118.778123,32.062596], zoom:14.7, pitch:55, bearing:-18, origin:[118.778123,32.062596], height:451,
+    label:{zh:'紫峰大厦 · 鼓楼',en:'Zifeng Tower · Gulou'},
+    points:[
+      {id:'zifeng',name:{zh:'紫峰大厦',en:'Zifeng Tower'},lng:118.778123,lat:32.062596,height:451,major:true},
+      {id:'xuanwu',name:{zh:'玄武湖',en:'Xuanwu Lake'},lng:118.795,lat:32.070,height:0},
+      {id:'drum',name:{zh:'鼓楼',en:'Drum Tower'},lng:118.775,lat:32.060,height:0},
+      {id:'presidential',name:{zh:'总统府',en:'Presidential Palace'},lng:118.792,lat:32.045,height:0}
+    ],
+    roads:[{zh:'中山路',en:'Zhongshan Rd',lng:118.779,lat:32.060},{zh:'中央路',en:'Zhongyang Rd',lng:118.780,lat:32.067}]
+  },
+  marrakech: {
+    center:[-7.9900,31.6250], zoom:15.4, pitch:50, bearing:-18, origin:[-7.9900,31.6250], height:0,
+    label:{zh:'Jemaa el-Fna · Koutoubia',en:'Jemaa el-Fna · Koutoubia'},
+    points:[
+      {id:'jemaa',name:{zh:'Jemaa el-Fna',en:'Jemaa el-Fna'},lng:-7.9891,lat:31.6258,height:0,major:true},
+      {id:'koutoubia',name:{zh:'库图比亚清真寺',en:'Koutoubia'},lng:-7.9932,lat:31.6238,height:0},
+      {id:'medina',name:{zh:'老城',en:'Medina'},lng:-7.986,lat:31.629,height:0},
+      {id:'mellah',name:{zh:'犹太区',en:'Mellah'},lng:-7.983,lat:31.621,height:0}
+    ],
+    roads:[{zh:'Kasbah 街',en:'Rue de la Kasbah',lng:-7.988,lat:31.621},{zh:'穆罕默德五世大道',en:'Avenue Mohammed V',lng:-7.991,lat:31.627}]
   }
 };
 
@@ -6034,7 +6256,15 @@ const LANDMARK_BLUEPRINT = {
   italia:    { mode:'osm', alt:168, radius:25, taper:0.5 },
   sydneytower:{ mode:'osm', alt:309, radius:25, taper:0.5 },
   westerkerk:{ mode:'osm', alt:82, radius:15, taper:0.6 },
-  eureka:    { mode:'osm', alt:298, radius:30, taper:0.4 }
+  eureka:    { mode:'osm', alt:298, radius:30, taper:0.4 },
+  petronas:  { mode:'osm', alt:452, radius:55, taper:0.5 },
+  willis:    { mode:'osm', alt:442, radius:55, taper:0.4 },
+  sagrada:   { mode:'osm', alt:185, radius:45, taper:0.55 },
+  grantorre: { mode:'osm', alt:300, radius:40, taper:0.4 },
+  hassan:    { mode:'osm', alt:210, radius:40, taper:0.5 },
+  abeno:     { mode:'osm', alt:300, radius:40, taper:0.4 },
+  monas:     { mode:'osm', alt:132, radius:35, taper:0.6 },
+  zifeng:    { mode:'osm', alt:451, radius:45, taper:0.4 }
 };
 
 // Some landmark models are deliberately narrow. When the real footprint is
@@ -6044,7 +6274,10 @@ const LANDMARK_XZ = {
   colosseum: 3.0,
   royalpalace: 2.4,
   marina: 2.0,
-  stbasil: 1.7
+  stbasil: 1.7,
+  petronas: 1.6,
+  sagrada: 1.2,
+  hassan: 1.8
 };
 
 function bpLineMat(color, opacity){
@@ -6211,6 +6444,14 @@ const BAZAAR_DISTRICT = {
     [87.6158,43.7755],[87.6112,43.7778],[87.6116,43.7810]
   ]
 };
+const MARRAKECH_DISTRICT = {
+  id:'marrakech',
+  center:[-7.9900,31.6250],
+  polygon:[
+    [-7.9952,31.6286],[-7.9862,31.6286],[-7.9860,31.6226],
+    [-7.9948,31.6222],[-7.9960,31.6254],[-7.9952,31.6286]
+  ]
+};
 function addDistrictLayer(map, district){
   const src = district.id + '-district';
   if (!map.getSource(src)){
@@ -6245,6 +6486,10 @@ function addShanghaiLandmarkLayer(map){
   const city = detail.city;
   const cfg = LANDMARKS[city.id] || LANDMARKS.paris;
   const active = activeMapConfig;
+  if (cfg.type === 'marrakech'){
+    try { addDistrictLayer(map, MARRAKECH_DISTRICT); } catch(e){ console.warn('[city-landmark] district', e); }
+    return;
+  }
   if (city.id === 'urumqi'){
     try { addDistrictLayer(map, BAZAAR_DISTRICT); } catch(e){ console.warn('[city-landmark] district', e); }
   }
@@ -6730,14 +6975,14 @@ const GUIDE_COPY = {
   zh: {
     eyebrow: 'EARTH ONLINE / 系统说明',
     title: '游戏说明',
-    intro: '一个实时共享的 3D 地球：36 座城市、实时天气、共享分数与城市详情。下面按功能说明，并给出每条的实现要点。',
+    intro: '一个实时共享的 3D 地球：45 座城市、实时天气、共享分数与城市详情。下面按功能说明，并给出每条的实现要点。',
     close: '关闭说明',
     foot: '无需账号 · 无需 API Key · 纯静态站点'
   },
   en: {
     eyebrow: 'EARTH ONLINE / SYSTEM',
     title: 'Game Guide',
-    intro: 'A real-time, shared 3D Earth: 36 cities, live weather, shared scores and city detail. Each feature includes a short implementation note.',
+    intro: 'A real-time, shared 3D Earth: 45 cities, live weather, shared scores and city detail. Each feature includes a short implementation note.',
     close: 'Close guide',
     foot: 'NO ACCOUNT · NO API KEY · STATIC SITE'
   }
@@ -6757,8 +7002,8 @@ const GUIDE_ITEMS = [
     en: { title: 'Live weather & air', desc: 'Open-Meteo supplies current conditions, feels-like, humidity, wind, sunrise/sunset and a 3-day forecast; air quality is a separate AQI and PM2.5 request, with local time.', tech: 'Open-Meteo + 10-min cache' }
   },
   {
-    zh: { title: '36 座城市', desc: '每城包含经纬度、时区、地标、标签和详情相机；地球、榜单和城市页共用 CITIES 数据源。', tech: '单一 CITIES 数据源' },
-    en: { title: '36 cities', desc: 'Each city has coordinates, timezone, landmark, labels and a detail camera; globe, board and city view share one CITIES source.', tech: 'Single CITIES source' }
+    zh: { title: '45 座城市', desc: '每城包含经纬度、时区、地标、标签和详情相机；地球、榜单和城市页共用 CITIES 数据源。', tech: '单一 CITIES 数据源' },
+    en: { title: '45 cities', desc: 'Each city has coordinates, timezone, landmark, labels and a detail camera; globe, board and city view share one CITIES source.', tech: 'Single CITIES source' }
   },
   {
     zh: { title: '共享城市分数', desc: '点击城市 +5，进入城市详情 +10；分数全局共享、可重复，左侧榜单按分数实时排序。', tech: 'NAS 会话 + 幂等事件' },
