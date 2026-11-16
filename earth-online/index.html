@@ -541,6 +541,10 @@
   .board__row.is-first:hover{background:rgba(212,163,115,.14)}
   .board__row:focus-visible{outline:1px solid var(--accent);outline-offset:-1px;background:rgba(255,255,255,.06)}
   .board__empty{padding:18px 4px;font-size:10px;color:var(--dim);line-height:1.7}
+  .board__loading{display:flex;flex-direction:column;gap:7px;padding:20px 4px;font-family:var(--mono);line-height:1.6}
+  .board__loading>span{display:block;width:34px;height:1px;background:linear-gradient(90deg,var(--accent),transparent);box-shadow:0 0 10px var(--accent-soft)}
+  .board__loading b{font-size:10px;font-weight:500;letter-spacing:.08em;color:var(--ink);text-transform:uppercase}
+  .board__loading small{font-size:8px;letter-spacing:.04em;color:var(--dim)}
   .board__foot{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:8px;padding-top:8px;border-top:1px solid var(--line);font-size:8px;letter-spacing:.06em;color:var(--dim)}
   .board__foot button{border:0;background:none;padding:0;color:var(--muted);font:inherit;font-size:8.5px;letter-spacing:.05em;cursor:pointer;text-transform:uppercase}
   .board__foot button:hover{color:var(--accent)}
@@ -1453,6 +1457,10 @@ const I18N = {
     'board-live':'LIVE',
     'board-offline':'离线',
     'board-syncing':'同步中',
+    'board-loading':'正在同步 {n} 城积分…',
+    'board-loading-sub':'数据来自 NAS · 请稍候',
+    'board-unavailable':'积分暂时不可用',
+    'board-retry':'点击刷新重试',
     'board-updated':'更新于 {t}',
     'board-empty':'暂无数据',
     'city-score':'城市积分',
@@ -1592,6 +1600,10 @@ const I18N = {
     'board-live':'LIVE',
     'board-offline':'Offline',
     'board-syncing':'Syncing',
+    'board-loading':'Syncing {n} city scores…',
+    'board-loading-sub':'Loading from the NAS · one moment',
+    'board-unavailable':'Scores temporarily unavailable',
+    'board-retry':'Refresh to retry',
     'board-updated':'Updated {t}',
     'board-empty':'No data yet',
     'city-score':'CITY SCORE',
@@ -2211,6 +2223,7 @@ const scoreState = {
   total: 0,
   updatedAt: 0,
   loading: true,
+  hasData: false,
   offline: false,
   syncing: false,
   flushing: false,
@@ -2254,13 +2267,22 @@ function boardRowsHtml(){
     return '<button type="button" data-city="' + city.id + '" class="' + cls + '" aria-label="' + label + '"><span class="rank">' + (i + 1) + '</span><span class="name">' + city.name[lang] + '</span><span class="pts">' + fmtNum(score) + '</span></button>';
   }).join('');
 }
+function boardLoadingHtml(){
+  const offline = !!scoreState.offline;
+  return '<div class="board__loading">' +
+    '<span aria-hidden="true"></span>' +
+    '<b>' + tr(offline ? 'board-unavailable' : 'board-loading', { n: CITIES.length }) + '</b>' +
+    '<small>' + tr(offline ? 'board-retry' : 'board-loading-sub') + '</small>' +
+  '</div>';
+}
 function renderBoard(){
   if (!boardListEl) return;
-  const html = boardRowsHtml();
+  const loaded = !!scoreState.hasData;
+  const html = loaded ? boardRowsHtml() : boardLoadingHtml();
   boardListEl.innerHTML = html;
   if (boardListModalEl) boardListModalEl.innerHTML = html;
-  if (boardTotalEl) boardTotalEl.textContent = fmtNum(scoreState.total);
-  if (boardTotalModalEl) boardTotalModalEl.textContent = fmtNum(scoreState.total);
+  if (boardTotalEl) boardTotalEl.textContent = loaded ? fmtNum(scoreState.total) : '—';
+  if (boardTotalModalEl) boardTotalModalEl.textContent = loaded ? fmtNum(scoreState.total) : '—';
   if (boardStatusEl){
     let text = tr('board-live');
     let cls = '';
@@ -2296,6 +2318,7 @@ function applyServerScores(data, includePending = true){
   }
   scoreState.map = next;
   scoreState.total = total;
+  scoreState.hasData = true;
   scoreState.updatedAt = Number(data && data.updatedAt) || scoreState.updatedAt;
 }
 async function scoreRequest(path, options = {}, timeout = 15000){
