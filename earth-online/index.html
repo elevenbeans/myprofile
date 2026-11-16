@@ -1332,6 +1332,15 @@ const CITIES = [
   { id:'marrakech',    name:{zh:'马拉喀什',en:'Marrakech'}, country:{zh:'摩洛哥',en:'Morocco'},   lat:31.6250,  lon:-7.9900,   tz:'Africa/Casablanca' }
 ];
 
+// Detail-only cities: reachable by direct route (#/city/<id>/detail), never
+// added to CITIES, so they do not appear on the globe, scoreboard or counts.
+const EXTRA_CITIES = [
+  { id:'nantong', name:{zh:'南通',en:'Nantong'}, country:{zh:'中国',en:'China'}, lat:31.9802, lon:120.8943, tz:'Asia/Shanghai', detailOnly:true }
+];
+function findCityById(id){
+  return CITIES.find((c) => c.id === id) || EXTRA_CITIES.find((c) => c.id === id) || null;
+}
+
 const hudCitiesEl = document.getElementById('hudCities');
 if (hudCitiesEl) hudCitiesEl.textContent = CITIES.length + ' CITIES';
 const boardCountEl = document.getElementById('boardCount');
@@ -3391,16 +3400,16 @@ function parseRoute(){
   if (m){
     let id = '';
     try { id = decodeURIComponent(m[1]); } catch (e) { return null; }
-    if (!CITIES.some((c) => c.id === id)) return null;
+    if (!findCityById(id)) return null;
     return { id, detail: !!m[2] };
   }
   if (raw && raw !== '#' && !raw.startsWith('#/')){
     let id = '';
     try { id = decodeURIComponent(raw.slice(1)); } catch (e) { return null; }
-    if (CITIES.some((c) => c.id === id)) return { id, detail: false };
+    if (findCityById(id)) return { id, detail: false };
   }
   const q = params.get('city');
-  if (q && CITIES.some((c) => c.id === q)) return { id: q, detail: false };
+  if (q && findCityById(q)) return { id: q, detail: false };
   return null;
 }
 let routeLock = false;
@@ -3414,8 +3423,17 @@ function applyRoute(){
       if (world.selected) closePanel({ fromRoute: true });
       return;
     }
-    const city = CITIES.find((c) => c.id === route.id);
+    const city = findCityById(route.id);
     if (!city) return;
+    if (city.detailOnly){
+      if (detail.active && detail.city && detail.city.id === city.id) return;
+      if (detail.active) exitCity({ fromRoute: true });
+      if (!history.state || history.state.detail !== city.id){
+        try { history.replaceState({ detail: city.id }, '', routeHref(routeHashDetail(city.id))); } catch (err) { /* ignore */ }
+      }
+      enterCity(city, { fromRoute: true, award: false });
+      return;
+    }
     if (route.detail){
       if (detail.active && detail.city && detail.city.id === city.id) return;
       if (detail.active) exitCity({ fromRoute: true });
@@ -4446,13 +4464,14 @@ const LANDMARKS = {
   osaka:        { type:'abeno',        name:{zh:'阿倍野 Harukas',en:'Abeno Harukas'},  color:0x9fb6c9, accent:0xffb347, scale:1.00, theme:'asia' },
   jakarta:      { type:'monas',        name:{zh:'独立纪念碑',en:'Monas'},             color:0xcfd6dd, accent:0xffb347, scale:1.00, theme:'tropical' },
   nanjing:      { type:'zifeng',       name:{zh:'紫峰大厦',en:'Zifeng Tower'},         color:0x9fb6c9, accent:0x7fd3ff, scale:1.00, theme:'asia' },
-  marrakech:    { type:'marrakech',    name:{zh:'Jemaa el-Fna',en:'Jemaa el-Fna'},     color:0xc9a46a, accent:0xffb347, scale:1.00, theme:'africa' }
+  marrakech:    { type:'marrakech',    name:{zh:'Jemaa el-Fna',en:'Jemaa el-Fna'},     color:0xc9a46a, accent:0xffb347, scale:1.00, theme:'africa' },
+  nantong:      { type:'nantong',      name:{zh:'濠河 · 南通老城',en:'Hao River · Nantong Old Town'}, color:0x9fb6c9, accent:0x7fd3ff, scale:1.00, theme:'asia' }
 };
 
 const LANDMARK_HEIGHTS = {
   eiffel: 33, empire: 36, burj: 64, bigben: 26, bank: 28, marina: 27,
   stbasil: 20, pyramid: 13, seoul: 34, gate: 16, pingan: 50, canton: 42, potala: 20, taipei101: 48,
-  brandenburg: 14, ryugyong: 40, bitexco: 36, cntower: 50, royalpalace: 16, colosseum: 14, ifs: 24, raffles: 30, citic: 52, shanghaitower: 63, arc: 15, salesforce: 40, highroller: 56, bazaar: 32, sapphire: 28, mahanakhon: 31, portside: 14, italia: 17, sydneytower: 31, westerkerk: 8, eureka: 30, datang: 10, petronas: 45, willis: 44, sagrada: 18, grantorre: 30, hassan: 21, abeno: 30, monas: 13, zifeng: 45, marrakech: 10
+  brandenburg: 14, ryugyong: 40, bitexco: 36, cntower: 50, royalpalace: 16, colosseum: 14, ifs: 24, raffles: 30, citic: 52, shanghaitower: 63, arc: 15, salesforce: 40, highroller: 56, bazaar: 32, sapphire: 28, mahanakhon: 31, portside: 14, italia: 17, sydneytower: 31, westerkerk: 8, eureka: 30, datang: 10, petronas: 45, willis: 44, sagrada: 18, grantorre: 30, hassan: 21, abeno: 30, monas: 13, zifeng: 45, marrakech: 10, nantong: 10
 };
 
 let cityPhaseDay = false;
@@ -5111,6 +5130,20 @@ function buildMarrakech(cfg){
   return g;
 }
 
+
+function buildNantong(cfg){
+  const g = new THREE.Group();
+  for (let i = 0; i < 8; i++){
+    const x = (i % 4 - 1.5) * 3.0, z = (Math.floor(i / 4) - 0.5) * 4.2;
+    lbox(g, 2.4, 2.0, 3.0, cfg.color, x, 0, z);
+    lbox(g, 3.0, 0.35, 3.6, cfg.accent, x, 2.0, z);
+  }
+  lbox(g, 2.0, 9, 2.0, cfg.color, -6, 0, 0);
+  lbox(g, 2.4, 0.5, 2.4, cfg.accent, -6, 9, 0);
+  lcone(g, 1.8, 2.2, cfg.accent, -6, 9.5, 0, 4);
+  return g;
+}
+
 function buildLandmark(cfg){
   switch (cfg.type){
     case 'eiffel': return buildEiffel(cfg);
@@ -5158,6 +5191,7 @@ function buildLandmark(cfg){
     case 'monas': return buildMonas(cfg);
     case 'zifeng': return buildZifeng(cfg);
     case 'marrakech': return buildMarrakech(cfg);
+    case 'nantong': return buildNantong(cfg);
     default: return buildEmpire(cfg);
   }
 }
@@ -5452,7 +5486,11 @@ function updateCityMeta(){
     const [lng, lat] = activeMapConfig.origin;
     tacCoordEl.textContent = Math.abs(lat).toFixed(4) + (lat >= 0 ? 'N' : 'S') + ' · ' + Math.abs(lng).toFixed(4) + (lng >= 0 ? 'E' : 'W');
   }
-  if (cityScoreEl) cityScoreEl.textContent = fmtNum(scoreFor(city.id));
+  if (cityScoreEl){
+    cityScoreEl.hidden = !!city.detailOnly;
+    cityScoreEl.style.display = city.detailOnly ? 'none' : '';
+    cityScoreEl.textContent = city.detailOnly ? '—' : fmtNum(scoreFor(city.id));
+  }
   if (cityTimeEl){
     try {
       cityTimeEl.textContent = new Intl.DateTimeFormat(langTag(), { timeZone: city.tz || 'UTC', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(new Date());
@@ -5969,6 +6007,17 @@ const CITY_MAPS = {
       {id:'mellah',name:{zh:'犹太区',en:'Mellah'},lng:-7.983,lat:31.621,height:0}
     ],
     roads:[{zh:'Kasbah 街',en:'Rue de la Kasbah',lng:-7.988,lat:31.621},{zh:'穆罕默德五世大道',en:'Avenue Mohammed V',lng:-7.991,lat:31.627}]
+  },
+  nantong: {
+    center:[120.8890,31.9690], zoom:14.4, pitch:48, bearing:-18, origin:[120.8900,31.9800], height:0,
+    label:{zh:'濠河 · 南通老城',en:'Hao River · Nantong Old Town'},
+    points:[
+      {id:'haohe',name:{zh:'濠河',en:'Hao River'},lng:120.8900,lat:31.9800,height:0,major:true},
+      {id:'museum',name:{zh:'南通博物苑',en:'Nantong Museum'},lng:120.8865,lat:31.9584,height:0},
+      {id:'langshan',name:{zh:'狼山',en:'Langshan'},lng:120.8950,lat:31.9550,height:0},
+      {id:'zhonglou',name:{zh:'钟楼',en:'Bell Tower'},lng:120.8880,lat:31.9810,height:0}
+    ],
+    roads:[{zh:'南大街',en:'South Street',lng:120.889,lat:31.979},{zh:'濠北路',en:'Haobei Rd',lng:120.890,lat:31.985}]
   }
 };
 
@@ -6522,6 +6571,14 @@ const MARRAKECH_DISTRICT = {
     [-7.9948,31.6222],[-7.9960,31.6254],[-7.9952,31.6286]
   ]
 };
+const NANTONG_DISTRICT = {
+  id:'nantong',
+  center:[120.8900,31.9800],
+  polygon:[
+    [120.8815,31.9885],[120.8985,31.9885],[120.8985,31.9715],
+    [120.8815,31.9715],[120.8815,31.9885]
+  ]
+};
 function addDistrictLayer(map, district){
   const src = district.id + '-district';
   if (!map.getSource(src)){
@@ -6556,6 +6613,10 @@ function addShanghaiLandmarkLayer(map){
   const city = detail.city;
   const cfg = LANDMARKS[city.id] || LANDMARKS.paris;
   const active = activeMapConfig;
+  if (cfg.type === 'nantong'){
+    try { addDistrictLayer(map, NANTONG_DISTRICT); } catch(e){ console.warn('[city-landmark] district', e); }
+    return;
+  }
   if (cfg.type === 'marrakech'){
     try { addDistrictLayer(map, MARRAKECH_DISTRICT); } catch(e){ console.warn('[city-landmark] district', e); }
     return;
@@ -6833,7 +6894,10 @@ function exitCity(opts = {}){
   if (cityHintEl) cityHintEl.textContent = tr('city-hint');
   if (enterCityBtn) enterCityBtn.focus({ preventScroll: true });
   if (!opts.fromRoute && city){
-    try { history.replaceState({ panel: city.id }, '', routeHref(routeHashPanel(city.id))); } catch (err) { /* ignore */ }
+    try {
+      if (city.detailOnly) history.replaceState({}, '', routeHref(''));
+      else history.replaceState({ panel: city.id }, '', routeHref(routeHashPanel(city.id)));
+    } catch (err) { /* ignore */ }
   }
   if (city) updatePanelScore();
   playSceneMusic(true);
