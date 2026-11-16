@@ -15,8 +15,9 @@
 <link rel="icon" href="https://images.elevenbeans.me/elevenbeans.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="vendor/maplibre-gl.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet"></noscript>
+<link id="maplibreCSS" rel="stylesheet" href="vendor/maplibre-gl.css" media="print" onload="this.media='all';this.dataset.ready='1'">
 <link rel="preconnect" href="https://tiles.openfreemap.org" crossorigin>
 <link rel="preconnect" href="https://server.arcgisonline.com" crossorigin>
 <link rel="preconnect" href="https://api.open-meteo.com" crossorigin>
@@ -5969,6 +5970,25 @@ function prefetchMapLibre(){
   document.head.appendChild(link);
 }
 
+function loadMapLibreCSS(){
+  const link = document.getElementById('maplibreCSS');
+  if (!link || link.dataset.ready === '1' || link.media === 'all') return Promise.resolve();
+  return new Promise((resolve) => {
+    let done = false;
+    const finish = () => {
+      if (done) return;
+      done = true;
+      link.media = 'all';
+      link.dataset.ready = '1';
+      resolve();
+    };
+    link.addEventListener('load', finish, { once: true });
+    link.addEventListener('error', finish, { once: true });
+    setTimeout(finish, 2500);
+    link.media = 'all';
+  });
+}
+
 function loadMapLibre(){
   if (window.maplibregl) return Promise.resolve(window.maplibregl);
   if (maplibrePromise) return maplibrePromise;
@@ -6647,6 +6667,7 @@ async function openShanghaiMap(city){
 
   let map = null;
   try {
+    await loadMapLibreCSS();
     const maplibregl = await loadMapLibre();
     if (!detail.active || !detail.mapActive) return;
     const zoom = window.innerWidth < 700 ? activeMapConfig.zoom - 0.6 : activeMapConfig.zoom;
