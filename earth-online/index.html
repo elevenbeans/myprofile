@@ -6796,10 +6796,14 @@ async function openShanghaiMap(city){
     });
 
     await new Promise((resolve) => {
-      if (map.areTilesLoaded()){ resolve(); return; }
       let done = false;
       const finish = () => { if (done) return; done = true; clearTimeout(t); resolve(); };
+      // areTilesLoaded() can be true before the style is usable. Do not
+      // expose the canvas until the style has loaded and initial tiles settle.
+      const check = () => { if (map.isStyleLoaded() && map.areTilesLoaded()) finish(); };
       const t = setTimeout(finish, 7000);
+      check();
+      map.once('style.load', check);
       map.once('idle', finish);
     });
 
