@@ -1047,6 +1047,18 @@
   .scan-marker span{pointer-events:none}
   @keyframes scanPulse{0%{transform:scale(.82);opacity:.7}70%,100%{transform:scale(1.3);opacity:0}}
   .city-card-btn{display:inline-flex;align-items:center;justify-content:center;width:25px;height:25px;padding:0;border-radius:5px;font-size:12px;line-height:1;cursor:pointer;pointer-events:auto}
+  .postcard-icon{display:block;width:13px;height:13px}
+  .modal__card--postcard{width:min(920px,100%);max-height:min(88dvh,900px);display:flex;flex-direction:column;overflow:hidden}
+  .postcard-preview{
+    flex:1 1 auto;min-height:0;display:flex;align-items:center;justify-content:center;
+    margin-top:14px;border:1px solid var(--line);border-radius:8px;background:rgba(255,255,255,.02);overflow:hidden;
+  }
+  .postcard-preview img{display:block;max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;-webkit-touch-callout:default}
+  .postcard-actions{display:flex;gap:8px;margin-top:12px;flex:0 0 auto}
+  .postcard-actions .act{flex:1;margin:0}
+  .postcard-actions .act:not(.act--enter){border-color:rgba(125,211,252,.3);background:rgba(125,211,252,.06);color:#c9f0ff}
+  .postcard-actions .act:not(.act--enter):hover{background:rgba(125,211,252,.14);border-color:rgba(125,211,252,.6);color:#fff}
+  .modal__card--postcard>.modal__note{flex:0 0 auto}
   .city-view.is-day .scan-hud{background:rgba(250,254,254,.9);border-color:rgba(11,113,136,.32)}
   .city-view.is-day .scan-hud__top b{color:#a85f00}
   .city-view.is-day .scan-hud__dots i{background:rgba(9,70,85,.18)}
@@ -1424,6 +1436,25 @@
     </div>
   </div>
 
+  <div class="modal" id="postcardModal" aria-hidden="true">
+    <div class="modal__backdrop" data-close-postcard></div>
+    <div class="modal__card modal__card--postcard" role="dialog" aria-modal="true" aria-labelledby="postcardTitle">
+      <header class="modal__head">
+        <div>
+          <div class="modal__eyebrow">POSTCARD / ORBITAL BLUEPRINT</div>
+          <h2 class="modal__title" id="postcardTitle" data-i18n="postcard-title">城市明信片</h2>
+        </div>
+        <button type="button" class="icon-btn" id="postcardClose" aria-label="关闭" data-i18n-aria="close">✕</button>
+      </header>
+      <div class="postcard-preview"><img id="postcardPreview" alt="City postcard"></div>
+      <div class="postcard-actions">
+        <button type="button" class="act act--enter" id="postcardSave" data-i18n="postcard-save">保存图片</button>
+        <button type="button" class="act" id="postcardShare" data-i18n="postcard-share" hidden>分享</button>
+      </div>
+      <p class="modal__note" id="postcardHint" data-i18n="postcard-hint">保存图片后即可分享；朋友圈请从相册发布。</p>
+    </div>
+  </div>
+
   <div class="city-view" id="cityView" aria-hidden="true">
     <div class="map-view" id="mapView" aria-hidden="true"></div>
     <div class="ra-overlay" aria-hidden="true">
@@ -1438,7 +1469,7 @@
     <header class="city-head">
       <button type="button" class="city-back" id="cityBack">← <span data-i18n="back-earth">返回地球</span></button>
       <div class="city-head__names"><span id="cityName">—</span><span id="cityCountry">—</span></div>
-      <div class="city-head__meta"><span id="cityTime">--:--</span><span id="cityWx">—</span><span id="cityScore">0</span><button type="button" class="chip chip--icon city-card-btn" id="postcardBtn" data-i18n-title="postcard-label" data-i18n-aria="postcard-label" aria-label="Export postcard">✉</button><button type="button" class="chip chip--icon city-sound" id="citySoundBtn" aria-pressed="true" data-i18n-title="sound-on" aria-label="Mute sound">🔊</button></div>
+      <div class="city-head__meta"><span id="cityTime">--:--</span><span id="cityWx">—</span><span id="cityScore">0</span><button type="button" class="chip chip--icon city-card-btn" id="postcardBtn" data-i18n-title="postcard-label" data-i18n-aria="postcard-label" aria-label="Export postcard"><svg class="postcard-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1.5" y="2.5" width="13" height="9.5" rx="1.3"/><path d="M4 8.7l2.2-2.2 2.2 2.2M11.4 7.2h1.6M8 10.5v3.2m-1.3-1.3L8 13.7l1.3-1.3"/></svg></button><button type="button" class="chip chip--icon city-sound" id="citySoundBtn" aria-pressed="true" data-i18n-title="sound-on" aria-label="Mute sound">🔊</button></div>
     </header>
     <div class="scan-hud" id="scanHud" hidden>
       <div class="scan-hud__top"><span>BLUEPRINT SCAN</span><b id="scanProgress">0/3</b></div>
@@ -1706,8 +1737,15 @@ const I18N = {
     'scan-locked':'先扫描 3 个地标',
     'scan-toast':'扫描 {n}/3 · {city}',
     'postcard-label':'导出城市明信片',
+    'postcard-title':'城市明信片',
+    'postcard-save':'保存图片',
+    'postcard-share':'分享',
+    'postcard-hint':'保存图片后即可分享；朋友圈请从相册发布。',
+    'postcard-wechat-hint':'微信内请长按图片保存，再从朋友圈相册发布。',
     'postcard-prep':'正在生成明信片…',
-    'postcard-ok':'明信片已导出',
+    'postcard-saved':'图片已保存',
+    'postcard-share-ok':'已打开系统分享',
+    'postcard-share-fail':'当前浏览器不支持系统分享，请保存图片',
     'postcard-fail':'明信片导出失败',
     'enter-city':'进入城市 · +10',
     'enter-hint':'进入地标与周边 3D 场景 · +10 分',
@@ -1875,8 +1913,15 @@ const I18N = {
     'scan-locked':'Scan 3 landmarks first',
     'scan-toast':'Scan {n}/3 · {city}',
     'postcard-label':'Export city postcard',
+    'postcard-title':'City postcard',
+    'postcard-save':'Save image',
+    'postcard-share':'Share',
+    'postcard-hint':'Save the image to share it; post to Moments from your album.',
+    'postcard-wechat-hint':'Long-press the image to save it, then post to Moments from your album.',
     'postcard-prep':'Generating postcard…',
-    'postcard-ok':'Postcard exported',
+    'postcard-saved':'Image saved',
+    'postcard-share-ok':'Share sheet opened',
+    'postcard-share-fail':'Sharing is not available here; save the image instead.',
     'postcard-fail':'Postcard export failed',
     'enter-city':'Enter city · +10',
     'enter-hint':'Explore the landmark and streets in 3D · +10 pts',
@@ -2107,6 +2152,12 @@ const routeStripModalEl = $('#routeStripModal');
 const routeStripModalCitiesEl = $('#routeStripModalCities');
 const routeStripModalCountEl = $('#routeStripModalCount');
 const postcardBtnEl = $('#postcardBtn');
+const postcardModalEl = $('#postcardModal');
+const postcardCloseEl = $('#postcardClose');
+const postcardPreviewEl = $('#postcardPreview');
+const postcardSaveEl = $('#postcardSave');
+const postcardShareEl = $('#postcardShare');
+const postcardHintEl = $('#postcardHint');
 const scanHudEl = $('#scanHud');
 const scanProgressEl = $('#scanProgress');
 const scanDotsEl = $('#scanDots');
@@ -7372,6 +7423,101 @@ function closeShanghaiMap(){
   if (cityHintEl) cityHintEl.textContent = tr('city-hint');
 }
 
+let postcardState = null;
+let postcardPreviewUrl = null;
+let lastPostcardFocus = null;
+
+function isPostcardOpen(){
+  return !!(postcardModalEl && postcardModalEl.classList.contains('is-open'));
+}
+
+function setPostcardShareVisibility(blob, filename){
+  if (!postcardShareEl) return;
+  let canShare = false;
+  if (blob && typeof File === 'function' && navigator.canShare && typeof navigator.share === 'function'){
+    try {
+      const file = new File([blob], filename, { type: 'image/png' });
+      canShare = navigator.canShare({ files: [file] });
+    } catch (e) { canShare = false; }
+  }
+  postcardShareEl.hidden = !canShare;
+}
+
+function openPostcardPreview(canvas, blob, city){
+  if (!postcardModalEl || !postcardPreviewEl) return;
+  if (postcardPreviewUrl) URL.revokeObjectURL(postcardPreviewUrl);
+  const filename = 'earth-online-' + city.id + '-' + routeKey() + '.png';
+  const wechat = /MicroMessenger/i.test(navigator.userAgent);
+  postcardState = { canvas, blob, cityId: city.id, filename };
+  // WeChat's long-press save is more reliable with a data URL than blob:.
+  postcardPreviewUrl = (!wechat && blob) ? URL.createObjectURL(blob) : null;
+  postcardPreviewEl.src = postcardPreviewUrl || canvas.toDataURL('image/png');
+  postcardPreviewEl.alt = city.name[lang] + ' · ' + city.country[lang] + ' postcard';
+  setPostcardShareVisibility(blob, filename);
+  if (postcardHintEl){
+    postcardHintEl.textContent = wechat ? tr('postcard-wechat-hint') : tr('postcard-hint');
+  }
+  lastPostcardFocus = document.activeElement;
+  postcardModalEl.classList.add('is-open');
+  postcardModalEl.setAttribute('aria-hidden', 'false');
+  if (postcardCloseEl) postcardCloseEl.focus();
+}
+
+function closePostcard(){
+  if (!postcardModalEl) return;
+  postcardModalEl.classList.remove('is-open');
+  postcardModalEl.setAttribute('aria-hidden', 'true');
+  if (postcardPreviewUrl) URL.revokeObjectURL(postcardPreviewUrl);
+  postcardPreviewUrl = null;
+  postcardState = null;
+  if (lastPostcardFocus && typeof lastPostcardFocus.focus === 'function') lastPostcardFocus.focus();
+}
+
+function savePostcard(){
+  if (!postcardState) return;
+  const { canvas, blob, filename } = postcardState;
+  const a = document.createElement('a');
+  a.download = filename;
+  if (blob){
+    const url = URL.createObjectURL(blob);
+    a.href = url;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1500);
+  } else {
+    a.href = canvas.toDataURL('image/png');
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  }
+  toast(tr('postcard-saved'), 'gold');
+}
+
+async function sharePostcard(){
+  if (!postcardState || !postcardState.blob){
+    toast(tr('postcard-share-fail'), 'ruin');
+    return;
+  }
+  try {
+    const file = new File([postcardState.blob], postcardState.filename, { type: 'image/png' });
+    if (!navigator.canShare || !navigator.canShare({ files: [file] })){
+      toast(tr('postcard-share-fail'), 'ruin');
+      return;
+    }
+    await navigator.share({
+      files: [file],
+      title: postcardState.cityId + ' · Earth Online',
+      text: 'Earth Online · Orbital Blueprint'
+    });
+    toast(tr('postcard-share-ok'), 'gold');
+  } catch (err){
+    if (err && err.name === 'AbortError') return;
+    console.warn('[postcard] share', err);
+    toast(tr('postcard-share-fail'), 'ruin');
+  }
+}
+
 function cityLocalTimeText(city){
   try {
     return new Intl.DateTimeFormat(lang === 'zh' ? 'zh-CN' : 'en-GB', {
@@ -7395,7 +7541,7 @@ function canvasToBlob(canvas){
   });
 }
 
-async function exportPostcard(){
+async function openPostcard(){
   const city = detail.city;
   if (!city || !shanghaiMap || !detail.mapReady){
     toast(tr('postcard-fail'), 'ruin');
@@ -7498,22 +7644,7 @@ async function exportPostcard(){
     ctx.textAlign = 'left';
 
     const blob = await canvasToBlob(canvas);
-    const a = document.createElement('a');
-    a.download = 'earth-online-' + city.id + '-' + routeKey() + '.png';
-    if (blob){
-      const url = URL.createObjectURL(blob);
-      a.href = url;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      setTimeout(() => URL.revokeObjectURL(url), 1500);
-    } else {
-      a.href = canvas.toDataURL('image/png');
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-    }
-    toast(tr('postcard-ok'), 'gold');
+    openPostcardPreview(canvas, blob, city);
   } catch (err) {
     console.warn('[postcard]', err);
     toast(tr('postcard-fail'), 'ruin');
@@ -7874,14 +8005,15 @@ function bindOrbitControls(){
 
   window.addEventListener('keydown', (e) => {
     if (e.key === 'Escape'){
-      if (isDossierOpen()) closeDossier();
+      if (isPostcardOpen()) closePostcard();
+      else if (isDossierOpen()) closeDossier();
       else if (isPassportOpen()) closePassport();
       else if (boardModalEl && boardModalEl.classList.contains('is-open')) closeBoard();
       else if (detail.active) exitCity();
       else closePanel();
       return;
     }
-    if (isDossierOpen() || isPassportOpen() || (boardModalEl && boardModalEl.classList.contains('is-open'))) return;
+    if (isPostcardOpen() || isDossierOpen() || isPassportOpen() || (boardModalEl && boardModalEl.classList.contains('is-open'))) return;
     if (detail.active) return;
     const active = document.activeElement;
     const inField = active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA');
@@ -7969,8 +8101,8 @@ const GUIDE_ITEMS = [
     en: { title: "Today's route", desc: 'A fixed daily solar snapshot picks three cities; entering a city completes a stop, and the route resets the next day.', tech: 'Date + solar altitude' }
   },
   {
-    zh: { title: '城市明信片', desc: '把当前城市地图、当地时间、天气、分数和扫描进度导出为 1600×1000 PNG。', tech: 'Canvas + MapLibre' },
-    en: { title: 'City postcard', desc: 'Exports the current city map, local time, weather, score and scan progress as a 1600×1000 PNG.', tech: 'Canvas + MapLibre' }
+    zh: { title: '城市明信片', desc: '生成 1600×1000 PNG 并预览；支持保存和系统分享。朋友圈需保存后从相册发布。', tech: 'Canvas + Web Share' },
+    en: { title: 'City postcard', desc: 'Renders a 1600×1000 PNG preview with Save and native Share where supported; Moments needs an album post.', tech: 'Canvas + Web Share' }
   },
   {
     zh: { title: '底图兜底', desc: '矢量瓦片不可用时自动使用 Esri 深灰/浅灰底图，城市、标签和地标仍然可读。', tech: 'OSM 矢量 + Esri 栅格' },
@@ -8171,7 +8303,14 @@ function bindUI(){
     const point = scanTargets(detail.city).find((p) => p.id === row.dataset.scanPoint);
     if (point) scanCityPoint(detail.city, point);
   });
-  if (postcardBtnEl) postcardBtnEl.addEventListener('click', exportPostcard);
+  if (postcardBtnEl) postcardBtnEl.addEventListener('click', openPostcard);
+  if (postcardCloseEl) postcardCloseEl.addEventListener('click', closePostcard);
+  if (postcardSaveEl) postcardSaveEl.addEventListener('click', savePostcard);
+  if (postcardShareEl) postcardShareEl.addEventListener('click', sharePostcard);
+  if (postcardModalEl){
+    const backdrop = postcardModalEl.querySelector('[data-close-postcard]');
+    if (backdrop) backdrop.addEventListener('click', closePostcard);
+  }
 
   $('#closeBtn').addEventListener('click', closePanel);
   if (enterCityBtn){

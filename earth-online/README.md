@@ -39,7 +39,7 @@ The passport, scan progress, daily route and card export are frontend-only:
 - Dossier facts live in `data/city-dossiers.js`; heights come from the city map config, and dates are completion/opening years. Facts are short editorial summaries, not full citations.
 - A city dossier is unlocked when all 3 scan targets are complete.
 - The daily route is deterministic from the UTC date and a noon solar snapshot, so every visitor gets the same three stops for that day.
-- Postcards are composed on a Canvas from the live MapLibre canvas; no upload or server render is involved.
+- Postcards are composed on a Canvas from the live MapLibre canvas; no upload or server render is involved. Export opens a preview with Save and, where supported, the native Share sheet. WeChat Moments still requires saving the image and posting it from the album; a web page cannot open Moments directly.
 
 ## All cities — Orbital Blueprint
 
