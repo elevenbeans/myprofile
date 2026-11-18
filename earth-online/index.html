@@ -6140,7 +6140,9 @@ function shanghaiMapStyle(isDay = cityPhaseDay){
         type: 'raster',
         tiles: [p.raster],
         tileSize: 256,
-        maxzoom: 16,
+        // z16 tiles are missing in some regions and MapLibre renders its
+        // "Map data not yet available" placeholder. Overzoom z15 instead.
+        maxzoom: 15,
         attribution: 'Esri, HERE, Garmin'
       },
       omt: { type: 'vector', url: 'https://tiles.openfreemap.org/planet', attribution: '' }
