@@ -15,7 +15,7 @@ A real-time, shareable Earth for [elevenbeans.me](https://elevenbeans.me) — NA
 - **No economy.** There are no credits, contracts, levels, combos, ranks, stability or demolition/rebuild. The visit itself is the score.
 - **Orbital Passport — local collection.** Entering a city records a stamp in `localStorage`; each city has 3 explicit scan points. Scanning all 3 unlocks a lightweight city dossier. There is no account and no cross-device sync.
 - **Today's route.** A fixed daily solar snapshot picks 3 cities (twilight / day / night); entering a city completes a stop. The route is local and resets by UTC date.
-- **City postcard.** Export the current city map as a 1600×1000 PNG with local time, weather, shared city score, scan progress and the active day/night theme.
+- **City postcard.** Export the current city map as a PNG — 1600×1000 on desktop, 1080×1350 portrait on phones — with local time, weather, shared city score, scan progress and the active day/night theme.
 - **Technical game guide.** A bottom-right **? / GUIDE** entry opens a complete, bilingual feature list; each feature includes a one-line implementation note capped at 20 characters.
 
 ## Scores and anti-abuse
@@ -39,7 +39,7 @@ The passport, scan progress, daily route and card export are frontend-only:
 - Dossier facts live in `data/city-dossiers.js`; heights come from the city map config, and dates are completion/opening years. Facts are short editorial summaries, not full citations.
 - A city dossier is unlocked when all 3 scan targets are complete.
 - The daily route is deterministic from the UTC date and a noon solar snapshot, so every visitor gets the same three stops for that day.
-- Postcards are composed on a Canvas from the live MapLibre canvas; no upload or server render is involved. Export opens a preview with Save and, where supported, the native Share sheet. The PNG includes a QR code pointing at the city page, and the share payload also carries the city detail URL where the platform accepts it. WeChat Moments still requires saving the image and posting it from the album; a web page cannot open Moments directly.
+- Postcards are composed on a Canvas from the live MapLibre canvas; no upload or server render is involved. Desktop cards are 1600×1000; phone cards are 1080×1350 with larger type. Export opens a preview with Save and, where supported, the native Share sheet. The PNG includes a QR code pointing at the city page, and the share payload also carries the city detail URL where the platform accepts it. WeChat Moments still requires saving the image and posting it from the album; a web page cannot open Moments directly.
 
 ## All cities — Orbital Blueprint
 

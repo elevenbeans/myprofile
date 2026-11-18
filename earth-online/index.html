@@ -7622,7 +7622,24 @@ async function openPostcard(){
     await new Promise((resolve) => requestAnimationFrame(resolve));
     const mapCanvas = shanghaiMap.getCanvas();
     if (!mapCanvas || !mapCanvas.width || !mapCanvas.height) throw new Error('map canvas unavailable');
-    const W = 1600, H = 1000;
+    const compact = window.matchMedia('(max-width: 760px)').matches;
+    const W = compact ? 1080 : 1600;
+    const H = compact ? 1350 : 1000;
+    const L = compact ? {
+      pad: 56, border: 32, top: 86, eyebrow: 18, sector: 16,
+      title: 76, titleY: 226, country: 26, countryY: 278,
+      landmark: 30, landmarkY: 342, local: 24, localY: 388,
+      score: 38, scoreY: 170, scoreLabel: 16, scan: 22,
+      date: 22, url: 16, meta: 96, urlY: 68, qr: 200,
+      topFade: 420, bottomFade: 500
+    } : {
+      pad: 64, border: 34, top: 78, eyebrow: 13, sector: 13,
+      title: 58, titleY: 164, country: 18, countryY: 198,
+      landmark: 20, landmarkY: 238, local: 12, localY: 264,
+      score: 22, scoreY: 120, scoreLabel: 10, scan: 14,
+      date: 18, url: 10, meta: 92, urlY: 66, qr: 176,
+      topFade: 340, bottomFade: 300
+    };
     const canvas = document.createElement('canvas');
     canvas.width = W;
     canvas.height = H;
@@ -7639,74 +7656,76 @@ async function openPostcard(){
     const sh = H / scale;
     ctx.drawImage(mapCanvas, (mapCanvas.width - sw) / 2, (mapCanvas.height - sh) / 2, sw, sh, 0, 0, W, H);
 
-    const top = ctx.createLinearGradient(0, 0, 0, 340);
+    const top = ctx.createLinearGradient(0, 0, 0, L.topFade);
     top.addColorStop(0, day ? 'rgba(245,251,251,.94)' : 'rgba(2,8,14,.9)');
     top.addColorStop(1, day ? 'rgba(245,251,251,0)' : 'rgba(2,8,14,0)');
     ctx.fillStyle = top;
-    ctx.fillRect(0, 0, W, 340);
-    const bottom = ctx.createLinearGradient(0, H - 300, 0, H);
+    ctx.fillRect(0, 0, W, L.topFade);
+    const bottom = ctx.createLinearGradient(0, H - L.bottomFade, 0, H);
     bottom.addColorStop(0, day ? 'rgba(245,251,251,0)' : 'rgba(2,8,14,0)');
     bottom.addColorStop(1, day ? 'rgba(245,251,251,.95)' : 'rgba(2,8,14,.94)');
     ctx.fillStyle = bottom;
-    ctx.fillRect(0, H - 300, W, 300);
+    ctx.fillRect(0, H - L.bottomFade, W, L.bottomFade);
 
     ctx.strokeStyle = line;
     ctx.lineWidth = 1;
-    ctx.strokeRect(34, 34, W - 68, H - 68);
+    ctx.strokeRect(L.border, L.border, W - L.border * 2, H - L.border * 2);
     ctx.strokeStyle = day ? 'rgba(8,82,98,.75)' : 'rgba(255,179,71,.65)';
     ctx.beginPath();
-    ctx.moveTo(34, 86); ctx.lineTo(34, 34); ctx.lineTo(86, 34);
-    ctx.moveTo(W - 86, H - 34); ctx.lineTo(W - 34, H - 34); ctx.lineTo(W - 34, H - 86);
+    const corner = L.border + 52;
+    ctx.moveTo(L.border, corner); ctx.lineTo(L.border, L.border); ctx.lineTo(corner, L.border);
+    ctx.moveTo(W - corner, H - L.border); ctx.lineTo(W - L.border, H - L.border); ctx.lineTo(W - L.border, H - corner);
     ctx.stroke();
 
     ctx.fillStyle = accent;
-    ctx.font = '600 13px ui-monospace, SFMono-Regular, Menlo, monospace';
-    ctx.letterSpacing = '3px';
-    ctx.fillText('EARTH ONLINE / ORBITAL BLUEPRINT', 64, 78);
+    ctx.font = '600 ' + L.eyebrow + 'px ui-monospace, SFMono-Regular, Menlo, monospace';
+    ctx.letterSpacing = compact ? '2px' : '3px';
+    ctx.fillText('EARTH ONLINE / ORBITAL BLUEPRINT', L.pad, L.top);
     ctx.textAlign = 'right';
     ctx.fillStyle = muted;
-    ctx.fillText('SECTOR 07 · ' + (day ? 'DAY' : 'NIGHT'), W - 64, 78);
+    ctx.fillText('SECTOR 07 · ' + (day ? 'DAY' : 'NIGHT'), W - L.pad, L.top);
     ctx.textAlign = 'left';
     ctx.letterSpacing = '0px';
 
     ctx.fillStyle = ink;
-    ctx.font = '600 58px "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif';
-    ctx.fillText(city.name[lang], 64, 164);
+    ctx.font = '600 ' + L.title + 'px "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif';
+    ctx.fillText(city.name[lang], L.pad, L.titleY);
     ctx.fillStyle = muted;
-    ctx.font = '500 18px ui-monospace, SFMono-Regular, Menlo, monospace';
-    ctx.fillText(city.country[lang].toUpperCase() + '  /  ' + formatCoord(city.lat, city.lon), 66, 198);
+    ctx.font = '500 ' + L.country + 'px ui-monospace, SFMono-Regular, Menlo, monospace';
+    ctx.fillText(city.country[lang].toUpperCase() + '  /  ' + formatCoord(city.lat, city.lon), L.pad + 2, L.countryY);
 
     const landmark = (LANDMARKS[city.id] && LANDMARKS[city.id].name[lang]) || city.name[lang];
     ctx.fillStyle = accent;
-    ctx.font = '600 20px "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif';
-    ctx.fillText(landmark, 66, 238);
+    ctx.font = '600 ' + L.landmark + 'px "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif';
+    ctx.fillText(landmark, L.pad + 2, L.landmarkY);
     ctx.fillStyle = muted;
-    ctx.font = '400 12px ui-monospace, SFMono-Regular, Menlo, monospace';
-    ctx.fillText('LOCAL ' + cityLocalTimeText(city) + '  ·  ' + postcardWeather(city), 66, 264);
+    ctx.font = '400 ' + L.local + 'px ui-monospace, SFMono-Regular, Menlo, monospace';
+    ctx.fillText('LOCAL ' + cityLocalTimeText(city) + '  ·  ' + postcardWeather(city), L.pad + 2, L.localY);
 
     const scans = Math.min(3, scanCount(city.id));
     const score = city.detailOnly ? '—' : fmtNum(scoreFor(city.id));
     ctx.fillStyle = ink;
-    ctx.font = '600 22px ui-monospace, SFMono-Regular, Menlo, monospace';
-    ctx.fillText(score, 66, H - 120);
+    const scoreBaseline = H - L.scoreY;
+    ctx.font = '600 ' + L.score + 'px ui-monospace, SFMono-Regular, Menlo, monospace';
+    ctx.fillText(score, L.pad + 2, scoreBaseline);
     ctx.fillStyle = muted;
-    ctx.font = '10px ui-monospace, SFMono-Regular, Menlo, monospace';
-    ctx.fillText('CITY SCORE', 66, H - 98);
+    ctx.font = L.scoreLabel + 'px ui-monospace, SFMono-Regular, Menlo, monospace';
+    ctx.fillText('CITY SCORE', L.pad + 2, scoreBaseline + 22);
     ctx.fillStyle = day ? '#087a69' : '#5eead4';
-    ctx.font = '600 14px ui-monospace, SFMono-Regular, Menlo, monospace';
-    ctx.fillText('SCAN ' + scans + '/3', 66, H - 64);
+    ctx.font = '600 ' + L.scan + 'px ui-monospace, SFMono-Regular, Menlo, monospace';
+    ctx.fillText('SCAN ' + scans + '/3', L.pad + 2, scoreBaseline + 56);
 
-    const qrSize = 176;
-    const qrX = W - 64 - qrSize;
-    const qrY = H - 64 - qrSize;
-    const metaRight = qr ? qrX - 24 : W - 64;
+    const qrSize = L.qr;
+    const qrX = W - L.pad - qrSize;
+    const qrY = H - L.pad - qrSize;
+    const metaRight = qr ? qrX - 24 : W - L.pad;
     ctx.textAlign = 'right';
     ctx.fillStyle = ink;
-    ctx.font = '600 18px ui-monospace, SFMono-Regular, Menlo, monospace';
-    ctx.fillText('POSTCARD / ' + stampDate(new Date().toISOString(), city), metaRight, H - 92);
+    ctx.font = '600 ' + L.date + 'px ui-monospace, SFMono-Regular, Menlo, monospace';
+    ctx.fillText('POSTCARD / ' + stampDate(new Date().toISOString(), city), metaRight, H - L.meta);
     ctx.fillStyle = muted;
-    ctx.font = '10px ui-monospace, SFMono-Regular, Menlo, monospace';
-    ctx.fillText('ELEVENBEANS.ME/EARTH-ONLINE', metaRight, H - 66);
+    ctx.font = L.url + 'px ui-monospace, SFMono-Regular, Menlo, monospace';
+    ctx.fillText('ELEVENBEANS.ME/EARTH-ONLINE', metaRight, H - L.urlY);
     if (qr){
       ctx.fillStyle = '#ffffff';
       ctx.fillRect(qrX - 8, qrY - 8, qrSize + 16, qrSize + 16);
@@ -7715,8 +7734,8 @@ async function openPostcard(){
       ctx.lineWidth = 1;
       ctx.strokeRect(qrX - 8, qrY - 8, qrSize + 16, qrSize + 16);
       ctx.fillStyle = accent;
-      ctx.font = '10px ui-monospace, SFMono-Regular, Menlo, monospace';
-      ctx.fillText('SCAN · CITY', W - 64, qrY - 18);
+      ctx.font = (compact ? 16 : 10) + 'px ui-monospace, SFMono-Regular, Menlo, monospace';
+      ctx.fillText('SCAN · CITY', W - L.pad, qrY - 18);
     }
     ctx.textAlign = 'left';
 
@@ -8178,8 +8197,8 @@ const GUIDE_ITEMS = [
     en: { title: "Today's route", desc: 'A fixed daily solar snapshot picks three cities; entering a city completes a stop, and the route resets the next day.', tech: 'Date + solar altitude' }
   },
   {
-    zh: { title: '城市明信片', desc: '生成带城市二维码的 1600×1000 PNG；支持保存和系统分享。朋友圈需保存后从相册发布。', tech: 'Canvas + QR + Share' },
-    en: { title: 'City postcard', desc: 'Renders a 1600×1000 PNG with a city QR code, Save and native Share where supported; Moments needs an album post.', tech: 'Canvas + QR + Share' }
+    zh: { title: '城市明信片', desc: '桌面生成 1600×1000，手机生成 1080×1350 竖版 PNG，带城市二维码；支持保存和系统分享。', tech: 'Canvas + QR + Share' },
+    en: { title: 'City postcard', desc: 'Renders 1600×1000 on desktop or 1080×1350 portrait on phones, with a city QR code, Save and native Share.', tech: 'Canvas + QR + Share' }
   },
   {
     zh: { title: '底图兜底', desc: '矢量瓦片不可用时自动使用 Esri 深灰/浅灰底图，城市、标签和地标仍然可读。', tech: 'OSM 矢量 + Esri 栅格' },
