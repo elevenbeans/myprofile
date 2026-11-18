@@ -1740,8 +1740,8 @@ const I18N = {
     'postcard-title':'城市明信片',
     'postcard-save':'保存图片',
     'postcard-share':'分享',
-    'postcard-hint':'保存图片后即可分享；朋友圈请从相册发布。',
-    'postcard-wechat-hint':'微信内请长按图片保存，再从朋友圈相册发布。',
+    'postcard-hint':'保存或分享图片；右下角二维码可进入城市。朋友圈请从相册发布。',
+    'postcard-wechat-hint':'微信内长按图片保存；二维码可进入城市，朋友圈请从相册发布。',
     'postcard-prep':'正在生成明信片…',
     'postcard-saved':'图片已保存',
     'postcard-share-ok':'已打开系统分享',
@@ -1916,8 +1916,8 @@ const I18N = {
     'postcard-title':'City postcard',
     'postcard-save':'Save image',
     'postcard-share':'Share',
-    'postcard-hint':'Save the image to share it; post to Moments from your album.',
-    'postcard-wechat-hint':'Long-press the image to save it, then post to Moments from your album.',
+    'postcard-hint':'Save or share the image; the QR code opens the city. Post to Moments from your album.',
+    'postcard-wechat-hint':'Long-press to save the image; the QR code opens the city, then post to Moments from your album.',
     'postcard-prep':'Generating postcard…',
     'postcard-saved':'Image saved',
     'postcard-share-ok':'Share sheet opened',
@@ -7505,16 +7505,73 @@ async function sharePostcard(){
       toast(tr('postcard-share-fail'), 'ruin');
       return;
     }
-    await navigator.share({
+    const city = findCityById(postcardState.cityId);
+    const shareData = {
       files: [file],
-      title: postcardState.cityId + ' · Earth Online',
-      text: 'Earth Online · Orbital Blueprint'
-    });
+      title: (city ? city.name[lang] : postcardState.cityId) + ' · Earth Online',
+      text: 'Earth Online · Orbital Blueprint',
+      url: city ? postcardCityUrl(city) : 'https://elevenbeans.me/earth-online/'
+    };
+    try {
+      await navigator.share(shareData);
+    } catch (err){
+      if (!err || err.name !== 'TypeError') throw err;
+      // Some targets reject files + url together; keep the image share working.
+      await navigator.share({ files: shareData.files, title: shareData.title, text: shareData.text });
+    }
     toast(tr('postcard-share-ok'), 'gold');
   } catch (err){
     if (err && err.name === 'AbortError') return;
     console.warn('[postcard] share', err);
     toast(tr('postcard-share-fail'), 'ruin');
+  }
+}
+
+let qrcodePromise = null;
+function loadQRCodeLib(){
+  if (window.qrcode) return Promise.resolve(window.qrcode);
+  if (qrcodePromise) return qrcodePromise;
+  qrcodePromise = new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = 'vendor/qrcode.min.js';
+    script.async = true;
+    script.onload = () => window.qrcode ? resolve(window.qrcode) : reject(new Error('qrcode missing'));
+    script.onerror = () => reject(new Error('qrcode load failed'));
+    document.head.appendChild(script);
+  });
+  return qrcodePromise;
+}
+
+function postcardCityUrl(city){
+  return 'https://elevenbeans.me/earth-online/#/city/' + encodeURIComponent(city.id) + '/detail';
+}
+
+function postcardQRUrl(city){
+  return 'https://elevenbeans.me/earth-online/#/city/' + encodeURIComponent(city.id);
+}
+
+function makeQRCode(url){
+  if (!window.qrcode) return null;
+  try {
+    const qr = window.qrcode(0, 'M');
+    qr.addData(url);
+    qr.make();
+    return qr;
+  } catch (err) { console.warn('[postcard] qr', err); return null; }
+}
+
+function drawPostcardQR(ctx, qr, x, y, size){
+  const count = qr.getModuleCount();
+  const quiet = 4;
+  const cell = size / (count + quiet * 2);
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(x, y, size, size);
+  ctx.fillStyle = '#071b2c';
+  for (let r = 0; r < count; r++){
+    for (let c = 0; c < count; c++){
+      if (!qr.isDark(r, c)) continue;
+      ctx.fillRect(x + (c + quiet) * cell, y + (r + quiet) * cell, Math.ceil(cell) + 0.2, Math.ceil(cell) + 0.2);
+    }
   }
 }
 
@@ -7549,6 +7606,11 @@ async function openPostcard(){
   }
   try {
     toast(tr('postcard-prep'), 'build');
+    let qr = null;
+    try {
+      await loadQRCodeLib();
+      qr = makeQRCode(postcardQRUrl(city));
+    } catch (err) { console.warn('[postcard] qr unavailable', err); }
     await new Promise((resolve) => {
       let done = false;
       const finish = () => { if (done) return; done = true; clearTimeout(timer); resolve(); };
@@ -7634,13 +7696,28 @@ async function openPostcard(){
     ctx.font = '600 14px ui-monospace, SFMono-Regular, Menlo, monospace';
     ctx.fillText('SCAN ' + scans + '/3', 66, H - 64);
 
+    const qrSize = 176;
+    const qrX = W - 64 - qrSize;
+    const qrY = H - 64 - qrSize;
+    const metaRight = qr ? qrX - 24 : W - 64;
     ctx.textAlign = 'right';
     ctx.fillStyle = ink;
     ctx.font = '600 18px ui-monospace, SFMono-Regular, Menlo, monospace';
-    ctx.fillText('POSTCARD / ' + stampDate(new Date().toISOString(), city), W - 64, H - 92);
+    ctx.fillText('POSTCARD / ' + stampDate(new Date().toISOString(), city), metaRight, H - 92);
     ctx.fillStyle = muted;
     ctx.font = '10px ui-monospace, SFMono-Regular, Menlo, monospace';
-    ctx.fillText('ELEVENBEANS.ME/EARTH-ONLINE', W - 64, H - 66);
+    ctx.fillText('ELEVENBEANS.ME/EARTH-ONLINE', metaRight, H - 66);
+    if (qr){
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(qrX - 8, qrY - 8, qrSize + 16, qrSize + 16);
+      drawPostcardQR(ctx, qr, qrX, qrY, qrSize);
+      ctx.strokeStyle = line;
+      ctx.lineWidth = 1;
+      ctx.strokeRect(qrX - 8, qrY - 8, qrSize + 16, qrSize + 16);
+      ctx.fillStyle = accent;
+      ctx.font = '10px ui-monospace, SFMono-Regular, Menlo, monospace';
+      ctx.fillText('SCAN · CITY', W - 64, qrY - 18);
+    }
     ctx.textAlign = 'left';
 
     const blob = await canvasToBlob(canvas);
@@ -8101,8 +8178,8 @@ const GUIDE_ITEMS = [
     en: { title: "Today's route", desc: 'A fixed daily solar snapshot picks three cities; entering a city completes a stop, and the route resets the next day.', tech: 'Date + solar altitude' }
   },
   {
-    zh: { title: '城市明信片', desc: '生成 1600×1000 PNG 并预览；支持保存和系统分享。朋友圈需保存后从相册发布。', tech: 'Canvas + Web Share' },
-    en: { title: 'City postcard', desc: 'Renders a 1600×1000 PNG preview with Save and native Share where supported; Moments needs an album post.', tech: 'Canvas + Web Share' }
+    zh: { title: '城市明信片', desc: '生成带城市二维码的 1600×1000 PNG；支持保存和系统分享。朋友圈需保存后从相册发布。', tech: 'Canvas + QR + Share' },
+    en: { title: 'City postcard', desc: 'Renders a 1600×1000 PNG with a city QR code, Save and native Share where supported; Moments needs an album post.', tech: 'Canvas + QR + Share' }
   },
   {
     zh: { title: '底图兜底', desc: '矢量瓦片不可用时自动使用 Esri 深灰/浅灰底图，城市、标签和地标仍然可读。', tech: 'OSM 矢量 + Esri 栅格' },

@@ -39,7 +39,7 @@ The passport, scan progress, daily route and card export are frontend-only:
 - Dossier facts live in `data/city-dossiers.js`; heights come from the city map config, and dates are completion/opening years. Facts are short editorial summaries, not full citations.
 - A city dossier is unlocked when all 3 scan targets are complete.
 - The daily route is deterministic from the UTC date and a noon solar snapshot, so every visitor gets the same three stops for that day.
-- Postcards are composed on a Canvas from the live MapLibre canvas; no upload or server render is involved. Export opens a preview with Save and, where supported, the native Share sheet. WeChat Moments still requires saving the image and posting it from the album; a web page cannot open Moments directly.
+- Postcards are composed on a Canvas from the live MapLibre canvas; no upload or server render is involved. Export opens a preview with Save and, where supported, the native Share sheet. The PNG includes a QR code pointing at the city page, and the share payload also carries the city detail URL where the platform accepts it. WeChat Moments still requires saving the image and posting it from the album; a web page cannot open Moments directly.
 
 ## All cities — Orbital Blueprint
 
@@ -193,6 +193,7 @@ The home page uses an original slow piano piece in A minor: broken chords, a low
 - `index.html` contains all markup, styles and application JavaScript.
 - `vendor/three.module.min.js` is Three.js r160 (MIT), loaded locally with a CDN fallback.
 - `vendor/maplibre-gl.js` + CSS are MapLibre GL JS 4.7 (BSD-3), loaded locally for every city view.
+- `vendor/qrcode.min.js` is qrcode-generator 1.4.4 (MIT), loaded on demand when a postcard is generated.
 - Each city's 3D layer is a MapLibre `fill-extrusion` of the `building` source-layer from OpenFreeMap, combined with water/road layers, an Esri dark-gray raster fallback, a blueprint HUD overlay and HTML landmark labels. No building data file is bundled; tiles are fetched at runtime.
 - Each landmark is a separate Three.js custom layer on the MapLibre canvas. The forty-one OSM-readable landmarks get a lock-on frame tied to the map's `building:part` massing; the rest get structural edges (`EdgesGeometry`, not a triangulated wireframe) over a dim volume, scaled to its real height. Every city view shows a real `ALT` readout in the landmark HUD. Both use a ground survey ring and an amber beacon.
 - `textures/` holds NASA day (2048×1024 WebP), night-lights (2048×1024 WebP) and cloud (1024×512 WebP) maps, with the previous 1K files as a local fallback and the Three.js CDN as a second fallback. On desktop, after the camera zooms in (`orbit.dist < 2.75`), a 4K day/night + 2K cloud set loads in the background and swaps in; mobile and WeChat stay on 2K. Textures use `?v=6` (2K) / `?v=7` (4K) and anisotropy 16.
@@ -221,6 +222,7 @@ The home page uses an original slow piano piece in A minor: broken chords, a low
 
 - Three.js — MIT, see `vendor/LICENSE`.
 - MapLibre GL JS — BSD-3, see `vendor/maplibre-gl.LICENSE`.
+- QR rendering — qrcode-generator 1.4.4, MIT, see `vendor/qrcode.LICENSE`.
 - City building footprints/heights — © OpenStreetMap contributors, rendered via [OpenFreeMap](https://openfreemap.org/).
 - Dark-gray raster fallback — Esri, HERE, Garmin, © OpenStreetMap contributors.
 - Earth imagery — NASA Blue Marble / Black Marble / cloud maps, public domain, via the Three.js example assets (2K set). 4K/2K detail set — [Solar System Scope](https://www.solarsystemscope.com/textures/), CC BY 4.0, based on NASA imagery; downsampled to 4096×2048 (day/night) and 2048×1024 (clouds).
