@@ -108,6 +108,8 @@ The city view is the real-map district described above, with a blueprint landmar
 
 Drag to pan, scroll or pinch to zoom, right-drag or two fingers rotate/pitch the map. `Esc` or **返回地球** leaves. The globe camera and open panel are preserved when you return.
 
+Two detail-only city pages are reachable by direct route and are intentionally **not** added to the globe, scoreboard or 46-city counts: `#/city/nantong/detail` (Hao River / Nantong old town) and `#/city/anqing/detail` (Zhenfeng Pagoda / Yingjiang Temple).
+
 ## Screenshots
 
 One city per render mode. All 46 share the MapLibre/OSM basemap; only the landmark overlay differs. These are night captures; daytime cities use the pale daylight variant.

@@ -1576,7 +1576,8 @@ const CITIES = [
 // Detail-only cities: reachable by direct route (#/city/<id>/detail), never
 // added to CITIES, so they do not appear on the globe, scoreboard or counts.
 const EXTRA_CITIES = [
-  { id:'nantong', name:{zh:'南通',en:'Nantong'}, country:{zh:'中国',en:'China'}, lat:31.9802, lon:120.8943, tz:'Asia/Shanghai', detailOnly:true }
+  { id:'nantong', name:{zh:'南通',en:'Nantong'}, country:{zh:'中国',en:'China'}, lat:31.9802, lon:120.8943, tz:'Asia/Shanghai', detailOnly:true },
+  { id:'anqing', name:{zh:'安庆',en:'Anqing'}, country:{zh:'中国',en:'China'}, lat:30.5036, lon:117.0493, tz:'Asia/Shanghai', detailOnly:true }
 ];
 function findCityById(id){
   return CITIES.find((c) => c.id === id) || EXTRA_CITIES.find((c) => c.id === id) || null;
@@ -5012,13 +5013,14 @@ const LANDMARKS = {
   nanjing:      { type:'zifeng',       name:{zh:'紫峰大厦',en:'Zifeng Tower'},         color:0x9fb6c9, accent:0x7fd3ff, scale:1.00, theme:'asia' },
   marrakech:    { type:'marrakech',    name:{zh:'Jemaa el-Fna',en:'Jemaa el-Fna'},     color:0xc9a46a, accent:0xffb347, scale:1.00, theme:'africa' },
   nantong:      { type:'nantong',      name:{zh:'濠河 · 南通老城',en:'Hao River · Nantong Old Town'}, color:0x9fb6c9, accent:0x7fd3ff, scale:1.00, theme:'asia' },
+  anqing:       { type:'zhenfeng',     name:{zh:'振风塔 · 迎江寺',en:'Zhenfeng Pagoda · Yingjiang Temple'}, color:0xb08a5a, accent:0xf0c75e, scale:1.00, theme:'asia' },
   vancouver:    { type:'shangrila',    name:{zh:'香格里拉大厦',en:'Living Shangri-La'}, color:0x9fb6c9, accent:0x7fd3ff, scale:1.00, theme:'americas' }
 };
 
 const LANDMARK_HEIGHTS = {
   eiffel: 33, empire: 36, burj: 64, bigben: 26, bank: 28, marina: 27,
   stbasil: 20, pyramid: 13, seoul: 34, gate: 16, pingan: 50, canton: 42, potala: 20, taipei101: 48,
-  brandenburg: 14, ryugyong: 40, bitexco: 36, cntower: 50, royalpalace: 16, colosseum: 14, ifs: 24, raffles: 30, citic: 52, shanghaitower: 63, arc: 15, salesforce: 40, highroller: 56, bazaar: 32, sapphire: 28, mahanakhon: 31, portside: 14, italia: 17, sydneytower: 31, westerkerk: 8, eureka: 30, datang: 10, petronas: 45, willis: 44, sagrada: 18, grantorre: 30, hassan: 21, abeno: 30, monas: 13, zifeng: 45, marrakech: 10, nantong: 10, shangrila: 20
+  brandenburg: 14, ryugyong: 40, bitexco: 36, cntower: 50, royalpalace: 16, colosseum: 14, ifs: 24, raffles: 30, citic: 52, shanghaitower: 63, arc: 15, salesforce: 40, highroller: 56, bazaar: 32, sapphire: 28, mahanakhon: 31, portside: 14, italia: 17, sydneytower: 31, westerkerk: 8, eureka: 30, datang: 10, petronas: 45, willis: 44, sagrada: 18, grantorre: 30, hassan: 21, abeno: 30, monas: 13, zifeng: 45, marrakech: 10, nantong: 10, shangrila: 20, zhenfeng: 64
 };
 
 let cityPhaseDay = false;
@@ -5691,6 +5693,23 @@ function buildNantong(cfg){
   return g;
 }
 
+function buildZhenfengPagoda(cfg){
+  const g = new THREE.Group();
+  lcyl(g, 5.6, 6.4, 3.0, cfg.color, 0, 0, 0, 8);
+  lcyl(g, 6.8, 6.8, 0.35, cfg.accent, 0, 3.0, 0, 8);
+  let y = 3.35;
+  for (let i = 0; i < 7; i++){
+    const radius = 4.8 - i * 0.42;
+    lcyl(g, radius * 0.88, radius, 7.0, cfg.color, 0, y, 0, 8);
+    lcyl(g, radius + 0.7, radius + 0.7, 0.35, cfg.accent, 0, y + 7.0, 0, 8);
+    y += 7.35;
+  }
+  lcyl(g, 1.5, 2.4, 3.2, cfg.color, 0, y, 0, 8);
+  lcyl(g, 0.15, 0.5, 6.0, cfg.accent, 0, y + 3.2, 0, 6);
+  lcyl(g, 0.05, 0.18, 2.0, cfg.accent, 0, y + 9.2, 0, 6);
+  return g;
+}
+
 
 function buildShangriLa(cfg){
   const g = new THREE.Group();
@@ -5753,6 +5772,7 @@ function buildLandmark(cfg){
     case 'zifeng': return buildZifeng(cfg);
     case 'marrakech': return buildMarrakech(cfg);
     case 'nantong': return buildNantong(cfg);
+    case 'zhenfeng': return buildZhenfengPagoda(cfg);
     case 'shangrila': return buildShangriLa(cfg);
     default: return buildEmpire(cfg);
   }
@@ -6632,6 +6652,17 @@ const CITY_MAPS = {
     ],
     roads:[{zh:'南大街',en:'South Street',lng:120.889,lat:31.979},{zh:'濠北路',en:'Haobei Rd',lng:120.890,lat:31.985}]
   },
+  anqing: {
+    center:[117.0493,30.5036], zoom:16.8, pitch:52, bearing:-18, origin:[117.0493,30.5036], height:64.8,
+    label:{zh:'振风塔 · 迎江寺',en:'Zhenfeng Pagoda · Yingjiang Temple'},
+    points:[
+      {id:'zhenfeng',name:{zh:'振风塔',en:'Zhenfeng Pagoda'},lng:117.0493,lat:30.5036,height:64.8,major:true},
+      {id:'yingjiang',name:{zh:'迎江寺',en:'Yingjiang Temple'},lng:117.0499,lat:30.5042,height:0},
+      {id:'yangtze',name:{zh:'长江',en:'Yangtze River'},lng:117.0525,lat:30.4988,height:0},
+      {id:'oldtown',name:{zh:'安庆老城',en:'Anqing Old Town'},lng:117.0560,lat:30.5100,height:0}
+    ],
+    roads:[{zh:'沿江东路',en:'Yanjiang East Rd',lng:117.050,lat:30.502},{zh:'人民路',en:'Renmin Rd',lng:117.055,lat:30.508}]
+  },
   vancouver: {
     center:[-123.12365,49.28575], zoom:14.8, pitch:55, bearing:-20, origin:[-123.12365,49.28575], height:201,
     label:{zh:'香格里拉大厦 · 温哥华市中心',en:'Living Shangri-La · Downtown'},
@@ -7278,6 +7309,14 @@ const NANTONG_DISTRICT = {
     [120.8815,31.9715],[120.8815,31.9885]
   ]
 };
+const ANQING_DISTRICT = {
+  id:'anqing',
+  center:[117.0493,30.5036],
+  polygon:[
+    [117.0455,30.5062],[117.0535,30.5062],[117.0535,30.5002],
+    [117.0455,30.5002],[117.0455,30.5062]
+  ]
+};
 function addDistrictLayer(map, district){
   const src = district.id + '-district';
   if (!map.getSource(src)){
@@ -7315,6 +7354,9 @@ function addShanghaiLandmarkLayer(map){
   if (cfg.type === 'nantong'){
     try { addDistrictLayer(map, NANTONG_DISTRICT); } catch(e){ console.warn('[city-landmark] district', e); }
     return;
+  }
+  if (cfg.type === 'zhenfeng'){
+    try { addDistrictLayer(map, ANQING_DISTRICT); } catch(e){ console.warn('[city-landmark] district', e); }
   }
   if (cfg.type === 'marrakech'){
     try { addDistrictLayer(map, MARRAKECH_DISTRICT); } catch(e){ console.warn('[city-landmark] district', e); }

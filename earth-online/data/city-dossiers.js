@@ -378,5 +378,13 @@ export const CITY_DOSSIERS = {
       zh: '濠河把南通老城圈成一条闭合的水轴，低层街巷和河岸共同构成这座城市的可见边界。',
       en: 'The Hao River loops Nantong’s old town into a closed water axis, with low lanes and embankments forming its visible edge.'
     }
+  },
+  anqing: {
+    year: 1570,
+    architect: null,
+    fact: {
+      zh: '振风塔立在迎江寺与长江之间，七层八角砖木塔身把安庆老城和江面收进同一根垂直轴线。',
+      en: 'Zhenfeng Pagoda rises between Yingjiang Temple and the Yangtze, tying Anqing’s old town to the river in one vertical axis.'
+    }
   }
 };
