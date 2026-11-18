@@ -7634,18 +7634,18 @@ async function openPostcard(){
     const H = compact ? 1350 : 1000;
     const L = compact ? {
       pad: 56, border: 32, top: 86, eyebrow: 18, sector: 16,
-      title: 228, titleY: 320, country: 28, countryY: 382,
-      landmark: 34, landmarkY: 444, local: 26, localY: 494,
+      title: 152, titleY: 300, country: 28, countryY: 356,
+      landmark: 34, landmarkY: 416, local: 26, localY: 462,
       score: 38, scoreY: 170, scoreLabel: 16, scan: 22,
       date: 22, url: 16, meta: 96, urlY: 68, qr: 200,
-      topFade: 560, bottomFade: 500
+      topFade: 520, bottomFade: 500
     } : {
       pad: 64, border: 34, top: 78, eyebrow: 13, sector: 13,
-      title: 174, titleY: 250, country: 24, countryY: 296,
-      landmark: 26, landmarkY: 350, local: 16, localY: 390,
+      title: 116, titleY: 230, country: 24, countryY: 274,
+      landmark: 26, landmarkY: 324, local: 16, localY: 362,
       score: 22, scoreY: 120, scoreLabel: 10, scan: 14,
       date: 18, url: 10, meta: 92, urlY: 66, qr: 176,
-      topFade: 470, bottomFade: 300
+      topFade: 440, bottomFade: 300
     };
     const canvas = document.createElement('canvas');
     canvas.width = W;
