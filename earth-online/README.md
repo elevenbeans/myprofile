@@ -13,6 +13,9 @@ A real-time, shareable Earth for [elevenbeans.me](https://elevenbeans.me) — NA
 - **Shared city score.** The left board lists all 46 cities, highest first, with the total shared across every visitor. On mobile the same board opens from the **▤** button in the top bar.
 - **First-visit continent intro.** The globe infers the visitor's continent from the browser timezone (no location permission prompt), centers on it, and shows a small continent chip. A city hash or `?city=` deep link skips the intro.
 - **No economy.** There are no credits, contracts, levels, combos, ranks, stability or demolition/rebuild. The visit itself is the score.
+- **Orbital Passport — local collection.** Entering a city records a stamp in `localStorage`; each city has 3 explicit scan points. Scanning all 3 unlocks a lightweight city dossier. There is no account and no cross-device sync.
+- **Today's route.** A fixed daily solar snapshot picks 3 cities (twilight / day / night); entering a city completes a stop. The route is local and resets by UTC date.
+- **City postcard.** Export the current city map as a 1600×1000 PNG with local time, weather, shared city score, scan progress and the active day/night theme.
 - **Technical game guide.** A bottom-right **? / GUIDE** entry opens a complete, bilingual feature list; each feature includes a one-line implementation note capped at 20 characters.
 
 ## Scores and anti-abuse
@@ -27,6 +30,16 @@ A real-time, shareable Earth for [elevenbeans.me](https://elevenbeans.me) — NA
 - The NAS issues short-lived session tokens and applies a small per-token/city/action cooldown (0.8 s focus, 1.5 s detail) plus an IP rate limit. Very rapid repeats may show **操作太快 · 本次未计分**.
 - Events carry an idempotency `eventId`, so a retry after a lost response does not double-count.
 - The score file is persisted at `nas-portal/.data/earth-online-scores.json` (override with `EARTH_SCORE_FILE`).
+
+## Local exploration
+
+The passport, scan progress, daily route and card export are frontend-only:
+
+- `localStorage` key `earth:explorer:v1` stores visits, scans and route progress.
+- Dossier facts live in `data/city-dossiers.js`; heights come from the city map config, and dates are completion/opening years. Facts are short editorial summaries, not full citations.
+- A city dossier is unlocked when all 3 scan targets are complete.
+- The daily route is deterministic from the UTC date and a noon solar snapshot, so every visitor gets the same three stops for that day.
+- Postcards are composed on a Canvas from the live MapLibre canvas; no upload or server render is involved.
 
 ## All cities — Orbital Blueprint
 

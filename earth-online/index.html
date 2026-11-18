@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Earth Online · mini — 地球 Online</title>
-<meta name="description" content="A real-time 3D Earth with 46 cities, live weather, shared city scores, and MapLibre/OSM Orbital Blueprint city views. Focus +5, enter a city +10.">
+<meta name="description" content="A real-time 3D Earth with 46 cities, live weather, shared scores, a local passport with landmark scans, daily routes and Orbital Blueprint city postcards.">
 <meta name="theme-color" content="#04060b">
 <meta property="og:title" content="Earth Online · mini">
 <meta property="og:description" content="A real-time 3D Earth with 46 cities, live weather, shared scores, and Orbital Blueprint city maps.">
@@ -255,6 +255,7 @@
   .contract.is-done{border-color:rgba(94,234,212,.28);opacity:.6}
   .contract.is-done .contract__bar i{background:var(--ok)}
   .modal__note{margin-top:14px;font-size:10px;line-height:1.75;color:var(--dim)}
+  .modal__scroll{margin-top:8px;font-family:var(--mono);font-size:8px;letter-spacing:.16em;color:rgba(232,238,248,.42);text-align:right;text-transform:uppercase}
 
   .hud{
     position:fixed;left:calc(26px + env(safe-area-inset-left,0px));bottom:calc(26px + env(safe-area-inset-bottom,0px));z-index:30;width:260px;
@@ -814,7 +815,8 @@
   .city-view.is-day .city-head__meta span{
     background:rgba(250,254,254,.8);color:#3f6370;border-color:var(--line);
   }
-  .city-view.is-day .city-head__meta .city-sound{
+  .city-view.is-day .city-head__meta .city-sound,
+  .city-view.is-day .city-head__meta .city-card-btn{
     background:rgba(250,254,254,.8);color:#0b4b5e;border-color:var(--line-strong);
   }
   .city-view.is-day #cityScore{color:#a85f00;border-color:rgba(184,106,8,.4)}
@@ -926,6 +928,153 @@
   @media (prefers-reduced-motion:reduce){
     .ra-radar::after,.ra-dot{animation:none!important}
   }
+
+
+  /* ---------- orbital passport / daily route / scans ---------- */
+  .passport-btn{position:relative}
+  .passport-btn .chip__badge{pointer-events:none}
+  .route-strip{
+    display:grid;grid-template-columns:1fr auto;gap:2px 8px;width:100%;margin:0 0 8px;padding:8px 7px;
+    border:1px solid rgba(125,211,252,.16);border-radius:7px;background:rgba(125,211,252,.045);
+    color:var(--muted);text-align:left;font:inherit;cursor:pointer;transition:border-color .2s,background .2s;
+  }
+  .route-strip:hover,.route-strip:focus-visible{border-color:rgba(125,211,252,.38);background:rgba(125,211,252,.09);outline:none}
+  .route-strip__label{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:8.5px;line-height:1.3;letter-spacing:.12em;color:var(--dim);text-transform:uppercase}
+  .route-strip__label i{width:5px;height:5px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--accent)}
+  .route-strip__cities{grid-column:1;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-size:9.5px;line-height:1.4;color:var(--muted)}
+  .route-strip b{grid-column:2;grid-row:1/3;align-self:center;font-family:var(--mono);font-size:12px;font-weight:400;color:var(--accent);font-variant-numeric:tabular-nums}
+  .passport-summary{
+    display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;
+    padding:10px 0 12px;border-bottom:1px solid var(--line);font-family:var(--mono);
+    font-size:9.5px;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;
+  }
+  .passport-summary b{color:var(--accent);font-weight:400;letter-spacing:.04em}
+  .passport-route{
+    margin:13px 0 0;padding:11px 12px 12px;border:1px solid rgba(125,211,252,.18);
+    border-radius:9px;background:linear-gradient(180deg,rgba(125,211,252,.07),rgba(125,211,252,.025));
+  }
+  .passport-route__head{display:flex;align-items:baseline;justify-content:space-between;gap:8px;font-family:var(--mono);font-size:8.5px;letter-spacing:.14em;color:var(--dim);text-transform:uppercase}
+  .passport-route__head b{font-size:12px;font-weight:400;color:var(--accent);letter-spacing:0}
+  .passport-route__note{margin:6px 0 8px;font-size:10px;line-height:1.6;color:var(--dim)}
+  .route-rows{display:flex;flex-direction:column;gap:2px}
+  .route-row{
+    display:grid;grid-template-columns:22px 1fr auto;align-items:center;gap:8px;width:100%;
+    padding:6px 5px;border:0;border-radius:4px;background:transparent;color:var(--ink);font:inherit;
+    text-align:left;cursor:pointer;transition:background .2s;
+  }
+  .route-row:hover,.route-row:focus-visible{background:rgba(255,255,255,.05);outline:none}
+  .route-row__n{font-family:var(--mono);font-size:9px;color:var(--dim)}
+  .route-row__city{font-size:12px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .route-row__meta{font-family:var(--mono);font-size:8.5px;letter-spacing:.05em;color:var(--dim);white-space:nowrap}
+  .route-row.is-done{opacity:.58}
+  .route-row.is-done .route-row__n,.route-row.is-done .route-row__meta{color:var(--ok)}
+  .route-row.is-done .route-row__city{text-decoration:line-through;text-decoration-color:rgba(94,234,212,.4)}
+  .passport-grid{
+    display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin-top:14px;
+  }
+  .passport-stamp{
+    position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:3px;
+    min-height:70px;padding:8px 8px 7px;border:1px solid var(--line);border-radius:7px;
+    background:rgba(255,255,255,.018);color:var(--dim);font:inherit;text-align:left;cursor:pointer;
+    transition:border-color .2s,background .2s,color .2s;
+  }
+  .passport-stamp:hover,.passport-stamp:focus-visible{
+    border-color:rgba(125,211,252,.4);background:rgba(125,211,252,.07);color:var(--ink);outline:none;
+  }
+  .passport-stamp__num{font-family:var(--mono);font-size:8px;letter-spacing:.08em;color:var(--dim)}
+  .passport-stamp strong{font-size:11.5px;font-weight:500;line-height:1.25;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+  .passport-stamp__country{font-family:var(--mono);font-size:7.5px;letter-spacing:.05em;color:var(--dim);text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+  .passport-stamp__scans{margin-top:auto;font-family:var(--mono);font-size:7.5px;letter-spacing:.05em;color:var(--dim);text-transform:uppercase}
+  .passport-stamp.is-visited{border-color:rgba(212,163,115,.3);background:rgba(212,163,115,.06);color:var(--ink)}
+  .passport-stamp.is-visited strong{color:var(--accent)}
+  .passport-stamp.is-scanned{border-color:rgba(94,234,212,.34);background:rgba(94,234,212,.055)}
+  .passport-stamp.is-scanned .passport-stamp__scans{color:var(--ok)}
+  .modal__card--passport{width:min(920px,100%);max-height:min(88dvh,900px);display:flex;flex-direction:column;overflow:hidden}
+  .modal__card--passport>.modal__head,
+  .modal__card--passport>.passport-summary,
+  .modal__card--passport>.passport-route,
+  .modal__card--passport>.modal__note{flex:0 0 auto}
+  .modal__card--passport>.passport-grid{flex:1 1 auto;min-height:0;overflow-y:scroll;padding-right:7px;scrollbar-gutter:stable}
+  .modal__card--passport>.passport-grid::-webkit-scrollbar{width:7px}
+  .modal__card--passport>.passport-grid::-webkit-scrollbar-track{background:rgba(255,255,255,.04);border-radius:7px}
+  .modal__card--passport>.passport-grid::-webkit-scrollbar-thumb{background:rgba(255,255,255,.28);border-radius:7px}
+  .modal__card--passport>.passport-grid::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.42)}
+  .passport-summary b{font-size:8.5px;color:var(--dim);letter-spacing:.04em;text-transform:none}
+  .modal__card--dossier{width:min(680px,100%)}
+  .dossier-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:16px}
+  .dossier-grid>div{display:flex;flex-direction:column;gap:5px;padding:9px 10px;border:1px solid var(--line);border-radius:7px;background:rgba(255,255,255,.02)}
+  .dossier-grid span{font-family:var(--mono);font-size:8px;letter-spacing:.14em;color:var(--dim);text-transform:uppercase}
+  .dossier-grid b{font-family:var(--mono);font-size:14px;font-weight:400;line-height:1.35;color:var(--ink);overflow-wrap:anywhere}
+  .dossier-fact{margin:18px 0 0;font-size:14px;line-height:1.85;color:var(--muted)}
+  .dossier-scanline{display:flex;flex-wrap:wrap;gap:6px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
+  .dossier-scanline span{font-family:var(--mono);font-size:8.5px;letter-spacing:.06em;color:var(--ok);border:1px solid rgba(94,234,212,.25);border-radius:4px;padding:4px 6px}
+  .dossier-actions{margin-top:16px}
+  .dossier-actions .act{width:100%;height:40px;margin:0;font-size:10px}
+  .scan-hud{
+    position:absolute;left:calc(24px + env(safe-area-inset-left,0px));top:calc(104px + env(safe-area-inset-top,0px));z-index:3;
+    min-width:174px;padding:9px 11px 10px;border:1px solid rgba(57,208,255,.3);
+    background:rgba(2,12,20,.82);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+    font-family:var(--mono);color:var(--muted);pointer-events:none;
+  }
+  .scan-hud[hidden]{display:none}
+  .scan-hud__top{display:flex;align-items:baseline;justify-content:space-between;gap:14px;font-size:8px;letter-spacing:.12em;color:var(--dim);text-transform:uppercase}
+  .scan-hud__top b{font-size:11px;font-weight:400;color:var(--accent);letter-spacing:0}
+  .scan-hud__dots{display:flex;gap:4px;margin-top:7px}
+  .scan-hud__dots i{width:22px;height:2px;background:rgba(255,255,255,.14);border-radius:2px;transition:background .25s,box-shadow .25s}
+  .scan-hud__dots i.is-on{background:var(--cyan);box-shadow:0 0 8px rgba(57,208,255,.6)}
+  .scan-hud__hint{margin-top:7px;font-size:8px;line-height:1.5;color:var(--dim);letter-spacing:.03em}
+  .scan-hud__list{display:flex;flex-direction:column;gap:2px;margin-top:6px;pointer-events:auto}
+  .scan-target{display:grid;grid-template-columns:18px 1fr 10px;align-items:center;gap:5px;width:100%;padding:3px 2px;border:0;background:transparent;color:var(--muted);font:inherit;font-size:8px;line-height:1.3;text-align:left;cursor:pointer}
+  .scan-target:hover,.scan-target:focus-visible{background:rgba(255,255,255,.05);outline:none}
+  .scan-target span{font-size:7.5px;color:var(--dim)}
+  .scan-target b{font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .scan-target em{font-style:normal;font-size:8px;color:var(--ok);text-align:right}
+  .scan-target.is-done{color:var(--ok)}
+  .scan-target.is-done span{color:var(--ok)}
+  .scan-hud__open{margin-top:8px;padding:0;border:0;background:none;color:var(--accent);font:inherit;font-size:8px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;pointer-events:auto}
+  .scan-hud__open:hover{color:#fff}
+  .scan-marker{
+    position:relative;width:30px;height:30px;padding:0;border:1px solid var(--accent);border-radius:50%;
+    background:rgba(3,14,22,.7);color:var(--accent);display:grid;place-items:center;
+    font-family:var(--mono);font-size:9px;line-height:1;cursor:pointer;
+    box-shadow:0 0 0 4px rgba(212,163,115,.12),0 0 16px rgba(212,163,115,.22);
+    -webkit-tap-highlight-color:transparent;transition:background .2s,color .2s,transform .2s;
+  }
+  .scan-marker::before{content:'';position:absolute;inset:-7px;border:1px solid rgba(212,163,115,.2);border-radius:50%;animation:scanPulse 2.2s ease-out infinite;pointer-events:none}
+  .scan-marker:hover,.scan-marker:focus-visible{background:rgba(212,163,115,.2);color:#fff;outline:none;transform:scale(1.08)}
+  .scan-marker.is-done{border-color:rgba(94,234,212,.5);color:var(--ok);background:rgba(6,28,30,.72);box-shadow:0 0 0 4px rgba(94,234,212,.08)}
+  .scan-marker.is-done::before{display:none}
+  .scan-marker span{pointer-events:none}
+  @keyframes scanPulse{0%{transform:scale(.82);opacity:.7}70%,100%{transform:scale(1.3);opacity:0}}
+  .city-card-btn{display:inline-flex;align-items:center;justify-content:center;width:25px;height:25px;padding:0;border-radius:5px;font-size:12px;line-height:1;cursor:pointer;pointer-events:auto}
+  .city-view.is-day .scan-hud{background:rgba(250,254,254,.9);border-color:rgba(11,113,136,.32)}
+  .city-view.is-day .scan-hud__top b{color:#a85f00}
+  .city-view.is-day .scan-hud__dots i{background:rgba(9,70,85,.18)}
+  .city-view.is-day .scan-hud__dots i.is-on{background:#0b7188;box-shadow:0 0 8px rgba(11,113,136,.5)}
+  .city-view.is-day .scan-hud__hint{color:#67848e}
+  .city-view.is-day .scan-target{color:#4e6f7a}
+  .city-view.is-day .scan-target:hover,.city-view.is-day .scan-target:focus-visible{background:rgba(11,113,136,.07)}
+  .city-view.is-day .scan-target span{color:#6f8b94}
+  .city-view.is-day .scan-target.is-done,.city-view.is-day .scan-target.is-done span{color:#087a69}
+  .city-view.is-day .scan-hud__open{color:#a85f00}
+  .city-view.is-day .scan-marker{border-color:#0b7188;color:#0b7188;background:rgba(250,254,254,.9);box-shadow:0 0 0 4px rgba(11,113,136,.1)}
+  .city-view.is-day .scan-marker::before{border-color:rgba(11,113,136,.24)}
+  .city-view.is-day .scan-marker.is-done{border-color:rgba(7,110,98,.45);color:#087a69;background:rgba(231,250,247,.92)}
+  body.city-mode .toast.is-show{opacity:1!important;visibility:visible!important;pointer-events:none!important;transition:none!important}
+  @media (max-width:760px){
+    .passport-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+    .passport-stamp{min-height:64px;padding:7px}
+    .passport-summary{font-size:8.5px}
+    .passport-route{padding:9px 9px 10px}
+    .route-row{grid-template-columns:18px 1fr auto;gap:6px}
+    .route-row__city{font-size:11px}
+    .scan-hud{left:14px;top:calc(94px + env(safe-area-inset-top,0px));min-width:154px;padding:8px 9px}
+    .scan-hud__hint{max-width:150px}
+    .scan-marker{width:36px;height:36px;font-size:10px}
+    .dossier-grid{grid-template-columns:1fr;gap:5px}
+    .dossier-fact{font-size:13px}
+  }
+  @media (prefers-reduced-motion:reduce){.scan-marker::before{animation:none}}
 
   /* ---------- responsive ---------- */
   @media (max-width:1100px){
@@ -1109,6 +1258,7 @@
       <span class="continent-chip" id="continentChip" hidden><i aria-hidden="true"></i><span id="continentChipText"></span></span>
       <span class="live" title="Live demo"><i aria-hidden="true"></i><span>LIVE</span></span>
       <span class="chip chip--static" id="modeBadge" hidden>PROCEDURAL</span>
+      <button type="button" class="chip chip--icon passport-btn" id="passportBtn" data-i18n-title="passport-label" data-i18n-aria="passport-label" aria-label="PASSPORT">◈<span class="chip__badge" id="passportBadge" hidden>0</span></button>
       <button type="button" class="chip chip--icon board-btn" id="boardBtn" data-i18n-title="board-label" data-i18n-aria="board-label" aria-label="CITY SCORE">▤</button>
       <button type="button" class="chip chip--icon" id="soundBtn" aria-pressed="false" data-i18n-title="sound-off">♪</button>
       <button type="button" class="chip" id="langBtn" data-i18n-title="lang-label" aria-label="Switch language">EN</button>
@@ -1118,6 +1268,11 @@
   <aside class="board" id="board" aria-label="CITY SCORE" data-i18n-aria="board-label">
     <div class="board__head"><span data-i18n="board-label">CITY SCORE</span><span id="boardStatus" class="board__status">SYNCING</span></div>
     <div class="board__total"><b id="boardTotal">0</b><span data-i18n="board-total">总分</span><span class="board__count" id="boardCount">45 CITIES</span></div>
+    <button type="button" class="route-strip" id="routeStrip" aria-label="Today's route">
+      <span class="route-strip__label"><i aria-hidden="true"></i><span data-i18n="route-label">TODAY'S ROUTE</span></span>
+      <span class="route-strip__cities" id="routeStripCities">—</span>
+      <b id="routeStripCount">0/3</b>
+    </button>
     <div class="board__list" id="boardList" aria-live="polite"></div>
     <div class="board__foot">
       <button type="button" id="boardRefresh" data-i18n="board-refresh">刷新</button>
@@ -1219,8 +1374,53 @@
         <button type="button" class="icon-btn" id="boardModalClose" aria-label="关闭" data-i18n-aria="close">✕</button>
       </header>
       <div class="board__total"><b id="boardTotalModal">0</b><span data-i18n="board-total">总分</span></div>
+      <button type="button" class="route-strip" id="routeStripModal" aria-label="Today's route">
+        <span class="route-strip__label"><i aria-hidden="true"></i><span data-i18n="route-label">TODAY'S ROUTE</span></span>
+        <span class="route-strip__cities" id="routeStripModalCities">—</span>
+        <b id="routeStripModalCount">0/3</b>
+      </button>
       <div class="board__list" id="boardListModal"></div>
+      <div class="modal__scroll" aria-hidden="true">SCROLL</div>
       <p class="modal__note" data-i18n="board-note">所有访问者共享的城市访问积分，按城市分数排序。</p>
+    </div>
+  </div>
+
+  <div class="modal" id="passportModal" aria-hidden="true">
+    <div class="modal__backdrop" data-close-passport></div>
+    <div class="modal__card modal__card--passport" role="dialog" aria-modal="true" aria-labelledby="passportTitle">
+      <header class="modal__head">
+        <div>
+          <div class="modal__eyebrow">EARTH ONLINE · LOCAL ARCHIVE</div>
+          <h2 class="modal__title" id="passportTitle" data-i18n="passport-label">ORBITAL PASSPORT</h2>
+        </div>
+        <button type="button" class="icon-btn" id="passportClose" aria-label="关闭" data-i18n-aria="close">✕</button>
+      </header>
+      <div class="passport-summary" id="passportSummary"></div>
+      <section class="passport-route" id="passportRoute" aria-label="Today's route"></section>
+      <div class="passport-grid" id="passportList"></div>
+      <p class="modal__note" data-i18n="passport-note">本地收集记录，只存在当前浏览器；不参与全球城市分数。</p>
+    </div>
+  </div>
+
+  <div class="modal" id="dossierModal" aria-hidden="true">
+    <div class="modal__backdrop" data-close-dossier></div>
+    <div class="modal__card modal__card--dossier" role="dialog" aria-modal="true" aria-labelledby="dossierCity">
+      <header class="modal__head">
+        <div>
+          <div class="modal__eyebrow" id="dossierEyebrow">ORBITAL ARCHIVE / CITY</div>
+          <h2 class="modal__title" id="dossierCity">—</h2>
+        </div>
+        <button type="button" class="icon-btn" id="dossierClose" aria-label="关闭" data-i18n-aria="close">✕</button>
+      </header>
+      <div class="dossier-grid">
+        <div><span data-i18n="dossier-height">HEIGHT</span><b id="dossierHeight">—</b></div>
+        <div><span data-i18n="dossier-year">YEAR</span><b id="dossierYear">—</b></div>
+        <div><span data-i18n="dossier-architect">ARCHITECT</span><b id="dossierArchitect">—</b></div>
+      </div>
+      <p class="dossier-fact" id="dossierFact">—</p>
+      <div class="dossier-scanline" id="dossierScans"></div>
+      <div class="dossier-actions"><button type="button" class="act act--enter" id="dossierEnterBtn" data-i18n="dossier-enter">进入城市</button></div>
+      <p class="modal__note" data-i18n="dossier-note">扫描 3 个地标后解锁。日期为竣工/启用年份，高度为建筑高度。</p>
     </div>
   </div>
 
@@ -1238,8 +1438,15 @@
     <header class="city-head">
       <button type="button" class="city-back" id="cityBack">← <span data-i18n="back-earth">返回地球</span></button>
       <div class="city-head__names"><span id="cityName">—</span><span id="cityCountry">—</span></div>
-      <div class="city-head__meta"><span id="cityTime">--:--</span><span id="cityWx">—</span><span id="cityScore">0</span><button type="button" class="chip chip--icon city-sound" id="citySoundBtn" aria-pressed="true" data-i18n-title="sound-on" aria-label="Mute sound">🔊</button></div>
+      <div class="city-head__meta"><span id="cityTime">--:--</span><span id="cityWx">—</span><span id="cityScore">0</span><button type="button" class="chip chip--icon city-card-btn" id="postcardBtn" data-i18n-title="postcard-label" data-i18n-aria="postcard-label" aria-label="Export postcard">✉</button><button type="button" class="chip chip--icon city-sound" id="citySoundBtn" aria-pressed="true" data-i18n-title="sound-on" aria-label="Mute sound">🔊</button></div>
     </header>
+    <div class="scan-hud" id="scanHud" hidden>
+      <div class="scan-hud__top"><span>BLUEPRINT SCAN</span><b id="scanProgress">0/3</b></div>
+      <div class="scan-hud__dots" id="scanDots"><i></i><i></i><i></i></div>
+      <p class="scan-hud__hint" id="scanHint" data-i18n="scan-hint">点击地图扫描点或下方清单</p>
+      <div class="scan-hud__list" id="scanList"></div>
+      <button type="button" class="scan-hud__open" id="scanDossierBtn" data-i18n="scan-open" hidden>OPEN ARCHIVE</button>
+    </div>
     <div class="city-landmark"><span data-i18n="landmark-label">地标</span><b id="cityLandmark">—</b><em id="cityAlt" hidden></em><em id="cityCredit" hidden title="© OpenStreetMap contributors · OpenFreeMap">© OSM 3D · ESRI</em></div>
     <div class="city-hint" id="cityHint" data-i18n="city-hint">拖拽旋转 · 滚轮缩放 · Esc 返回</div>
   </div>
@@ -1268,6 +1475,8 @@
     </section>
   </div>
 <script type="module">
+import { CITY_DOSSIERS } from './data/city-dossiers.js';
+
 /* ------------------------------------------------------------------
    Earth Online · mini
    A real-time globe. Live weather. Demolish, then rebuild.
@@ -1474,6 +1683,32 @@ const I18N = {
     'board-updated':'更新于 {t}',
     'board-empty':'暂无数据',
     'city-score':'城市积分',
+    'passport-label':'轨道护照',
+    'passport-note':'本地收集记录，只存在当前浏览器；不参与全球城市分数。',
+    'passport-summary':'{visited}/{total} 已盖章 · {scanned} 城已完成扫描',
+    'passport-scroll':'{n} 枚印章 · 向下滚动',
+    'passport-unvisited':'未到访',
+    'passport-first':'首次到访 {date}',
+    'route-label':'今日航线',
+    'route-title':'晨昏线航线',
+    'route-note':'每天按当地日照生成三站；进入城市即完成一站。',
+    'route-done':'已完成',
+    'route-complete':'今日航线完成',
+    'route-toast':'今日航线 +1 · {city}',
+    'dossier-height':'高度',
+    'dossier-year':'年份',
+    'dossier-architect':'建筑师',
+    'dossier-note':'扫描 3 个地标后解锁。日期为竣工/启用年份，高度为建筑高度。',
+    'dossier-enter':'进入城市',
+    'scan-hint':'点击地图扫描点或下方清单',
+    'scan-open':'打开城市档案',
+    'scan-complete':'扫描完成 · 档案已解锁',
+    'scan-locked':'先扫描 3 个地标',
+    'scan-toast':'扫描 {n}/3 · {city}',
+    'postcard-label':'导出城市明信片',
+    'postcard-prep':'正在生成明信片…',
+    'postcard-ok':'明信片已导出',
+    'postcard-fail':'明信片导出失败',
     'enter-city':'进入城市 · +10',
     'enter-hint':'进入地标与周边 3D 场景 · +10 分',
     'back-earth':'返回地球',
@@ -1617,6 +1852,32 @@ const I18N = {
     'board-updated':'Updated {t}',
     'board-empty':'No data yet',
     'city-score':'CITY SCORE',
+    'passport-label':'Orbital passport',
+    'passport-note':'A local collection, stored only in this browser; it does not affect the global city score.',
+    'passport-summary':'{visited}/{total} stamped · {scanned} fully scanned',
+    'passport-scroll':'{n} stamps · scroll',
+    'passport-unvisited':'Not visited',
+    'passport-first':'First visit {date}',
+    'route-label':"Today's route",
+    'route-title':'Terminator route',
+    'route-note':'Three stops chosen from local daylight each day; entering a city completes a stop.',
+    'route-done':'Done',
+    'route-complete':'Route complete',
+    'route-toast':'Route +1 · {city}',
+    'dossier-height':'Height',
+    'dossier-year':'Year',
+    'dossier-architect':'Architect',
+    'dossier-note':'Unlocked after scanning 3 landmarks. Dates are completion/opening years; heights are architectural heights.',
+    'dossier-enter':'Enter city',
+    'scan-hint':'Tap map scan points or the list',
+    'scan-open':'Open city dossier',
+    'scan-complete':'Scan complete · dossier unlocked',
+    'scan-locked':'Scan 3 landmarks first',
+    'scan-toast':'Scan {n}/3 · {city}',
+    'postcard-label':'Export city postcard',
+    'postcard-prep':'Generating postcard…',
+    'postcard-ok':'Postcard exported',
+    'postcard-fail':'Postcard export failed',
     'enter-city':'Enter city · +10',
     'enter-hint':'Explore the landmark and streets in 3D · +10 pts',
     'back-earth':'Back to Earth',
@@ -1644,6 +1905,80 @@ const store = {
   getJSON(key, fallback){ try { const raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : fallback; } catch { return fallback; } },
   setJSON(key, val){ try { localStorage.setItem(key, JSON.stringify(val)); } catch {} }
 };
+
+/* ---------------- local explorer state ---------------- */
+
+const EXPLORER_KEY = 'earth:explorer:v1';
+const explorer = { visits: {}, scans: {}, routes: {} };
+
+function loadExplorer(){
+  const saved = store.getJSON(EXPLORER_KEY, null);
+  if (!saved || typeof saved !== 'object') return;
+  if (saved.visits && typeof saved.visits === 'object') explorer.visits = saved.visits;
+  if (saved.scans && typeof saved.scans === 'object') explorer.scans = saved.scans;
+  if (saved.routes && typeof saved.routes === 'object') explorer.routes = saved.routes;
+}
+
+function saveExplorer(){
+  store.setJSON(EXPLORER_KEY, explorer);
+}
+
+function scanCount(cityId){
+  const scans = explorer.scans[cityId];
+  return scans && typeof scans === 'object' ? Object.keys(scans).length : 0;
+}
+
+function scanDone(cityId, pointId){
+  return !!(explorer.scans[cityId] && explorer.scans[cityId][pointId]);
+}
+
+function recordVisit(city){
+  if (!city) return;
+  const now = new Date().toISOString();
+  const visit = explorer.visits[city.id] || { first: now, count: 0 };
+  if (!visit.first) visit.first = now;
+  visit.last = now;
+  visit.count = (visit.count || 0) + 1;
+  explorer.visits[city.id] = visit;
+  saveExplorer();
+  updatePassportBadge();
+  if (isPassportOpen()) renderPassport();
+  markRouteStop(city.id);
+}
+
+function recordScan(city, pointId){
+  if (!city || !pointId) return false;
+  const scans = explorer.scans[city.id] || {};
+  if (scans[pointId]) return false;
+  scans[pointId] = new Date().toISOString();
+  explorer.scans[city.id] = scans;
+  saveExplorer();
+  updatePassportBadge();
+  if (isPassportOpen()) renderPassport();
+  return true;
+}
+
+function visitedCount(){
+  return CITIES.reduce((n, city) => n + (explorer.visits[city.id] ? 1 : 0), 0);
+}
+
+function fullyScannedCount(){
+  return CITIES.reduce((n, city) => n + (scanCount(city.id) >= 3 ? 1 : 0), 0);
+}
+
+function updatePassportBadge(){
+  const badge = $('#passportBadge');
+  if (!badge) return;
+  const visited = visitedCount();
+  badge.textContent = String(visited);
+  badge.hidden = visited === 0;
+}
+
+function cityDossier(cityId){
+  return CITY_DOSSIERS[cityId] || null;
+}
+
+loadExplorer();
 
 const SUPPORTED = ['zh', 'en'];
 let lang = (() => {
@@ -1748,6 +2083,36 @@ const boardModalEl = $('#boardModal');
 const boardListModalEl = $('#boardListModal');
 const boardTotalModalEl = $('#boardTotalModal');
 const boardModalCloseEl = $('#boardModalClose');
+const passportBtnEl = $('#passportBtn');
+const passportBadgeEl = $('#passportBadge');
+const passportModalEl = $('#passportModal');
+const passportCloseEl = $('#passportClose');
+const passportSummaryEl = $('#passportSummary');
+const passportRouteEl = $('#passportRoute');
+const passportListEl = $('#passportList');
+const dossierModalEl = $('#dossierModal');
+const dossierCloseEl = $('#dossierClose');
+const dossierEyebrowEl = $('#dossierEyebrow');
+const dossierCityEl = $('#dossierCity');
+const dossierHeightEl = $('#dossierHeight');
+const dossierYearEl = $('#dossierYear');
+const dossierArchitectEl = $('#dossierArchitect');
+const dossierFactEl = $('#dossierFact');
+const dossierScansEl = $('#dossierScans');
+const dossierEnterBtn = $('#dossierEnterBtn');
+const routeStripEl = $('#routeStrip');
+const routeStripCitiesEl = $('#routeStripCities');
+const routeStripCountEl = $('#routeStripCount');
+const routeStripModalEl = $('#routeStripModal');
+const routeStripModalCitiesEl = $('#routeStripModalCities');
+const routeStripModalCountEl = $('#routeStripModalCount');
+const postcardBtnEl = $('#postcardBtn');
+const scanHudEl = $('#scanHud');
+const scanProgressEl = $('#scanProgress');
+const scanDotsEl = $('#scanDots');
+const scanHintEl = $('#scanHint');
+const scanDossierBtn = $('#scanDossierBtn');
+const scanListEl = $('#scanList');
 const pCityScoreEl = $('#pCityScore');
 const enterCityBtn = $('#enterCityBtn');
 const cityViewEl = $('#cityView');
@@ -2454,6 +2819,134 @@ function showCityPoints(points){
   setTimeout(() => el.remove(), 1000);
 }
 let lastBoardFocus = null;
+let lastPassportFocus = null;
+let lastDossierFocus = null;
+let dossierCityId = null;
+
+function isPassportOpen(){
+  return !!(passportModalEl && passportModalEl.classList.contains('is-open'));
+}
+function isDossierOpen(){
+  return !!(dossierModalEl && dossierModalEl.classList.contains('is-open'));
+}
+function stampDate(iso, city){
+  if (!iso) return '—';
+  try {
+    return new Intl.DateTimeFormat(lang === 'zh' ? 'zh-CN' : 'en-GB', {
+      year: 'numeric', month: '2-digit', day: '2-digit', timeZone: city.tz || 'UTC'
+    }).format(new Date(iso));
+  } catch { return iso.slice(0, 10); }
+}
+function renderPassport(){
+  if (!passportListEl) return;
+  const visited = visitedCount();
+  const scanned = fullyScannedCount();
+  if (passportSummaryEl){
+    passportSummaryEl.innerHTML = '<span>' + tr('passport-summary', {
+      visited, total: CITIES.length, scanned
+    }) + '</span><b>' + tr('passport-scroll', { n: CITIES.length }) + '</b>';
+  }
+  const route = currentRoute();
+  if (passportRouteEl) passportRouteEl.innerHTML = routeSectionHTML(route);
+  passportListEl.innerHTML = CITIES.map((city, index) => {
+    const visit = explorer.visits[city.id];
+    const scans = Math.min(3, scanCount(city.id));
+    const classes = 'passport-stamp' + (visit ? ' is-visited' : '') + (scans >= 3 ? ' is-scanned' : '');
+    const meta = visit ? tr('passport-first', { date: stampDate(visit.first, city) }) : tr('passport-unvisited');
+    return '<button type="button" class="' + classes + '" data-city-id="' + city.id + '" title="' + meta + '">' +
+      '<span class="passport-stamp__num">' + String(index + 1).padStart(2, '0') + ' / ' + CITIES.length + '</span>' +
+      '<strong>' + city.name[lang] + '</strong>' +
+      '<span class="passport-stamp__country">' + city.country[lang] + '</span>' +
+      '<span class="passport-stamp__scans">' + scans + '/3 SCAN</span>' +
+    '</button>';
+  }).join('');
+  updateRouteStrip(route);
+}
+function routeSectionHTML(route){
+  const stops = route.stops.map((id) => findCityById(id)).filter(Boolean);
+  const done = route.done.length;
+  return '<div class="passport-route__head"><span>' + tr('route-title') + '</span><b>' + done + '/' + stops.length + '</b></div>' +
+    '<p class="passport-route__note">' + tr('route-note') + '</p>' +
+    '<div class="route-rows">' + stops.map((city, i) => {
+      const isDone = route.done.includes(city.id);
+      const phase = citySolarPhase(city);
+      return '<button type="button" class="route-row' + (isDone ? ' is-done' : '') + '" data-route-city="' + city.id + '">' +
+        '<span class="route-row__n">' + String(i + 1).padStart(2, '0') + '</span>' +
+        '<span class="route-row__city">' + city.name[lang] + ' · ' + city.country[lang] + '</span>' +
+        '<span class="route-row__meta">' + (isDone ? tr('route-done') : phase.toUpperCase()) + '</span>' +
+      '</button>';
+    }).join('') + '</div>';
+}
+function updateRouteStrip(route = currentRoute()){
+  const stops = route.stops.map((id) => findCityById(id)).filter(Boolean);
+  const progress = route.done.length + '/' + stops.length;
+  const cities = stops.map((c) => c.name[lang]).join(' · ');
+  for (const [el, citiesEl, countEl] of [
+    [routeStripEl, routeStripCitiesEl, routeStripCountEl],
+    [routeStripModalEl, routeStripModalCitiesEl, routeStripModalCountEl]
+  ]){
+    if (!el) continue;
+    if (countEl) countEl.textContent = progress;
+    if (citiesEl) citiesEl.textContent = cities;
+    el.setAttribute('aria-label', tr('route-label') + ' ' + progress);
+  }
+}
+function openPassport(){
+  if (!passportModalEl) return;
+  lastPassportFocus = document.activeElement;
+  renderPassport();
+  passportModalEl.classList.add('is-open');
+  passportModalEl.setAttribute('aria-hidden', 'false');
+  if (passportCloseEl) passportCloseEl.focus();
+  sfx('tick');
+}
+function closePassport(){
+  if (!passportModalEl) return;
+  passportModalEl.classList.remove('is-open');
+  passportModalEl.setAttribute('aria-hidden', 'true');
+  if (lastPassportFocus && typeof lastPassportFocus.focus === 'function') lastPassportFocus.focus();
+}
+function cityDossierHeight(city){
+  const mapCfg = CITY_MAPS[city.id];
+  if (mapCfg && Number.isFinite(mapCfg.height) && mapCfg.height > 0) return Math.round(mapCfg.height);
+  const cfg = LANDMARKS[city.id];
+  const bp = cfg && LANDMARK_BLUEPRINT[cfg.type];
+  return bp && bp.alt ? Math.round(bp.alt) : 0;
+}
+function openDossier(city, opts = {}){
+  if (!city || !dossierModalEl) return;
+  if (scanCount(city.id) < 3 && !opts.force){
+    toast(tr('scan-locked'), 'ruin');
+    return;
+  }
+  const data = cityDossier(city.id);
+  const height = cityDossierHeight(city);
+  dossierCityId = city.id;
+  if (dossierEyebrowEl) dossierEyebrowEl.textContent = 'ORBITAL ARCHIVE / ' + city.id.toUpperCase();
+  if (dossierCityEl) dossierCityEl.textContent = city.name[lang] + ' · ' + city.country[lang];
+  if (dossierHeightEl) dossierHeightEl.textContent = height ? height + ' M' : 'DISTRICT';
+  if (dossierYearEl) dossierYearEl.textContent = data && data.year ? String(data.year) : '—';
+  if (dossierArchitectEl) dossierArchitectEl.textContent = data && data.architect ? data.architect : '—';
+  if (dossierFactEl) dossierFactEl.textContent = data && data.fact ? data.fact[lang] : tr('scan-locked');
+  if (dossierScansEl){
+    const points = scanTargets(city);
+    dossierScansEl.innerHTML = points.map((p) =>
+      '<span>' + (scanDone(city.id, p.id) ? '✓ ' : '') + p.name[lang] + '</span>'
+    ).join('');
+  }
+  lastDossierFocus = document.activeElement;
+  dossierModalEl.classList.add('is-open');
+  dossierModalEl.setAttribute('aria-hidden', 'false');
+  if (dossierCloseEl) dossierCloseEl.focus();
+  sfx('tick');
+}
+function closeDossier(){
+  if (!dossierModalEl) return;
+  dossierModalEl.classList.remove('is-open');
+  dossierModalEl.setAttribute('aria-hidden', 'true');
+  if (lastDossierFocus && typeof lastDossierFocus.focus === 'function') lastDossierFocus.focus();
+}
+
 function openBoard(){
   lastBoardFocus = document.activeElement;
   renderBoard();
@@ -5278,11 +5771,10 @@ function addRoads(scene, theme, rng, night){
 // Beijing at 21:00 is night while London at 13:00 is still day. Recomputing
 // this while a city stays open lets sunrise/sunset repaint the map in place.
 // The -0.833° horizon includes atmospheric refraction.
-function cityIsDay(city){
+function citySolarAltitude(city, now = new Date()){
   const lat = Number(city.lat);
   const lon = Number(city.lon);
-  if (!Number.isFinite(lat) || !Number.isFinite(lon)) return true;
-  const now = new Date();
+  if (!Number.isFinite(lat) || !Number.isFinite(lon)) return 90;
   const start = Date.UTC(now.getUTCFullYear(), 0, 1);
   const day = Math.floor((Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()) - start) / 86400000) + 1;
   const hour = now.getUTCHours() + now.getUTCMinutes() / 60 + now.getUTCSeconds() / 3600;
@@ -5297,8 +5789,60 @@ function cityIsDay(city){
   const latRad = lat * Math.PI / 180;
   const cosZenith = Math.sin(latRad) * Math.sin(decl)
     + Math.cos(latRad) * Math.cos(decl) * Math.cos(hourAngle);
-  const altitude = 90 - Math.acos(Math.max(-1, Math.min(1, cosZenith))) * 180 / Math.PI;
-  return altitude > -0.833;
+  return 90 - Math.acos(Math.max(-1, Math.min(1, cosZenith))) * 180 / Math.PI;
+}
+function cityIsDay(city){
+  return citySolarAltitude(city) > -0.833;
+}
+function citySolarPhase(city, at = new Date()){
+  const altitude = citySolarAltitude(city, at);
+  if (altitude < -6) return 'night';
+  if (altitude < 6) return 'twilight';
+  return 'day';
+}
+function routeKey(now = new Date()){
+  return now.toISOString().slice(0, 10);
+}
+function generateRoute(key){
+  const rng = seeded(hashString('route:' + key));
+  const snapshot = new Date(key + 'T12:00:00Z');
+  const buckets = { day: [], twilight: [], night: [] };
+  for (const city of CITIES) buckets[citySolarPhase(city, snapshot)].push(city);
+  const picks = [];
+  const order = ['twilight', 'day', 'night'];
+  for (const phase of order){
+    const bucket = buckets[phase];
+    if (!bucket.length) continue;
+    const city = bucket[Math.floor(rng() * bucket.length)];
+    if (city && !picks.includes(city)) picks.push(city);
+  }
+  for (const city of CITIES){
+    if (picks.length >= 3) break;
+    if (!picks.includes(city)) picks.push(city);
+  }
+  return { key, stops: picks.slice(0, 3).map((city) => city.id), done: [], createdAt: new Date().toISOString() };
+}
+function currentRoute(){
+  const key = routeKey();
+  let route = explorer.routes[key];
+  if (!route || !Array.isArray(route.stops) || route.stops.length !== 3 || route.stops.some((id) => !findCityById(id))){
+    route = generateRoute(key);
+    explorer.routes[key] = route;
+    saveExplorer();
+  }
+  if (!Array.isArray(route.done)) route.done = [];
+  return route;
+}
+function markRouteStop(cityId){
+  const route = currentRoute();
+  if (!route.stops.includes(cityId) || route.done.includes(cityId)) return;
+  route.done.push(cityId);
+  saveExplorer();
+  updateRouteStrip(route);
+  if (isPassportOpen()) renderPassport();
+  const city = findCityById(cityId);
+  if (city) toast(tr('route-toast', { city: city.name[lang] }), 'gold');
+  if (route.done.length === route.stops.length) toast(tr('route-complete'), 'gold');
 }
 
 function buildCityDetail(city){
@@ -6053,6 +6597,7 @@ let activeMapConfig = null;
 let shanghaiMap = null;
 let shanghaiPins = [];
 let shanghaiRoadLabels = [];
+let scanMarkers = [];
 let shanghaiLoadEl = null;
 let maplibrePromise = null;
 let maplibrePrefetched = false;
@@ -6226,6 +6771,77 @@ function refreshCityLandmarkLayer(map){
     if (map.getLayer('city-landmark-3d')) map.removeLayer('city-landmark-3d');
   } catch (err) { console.warn('[city-theme] landmark remove', err); }
   addShanghaiLandmarkLayer(map);
+}
+
+function scanTargets(city){
+  const cfg = CITY_MAPS[city && city.id];
+  if (!cfg || !Array.isArray(cfg.points)) return [];
+  const center = cfg.center || cfg.origin;
+  const dist = (p) => Math.pow((p.lng - center[0]) * Math.cos((p.lat || 0) * Math.PI / 180), 2) + Math.pow(p.lat - center[1], 2);
+  return cfg.points.slice().sort((a, b) => (b.major ? 1 : 0) - (a.major ? 1 : 0) || dist(a) - dist(b)).slice(0, 3);
+}
+
+function scanCityPoint(city, point){
+  if (!city || !point || scanDone(city.id, point.id)) return false;
+  if (!recordScan(city, point.id)) return false;
+  const item = scanMarkers.find((entry) => entry.point.id === point.id);
+  if (item){
+    item.el.classList.add('is-done');
+    item.el.innerHTML = '<span>✓</span>';
+  }
+  const scans = Math.min(3, scanCount(city.id));
+  updateScanHUD();
+  sfx(scans >= 3 ? 'contract' : 'tick');
+  toast(tr('scan-toast', { n: scans, city: city.name[lang] }), scans >= 3 ? 'gold' : 'build');
+  if (scans >= 3){
+    if (scanDossierBtn) scanDossierBtn.hidden = false;
+    setTimeout(() => toast(tr('scan-complete'), 'gold'), 200);
+  }
+  return true;
+}
+
+function updateScanHUD(){
+  if (!scanHudEl || !detail.city) return;
+  const scans = Math.min(3, scanCount(detail.city.id));
+  const points = scanTargets(detail.city);
+  if (scanProgressEl) scanProgressEl.textContent = scans + '/3';
+  if (scanDotsEl) Array.from(scanDotsEl.children).forEach((dot, i) => dot.classList.toggle('is-on', i < scans));
+  if (scanHintEl) scanHintEl.textContent = scans >= 3 ? tr('scan-complete') : tr('scan-hint');
+  if (scanDossierBtn) scanDossierBtn.hidden = scans < 3;
+  if (scanListEl){
+    scanListEl.innerHTML = points.map((point, index) => {
+      const done = scanDone(detail.city.id, point.id);
+      return '<button type="button" class="scan-target' + (done ? ' is-done' : '') + '" data-scan-point="' + point.id + '">' +
+        '<span>' + String(index + 1).padStart(2, '0') + '</span><b>' + point.name[lang] + '</b><em>' + (done ? '✓' : '') + '</em>' +
+      '</button>';
+    }).join('');
+  }
+}
+
+function addScanMarkers(map){
+  if (!map || !detail.city) return;
+  for (const item of scanMarkers){ try { item.marker.remove(); } catch (e) {} }
+  scanMarkers = [];
+  const city = detail.city;
+  const points = scanTargets(city);
+  points.forEach((point, index) => {
+    const el = document.createElement('button');
+    el.type = 'button';
+    el.className = 'scan-marker' + (scanDone(city.id, point.id) ? ' is-done' : '');
+    el.innerHTML = '<span>' + (scanDone(city.id, point.id) ? '✓' : String(index + 1)) + '</span>';
+    el.setAttribute('aria-label', 'SCAN ' + (index + 1) + ' · ' + point.name[lang]);
+    el.title = point.name[lang] + ' · SCAN ' + (index + 1);
+    el.addEventListener('click', (event) => {
+      event.stopPropagation();
+      scanCityPoint(city, point);
+    });
+    const marker = new window.maplibregl.Marker({ element: el, anchor: 'center' })
+      .setLngLat([point.lng, point.lat])
+      .addTo(map);
+    scanMarkers.push({ marker, point, el });
+  });
+  if (scanHudEl) scanHudEl.hidden = false;
+  updateScanHUD();
 }
 
 function addShanghaiMarkers(map){
@@ -6740,6 +7356,9 @@ function closeShanghaiMap(){
   shanghaiMap = null;
   shanghaiPins = [];
   shanghaiRoadLabels = [];
+  for (const item of scanMarkers){ try { item.marker.remove(); } catch (e) {} }
+  scanMarkers = [];
+  if (scanHudEl) scanHudEl.hidden = true;
   activeMapConfig = null;
   detail.mapActive = false;
   detail.mapReady = false;
@@ -6750,6 +7369,154 @@ function closeShanghaiMap(){
   if (cityViewEl) cityViewEl.classList.remove('map-mode');
   if (cityCreditEl) cityCreditEl.hidden = true;
   if (cityHintEl) cityHintEl.textContent = tr('city-hint');
+}
+
+function cityLocalTimeText(city){
+  try {
+    return new Intl.DateTimeFormat(lang === 'zh' ? 'zh-CN' : 'en-GB', {
+      timeZone: city.tz || 'UTC', hour: '2-digit', minute: '2-digit', hourCycle: 'h23'
+    }).format(new Date());
+  } catch { return '--:--'; }
+}
+
+function postcardWeather(city){
+  const cur = city.weather && city.weather.current;
+  if (!cur) return '—';
+  const temp = typeof cur.temperature_2m === 'number' ? Math.round(cur.temperature_2m) + '°C' : '—';
+  const condition = tr(wmo(Number(cur.weather_code), cityPhaseDay).k);
+  return temp + ' · ' + condition;
+}
+
+function canvasToBlob(canvas){
+  return new Promise((resolve, reject) => {
+    if (typeof canvas.toBlob !== 'function'){ resolve(null); return; }
+    canvas.toBlob((blob) => blob ? resolve(blob) : reject(new Error('empty canvas')), 'image/png');
+  });
+}
+
+async function exportPostcard(){
+  const city = detail.city;
+  if (!city || !shanghaiMap || !detail.mapReady){
+    toast(tr('postcard-fail'), 'ruin');
+    return;
+  }
+  try {
+    toast(tr('postcard-prep'), 'build');
+    await new Promise((resolve) => {
+      let done = false;
+      const finish = () => { if (done) return; done = true; clearTimeout(timer); resolve(); };
+      const timer = setTimeout(finish, 6000);
+      shanghaiMap.once('idle', finish);
+      if (shanghaiMap.areTilesLoaded()) finish();
+      shanghaiMap.triggerRepaint();
+    });
+    await new Promise((resolve) => requestAnimationFrame(resolve));
+    const mapCanvas = shanghaiMap.getCanvas();
+    if (!mapCanvas || !mapCanvas.width || !mapCanvas.height) throw new Error('map canvas unavailable');
+    const W = 1600, H = 1000;
+    const canvas = document.createElement('canvas');
+    canvas.width = W;
+    canvas.height = H;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) throw new Error('2d context unavailable');
+    const day = cityPhaseDay;
+    const ink = day ? '#08252f' : '#eef5fa';
+    const muted = day ? '#4e6f7a' : '#9fb6c9';
+    const accent = day ? '#a85f00' : '#ffb347';
+    const line = day ? 'rgba(8,82,98,.45)' : 'rgba(125,211,252,.38)';
+
+    const scale = Math.max(W / mapCanvas.width, H / mapCanvas.height);
+    const sw = W / scale;
+    const sh = H / scale;
+    ctx.drawImage(mapCanvas, (mapCanvas.width - sw) / 2, (mapCanvas.height - sh) / 2, sw, sh, 0, 0, W, H);
+
+    const top = ctx.createLinearGradient(0, 0, 0, 340);
+    top.addColorStop(0, day ? 'rgba(245,251,251,.94)' : 'rgba(2,8,14,.9)');
+    top.addColorStop(1, day ? 'rgba(245,251,251,0)' : 'rgba(2,8,14,0)');
+    ctx.fillStyle = top;
+    ctx.fillRect(0, 0, W, 340);
+    const bottom = ctx.createLinearGradient(0, H - 300, 0, H);
+    bottom.addColorStop(0, day ? 'rgba(245,251,251,0)' : 'rgba(2,8,14,0)');
+    bottom.addColorStop(1, day ? 'rgba(245,251,251,.95)' : 'rgba(2,8,14,.94)');
+    ctx.fillStyle = bottom;
+    ctx.fillRect(0, H - 300, W, 300);
+
+    ctx.strokeStyle = line;
+    ctx.lineWidth = 1;
+    ctx.strokeRect(34, 34, W - 68, H - 68);
+    ctx.strokeStyle = day ? 'rgba(8,82,98,.75)' : 'rgba(255,179,71,.65)';
+    ctx.beginPath();
+    ctx.moveTo(34, 86); ctx.lineTo(34, 34); ctx.lineTo(86, 34);
+    ctx.moveTo(W - 86, H - 34); ctx.lineTo(W - 34, H - 34); ctx.lineTo(W - 34, H - 86);
+    ctx.stroke();
+
+    ctx.fillStyle = accent;
+    ctx.font = '600 13px ui-monospace, SFMono-Regular, Menlo, monospace';
+    ctx.letterSpacing = '3px';
+    ctx.fillText('EARTH ONLINE / ORBITAL BLUEPRINT', 64, 78);
+    ctx.textAlign = 'right';
+    ctx.fillStyle = muted;
+    ctx.fillText('SECTOR 07 · ' + (day ? 'DAY' : 'NIGHT'), W - 64, 78);
+    ctx.textAlign = 'left';
+    ctx.letterSpacing = '0px';
+
+    ctx.fillStyle = ink;
+    ctx.font = '600 58px "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif';
+    ctx.fillText(city.name[lang], 64, 164);
+    ctx.fillStyle = muted;
+    ctx.font = '500 18px ui-monospace, SFMono-Regular, Menlo, monospace';
+    ctx.fillText(city.country[lang].toUpperCase() + '  /  ' + formatCoord(city.lat, city.lon), 66, 198);
+
+    const landmark = (LANDMARKS[city.id] && LANDMARKS[city.id].name[lang]) || city.name[lang];
+    ctx.fillStyle = accent;
+    ctx.font = '600 20px "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif';
+    ctx.fillText(landmark, 66, 238);
+    ctx.fillStyle = muted;
+    ctx.font = '400 12px ui-monospace, SFMono-Regular, Menlo, monospace';
+    ctx.fillText('LOCAL ' + cityLocalTimeText(city) + '  ·  ' + postcardWeather(city), 66, 264);
+
+    const scans = Math.min(3, scanCount(city.id));
+    const score = city.detailOnly ? '—' : fmtNum(scoreFor(city.id));
+    ctx.fillStyle = ink;
+    ctx.font = '600 22px ui-monospace, SFMono-Regular, Menlo, monospace';
+    ctx.fillText(score, 66, H - 120);
+    ctx.fillStyle = muted;
+    ctx.font = '10px ui-monospace, SFMono-Regular, Menlo, monospace';
+    ctx.fillText('CITY SCORE', 66, H - 98);
+    ctx.fillStyle = day ? '#087a69' : '#5eead4';
+    ctx.font = '600 14px ui-monospace, SFMono-Regular, Menlo, monospace';
+    ctx.fillText('SCAN ' + scans + '/3', 66, H - 64);
+
+    ctx.textAlign = 'right';
+    ctx.fillStyle = ink;
+    ctx.font = '600 18px ui-monospace, SFMono-Regular, Menlo, monospace';
+    ctx.fillText('POSTCARD / ' + stampDate(new Date().toISOString(), city), W - 64, H - 92);
+    ctx.fillStyle = muted;
+    ctx.font = '10px ui-monospace, SFMono-Regular, Menlo, monospace';
+    ctx.fillText('ELEVENBEANS.ME/EARTH-ONLINE', W - 64, H - 66);
+    ctx.textAlign = 'left';
+
+    const blob = await canvasToBlob(canvas);
+    const a = document.createElement('a');
+    a.download = 'earth-online-' + city.id + '-' + routeKey() + '.png';
+    if (blob){
+      const url = URL.createObjectURL(blob);
+      a.href = url;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1500);
+    } else {
+      a.href = canvas.toDataURL('image/png');
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    }
+    toast(tr('postcard-ok'), 'gold');
+  } catch (err) {
+    console.warn('[postcard]', err);
+    toast(tr('postcard-fail'), 'ruin');
+  }
 }
 
 function shanghaiFallback(city){
@@ -6795,6 +7562,7 @@ async function openShanghaiMap(city){
       bearing: activeMapConfig.bearing,
       maxPitch: 70,
       antialias: true,
+      preserveDrawingBuffer: true,
       attributionControl: false
     });
     shanghaiMap = map;
@@ -6845,6 +7613,7 @@ async function openShanghaiMap(city){
     }
     addShanghaiMarkers(map);
     addShanghaiLandmarkLayer(map);
+    addScanMarkers(map);
     map.resize();
     removeShanghaiLoading();
     detail.mapReady = true;
@@ -6864,6 +7633,7 @@ function enterCity(city, opts = {}){
   detail.city = city;
   activeMapConfig = CITY_MAPS[city.id] || null;
   setCityPhase(cityIsDay(city));
+  recordVisit(city);
   startCityPhaseWatch();
   detail.mapActive = true;
   detail.scene = null;
@@ -7103,12 +7873,14 @@ function bindOrbitControls(){
 
   window.addEventListener('keydown', (e) => {
     if (e.key === 'Escape'){
-      if (boardModalEl && boardModalEl.classList.contains('is-open')) closeBoard();
+      if (isDossierOpen()) closeDossier();
+      else if (isPassportOpen()) closePassport();
+      else if (boardModalEl && boardModalEl.classList.contains('is-open')) closeBoard();
       else if (detail.active) exitCity();
       else closePanel();
       return;
     }
-    if (boardModalEl && boardModalEl.classList.contains('is-open')) return;
+    if (isDossierOpen() || isPassportOpen() || (boardModalEl && boardModalEl.classList.contains('is-open'))) return;
     if (detail.active) return;
     const active = document.activeElement;
     const inField = active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA');
@@ -7186,6 +7958,18 @@ const GUIDE_ITEMS = [
   {
     zh: { title: '城市详情地图', desc: 'MapLibre 加载 OSM 建筑并拉伸为 3D；每城独立相机、地标标签和可点击 marker，日出/日落自动换色。', tech: 'MapLibre + 本地太阳高度' },
     en: { title: 'City detail map', desc: 'MapLibre loads OSM buildings and extrudes them into 3D; each city has its own camera, labels and clickable markers, with an automatic day/night palette that follows sunrise and sunset while open.', tech: 'MapLibre + local solar altitude' }
+  },
+  {
+    zh: { title: '轨道护照', desc: '进入城市记录本地印章；每城扫描 3 处地标后解锁一张轻量城市档案。', tech: 'localStorage + 扫描' },
+    en: { title: 'Orbital passport', desc: 'Entering a city records a local stamp; scan its 3 landmarks to unlock a lightweight city dossier.', tech: 'localStorage + scans' }
+  },
+  {
+    zh: { title: '今日航线', desc: '每天用固定日照快照选三座城市组成航线；进入城市完成一站，第二天重新生成。', tech: '日期 + 太阳高度' },
+    en: { title: "Today's route", desc: 'A fixed daily solar snapshot picks three cities; entering a city completes a stop, and the route resets the next day.', tech: 'Date + solar altitude' }
+  },
+  {
+    zh: { title: '城市明信片', desc: '把当前城市地图、当地时间、天气、分数和扫描进度导出为 1600×1000 PNG。', tech: 'Canvas + MapLibre' },
+    en: { title: 'City postcard', desc: 'Exports the current city map, local time, weather, score and scan progress as a 1600×1000 PNG.', tech: 'Canvas + MapLibre' }
   },
   {
     zh: { title: '底图兜底', desc: '矢量瓦片不可用时自动使用 Esri 深灰/浅灰底图，城市、标签和地标仍然可读。', tech: 'OSM 矢量 + Esri 栅格' },
@@ -7335,6 +8119,59 @@ function bindUI(){
     if (backdrop) backdrop.addEventListener('click', closeBoard);
   }
 
+  if (passportBtnEl) passportBtnEl.addEventListener('click', openPassport);
+  if (routeStripEl) routeStripEl.addEventListener('click', openPassport);
+  if (routeStripModalEl) routeStripModalEl.addEventListener('click', () => { closeBoard(); openPassport(); });
+  setInterval(() => { if (!document.hidden) updateRouteStrip(); }, 60 * 1000);
+  updatePassportBadge();
+  updateRouteStrip();
+  if (passportCloseEl) passportCloseEl.addEventListener('click', closePassport);
+  if (passportModalEl){
+    const backdrop = passportModalEl.querySelector('[data-close-passport]');
+    if (backdrop) backdrop.addEventListener('click', closePassport);
+  }
+  if (passportListEl){
+    passportListEl.addEventListener('click', (event) => {
+      const stamp = event.target.closest('.passport-stamp[data-city-id]');
+      if (!stamp) return;
+      const city = findCityById(stamp.dataset.cityId);
+      if (!city) return;
+      closePassport();
+      if (scanCount(city.id) >= 3) openDossier(city);
+      else selectCity(city);
+    });
+  }
+  if (passportRouteEl){
+    passportRouteEl.addEventListener('click', (event) => {
+      const row = event.target.closest('.route-row[data-route-city]');
+      if (!row) return;
+      const city = findCityById(row.dataset.routeCity);
+      if (!city) return;
+      closePassport();
+      selectCity(city);
+    });
+  }
+  if (dossierCloseEl) dossierCloseEl.addEventListener('click', closeDossier);
+  if (dossierEnterBtn) dossierEnterBtn.addEventListener('click', () => {
+    const city = findCityById(dossierCityId);
+    closeDossier();
+    if (city) selectCity(city);
+  });
+  if (dossierModalEl){
+    const backdrop = dossierModalEl.querySelector('[data-close-dossier]');
+    if (backdrop) backdrop.addEventListener('click', closeDossier);
+  }
+  if (scanDossierBtn) scanDossierBtn.addEventListener('click', () => {
+    if (detail.city) openDossier(detail.city);
+  });
+  if (scanListEl) scanListEl.addEventListener('click', (event) => {
+    const row = event.target.closest('.scan-target[data-scan-point]');
+    if (!row || !detail.city) return;
+    const point = scanTargets(detail.city).find((p) => p.id === row.dataset.scanPoint);
+    if (point) scanCityPoint(detail.city, point);
+  });
+  if (postcardBtnEl) postcardBtnEl.addEventListener('click', exportPostcard);
+
   $('#closeBtn').addEventListener('click', closePanel);
   if (enterCityBtn){
     enterCityBtn.addEventListener('click', () => { if (world.selected) enterCity(world.selected); });
@@ -7374,6 +8211,8 @@ function refreshLanguage(){
     if (world.selected.air) applyAir(world.selected, world.selected.air);
   }
   renderBoard();
+  updateRouteStrip();
+  if (isPassportOpen()) renderPassport();
   if (detail.active) updateCityMeta();
   if (!modeBadgeEl.hidden) modeBadgeEl.textContent = tr('procedural');
   if (bootEl && !bootEl.classList.contains('is-done')) setBootStatus(bootKey);
