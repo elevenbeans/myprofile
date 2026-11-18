@@ -7575,6 +7575,13 @@ function drawPostcardQR(ctx, qr, x, y, size){
   }
 }
 
+function fitCanvasFont(ctx, text, target, maxWidth, family, weight = '600'){
+  ctx.font = weight + ' ' + target + 'px ' + family;
+  const measured = ctx.measureText(text).width;
+  if (measured <= maxWidth) return target;
+  return Math.max(42, Math.floor(target * maxWidth / measured));
+}
+
 function cityLocalTimeText(city){
   try {
     return new Intl.DateTimeFormat(lang === 'zh' ? 'zh-CN' : 'en-GB', {
@@ -7627,18 +7634,18 @@ async function openPostcard(){
     const H = compact ? 1350 : 1000;
     const L = compact ? {
       pad: 56, border: 32, top: 86, eyebrow: 18, sector: 16,
-      title: 76, titleY: 226, country: 26, countryY: 278,
-      landmark: 30, landmarkY: 342, local: 24, localY: 388,
+      title: 228, titleY: 320, country: 28, countryY: 382,
+      landmark: 34, landmarkY: 444, local: 26, localY: 494,
       score: 38, scoreY: 170, scoreLabel: 16, scan: 22,
       date: 22, url: 16, meta: 96, urlY: 68, qr: 200,
-      topFade: 420, bottomFade: 500
+      topFade: 560, bottomFade: 500
     } : {
       pad: 64, border: 34, top: 78, eyebrow: 13, sector: 13,
-      title: 58, titleY: 164, country: 18, countryY: 198,
-      landmark: 20, landmarkY: 238, local: 12, localY: 264,
+      title: 174, titleY: 250, country: 24, countryY: 296,
+      landmark: 26, landmarkY: 350, local: 16, localY: 390,
       score: 22, scoreY: 120, scoreLabel: 10, scan: 14,
       date: 18, url: 10, meta: 92, urlY: 66, qr: 176,
-      topFade: 340, bottomFade: 300
+      topFade: 470, bottomFade: 300
     };
     const canvas = document.createElement('canvas');
     canvas.width = W;
@@ -7688,7 +7695,9 @@ async function openPostcard(){
     ctx.letterSpacing = '0px';
 
     ctx.fillStyle = ink;
-    ctx.font = '600 ' + L.title + 'px "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif';
+    const titleFamily = '"PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif';
+    const titleSize = fitCanvasFont(ctx, city.name[lang], L.title, W - L.pad * 2, titleFamily, '600');
+    ctx.font = '600 ' + titleSize + 'px ' + titleFamily;
     ctx.fillText(city.name[lang], L.pad, L.titleY);
     ctx.fillStyle = muted;
     ctx.font = '500 ' + L.country + 'px ui-monospace, SFMono-Regular, Menlo, monospace';
