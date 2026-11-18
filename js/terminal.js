@@ -20,7 +20,7 @@ const fileSystem = {
         'Blog': '.tag: dir\nThoughts on engineering, travel, and side projects.',
         'Budgetair.com': '.tag: dir\nOTA flight booking platform.',
         'Cheaptickets.nl': '.tag: dir\nFlight search and comparison.',
-        'Earth Online': '.tag: dir\nInteractive 3D Earth: 45 cities, live weather, shared scores.',
+        'Earth Online': '.tag: dir\nInteractive 3D Earth: 46 cities, live weather, shared scores.',
       },
       'Interests': {
         '.tag': 'dir',

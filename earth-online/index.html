@@ -4,10 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Earth Online · mini — 地球 Online</title>
-<meta name="description" content="A real-time 3D Earth with 45 cities, live weather, shared city scores, and MapLibre/OSM Orbital Blueprint city views. Focus +5, enter a city +10.">
+<meta name="description" content="A real-time 3D Earth with 46 cities, live weather, shared city scores, and MapLibre/OSM Orbital Blueprint city views. Focus +5, enter a city +10.">
 <meta name="theme-color" content="#04060b">
 <meta property="og:title" content="Earth Online · mini">
-<meta property="og:description" content="A real-time 3D Earth with 45 cities, live weather, shared scores, and Orbital Blueprint city maps.">
+<meta property="og:description" content="A real-time 3D Earth with 46 cities, live weather, shared scores, and Orbital Blueprint city maps.">
 <meta property="og:type" content="website">
 <meta property="og:image" content="https://elevenbeans.me/earth-online/preview/home.webp">
 <meta name="twitter:card" content="summary_large_image">
@@ -1329,7 +1329,8 @@ const CITIES = [
   { id:'osaka',        name:{zh:'大阪',en:'Osaka'},         country:{zh:'日本',en:'Japan'},       lat:34.6458,  lon:135.5140,  tz:'Asia/Tokyo' },
   { id:'jakarta',      name:{zh:'雅加达',en:'Jakarta'},     country:{zh:'印度尼西亚',en:'Indonesia'},lat:-6.1754, lon:106.8272, tz:'Asia/Jakarta' },
   { id:'nanjing',      name:{zh:'南京',en:'Nanjing'},       country:{zh:'中国',en:'China'},       lat:32.0617,  lon:118.7778,  tz:'Asia/Shanghai' },
-  { id:'marrakech',    name:{zh:'马拉喀什',en:'Marrakech'}, country:{zh:'摩洛哥',en:'Morocco'},   lat:31.6250,  lon:-7.9900,   tz:'Africa/Casablanca' }
+  { id:'marrakech',    name:{zh:'马拉喀什',en:'Marrakech'}, country:{zh:'摩洛哥',en:'Morocco'},   lat:31.6250,  lon:-7.9900,   tz:'Africa/Casablanca' },
+  { id:'vancouver',    name:{zh:'温哥华',en:'Vancouver'},    country:{zh:'加拿大',en:'Canada'},    lat:49.2827,  lon:-123.1207, tz:'America/Vancouver' }
 ];
 
 // Detail-only cities: reachable by direct route (#/city/<id>/detail), never
@@ -4465,13 +4466,14 @@ const LANDMARKS = {
   jakarta:      { type:'monas',        name:{zh:'独立纪念碑',en:'Monas'},             color:0xcfd6dd, accent:0xffb347, scale:1.00, theme:'tropical' },
   nanjing:      { type:'zifeng',       name:{zh:'紫峰大厦',en:'Zifeng Tower'},         color:0x9fb6c9, accent:0x7fd3ff, scale:1.00, theme:'asia' },
   marrakech:    { type:'marrakech',    name:{zh:'Jemaa el-Fna',en:'Jemaa el-Fna'},     color:0xc9a46a, accent:0xffb347, scale:1.00, theme:'africa' },
-  nantong:      { type:'nantong',      name:{zh:'濠河 · 南通老城',en:'Hao River · Nantong Old Town'}, color:0x9fb6c9, accent:0x7fd3ff, scale:1.00, theme:'asia' }
+  nantong:      { type:'nantong',      name:{zh:'濠河 · 南通老城',en:'Hao River · Nantong Old Town'}, color:0x9fb6c9, accent:0x7fd3ff, scale:1.00, theme:'asia' },
+  vancouver:    { type:'shangrila',    name:{zh:'香格里拉大厦',en:'Living Shangri-La'}, color:0x9fb6c9, accent:0x7fd3ff, scale:1.00, theme:'americas' }
 };
 
 const LANDMARK_HEIGHTS = {
   eiffel: 33, empire: 36, burj: 64, bigben: 26, bank: 28, marina: 27,
   stbasil: 20, pyramid: 13, seoul: 34, gate: 16, pingan: 50, canton: 42, potala: 20, taipei101: 48,
-  brandenburg: 14, ryugyong: 40, bitexco: 36, cntower: 50, royalpalace: 16, colosseum: 14, ifs: 24, raffles: 30, citic: 52, shanghaitower: 63, arc: 15, salesforce: 40, highroller: 56, bazaar: 32, sapphire: 28, mahanakhon: 31, portside: 14, italia: 17, sydneytower: 31, westerkerk: 8, eureka: 30, datang: 10, petronas: 45, willis: 44, sagrada: 18, grantorre: 30, hassan: 21, abeno: 30, monas: 13, zifeng: 45, marrakech: 10, nantong: 10
+  brandenburg: 14, ryugyong: 40, bitexco: 36, cntower: 50, royalpalace: 16, colosseum: 14, ifs: 24, raffles: 30, citic: 52, shanghaitower: 63, arc: 15, salesforce: 40, highroller: 56, bazaar: 32, sapphire: 28, mahanakhon: 31, portside: 14, italia: 17, sydneytower: 31, westerkerk: 8, eureka: 30, datang: 10, petronas: 45, willis: 44, sagrada: 18, grantorre: 30, hassan: 21, abeno: 30, monas: 13, zifeng: 45, marrakech: 10, nantong: 10, shangrila: 20
 };
 
 let cityPhaseDay = false;
@@ -5144,6 +5146,20 @@ function buildNantong(cfg){
   return g;
 }
 
+
+function buildShangriLa(cfg){
+  const g = new THREE.Group();
+  lbox(g, 11, 4, 11, 0x3a3f45, 0, 0, 0);
+  for (let i = 0; i < 6; i++){
+    const w = 7.2 - i * 0.55;
+    lbox(g, w, 5.2, w, cfg.color, 0, 4 + i * 5.2, 0);
+    lbox(g, w + 0.15, 0.12, w + 0.15, cfg.accent, 0, 4 + i * 5.2 + 5.1, 0);
+  }
+  lbox(g, 4.2, 2.2, 4.2, cfg.accent, 0, 35.4, 0);
+  lcyl(g, 0.2, 0.5, 3.2, cfg.accent, 0, 37.6, 0, 6);
+  return g;
+}
+
 function buildLandmark(cfg){
   switch (cfg.type){
     case 'eiffel': return buildEiffel(cfg);
@@ -5192,6 +5208,7 @@ function buildLandmark(cfg){
     case 'zifeng': return buildZifeng(cfg);
     case 'marrakech': return buildMarrakech(cfg);
     case 'nantong': return buildNantong(cfg);
+    case 'shangrila': return buildShangriLa(cfg);
     default: return buildEmpire(cfg);
   }
 }
@@ -6018,6 +6035,17 @@ const CITY_MAPS = {
       {id:'zhonglou',name:{zh:'钟楼',en:'Bell Tower'},lng:120.8880,lat:31.9810,height:0}
     ],
     roads:[{zh:'南大街',en:'South Street',lng:120.889,lat:31.979},{zh:'濠北路',en:'Haobei Rd',lng:120.890,lat:31.985}]
+  },
+  vancouver: {
+    center:[-123.12365,49.28575], zoom:14.8, pitch:55, bearing:-20, origin:[-123.12365,49.28575], height:201,
+    label:{zh:'香格里拉大厦 · 温哥华市中心',en:'Living Shangri-La · Downtown'},
+    points:[
+      {id:'shangrila',name:{zh:'香格里拉大厦',en:'Living Shangri-La'},lng:-123.12365,lat:49.28575,height:201,major:true},
+      {id:'robson',name:{zh:'罗布森广场',en:'Robson Square'},lng:-123.1216,lat:49.2820,height:0},
+      {id:'harbour',name:{zh:'海港中心',en:'Harbour Centre'},lng:-123.1119,lat:49.2848,height:146},
+      {id:'canadaplace',name:{zh:'加拿大广场',en:'Canada Place'},lng:-123.1111,lat:49.2888,height:0}
+    ],
+    roads:[{zh:'西乔治亚街',en:'W Georgia St',lng:-123.123,lat:49.284},{zh:'布拉德街',en:'Burrard St',lng:-123.120,lat:49.285}]
   }
 };
 
@@ -6383,7 +6411,8 @@ const LANDMARK_BLUEPRINT = {
   hassan:    { mode:'osm', alt:210, radius:40, taper:0.5 },
   abeno:     { mode:'osm', alt:300, radius:40, taper:0.4 },
   monas:     { mode:'osm', alt:132, radius:35, taper:0.6 },
-  zifeng:    { mode:'osm', alt:451, radius:45, taper:0.4 }
+  zifeng:    { mode:'osm', alt:451, radius:45, taper:0.4 },
+  shangrila: { mode:'osm', alt:201, radius:45, taper:0.4 }
 };
 
 // Some landmark models are deliberately narrow. When the real footprint is
@@ -7114,14 +7143,14 @@ const GUIDE_COPY = {
   zh: {
     eyebrow: 'EARTH ONLINE / 系统说明',
     title: '游戏说明',
-    intro: '一个实时共享的 3D 地球：45 座城市、实时天气、共享分数与城市详情。下面按功能说明，并给出每条的实现要点。',
+    intro: '一个实时共享的 3D 地球：46 座城市、实时天气、共享分数与城市详情。下面按功能说明，并给出每条的实现要点。',
     close: '关闭说明',
     foot: '无需账号 · 无需 API Key · 纯静态站点'
   },
   en: {
     eyebrow: 'EARTH ONLINE / SYSTEM',
     title: 'Game Guide',
-    intro: 'A real-time, shared 3D Earth: 45 cities, live weather, shared scores and city detail. Each feature includes a short implementation note.',
+    intro: 'A real-time, shared 3D Earth: 46 cities, live weather, shared scores and city detail. Each feature includes a short implementation note.',
     close: 'Close guide',
     foot: 'NO ACCOUNT · NO API KEY · STATIC SITE'
   }
@@ -7141,8 +7170,8 @@ const GUIDE_ITEMS = [
     en: { title: 'Live weather & air', desc: 'Open-Meteo supplies current conditions, feels-like, humidity, wind, sunrise/sunset and a 3-day forecast; air quality is a separate AQI and PM2.5 request, with local time.', tech: 'Open-Meteo + 10-min cache' }
   },
   {
-    zh: { title: '45 座城市', desc: '每城包含经纬度、时区、地标、标签和详情相机；地球、榜单和城市页共用 CITIES 数据源。', tech: '单一 CITIES 数据源' },
-    en: { title: '45 cities', desc: 'Each city has coordinates, timezone, landmark, labels and a detail camera; globe, board and city view share one CITIES source.', tech: 'Single CITIES source' }
+    zh: { title: '46 座城市', desc: '每城包含经纬度、时区、地标、标签和详情相机；地球、榜单和城市页共用 CITIES 数据源。', tech: '单一 CITIES 数据源' },
+    en: { title: '46 cities', desc: 'Each city has coordinates, timezone, landmark, labels and a detail camera; globe, board and city view share one CITIES source.', tech: 'Single CITIES source' }
   },
   {
     zh: { title: '共享城市分数', desc: '点击城市 +5，进入城市详情 +10；分数全局共享、可重复，左侧榜单按分数实时排序。', tech: 'NAS 会话 + 幂等事件' },

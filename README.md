@@ -4,7 +4,7 @@ Personal profile page. Vanilla HTML/CSS/JS with native ES modules — no framewo
 
 ## Features
 
-- Work timeline, project showcase, and interests, including [Earth Online](https://elevenbeans.me/earth-online/) — an interactive 3D Earth with 45 cities, live weather and shared scores
+- Work timeline, project showcase, and interests, including [Earth Online](https://elevenbeans.me/earth-online/) — an interactive 3D Earth with 46 cities, live weather and shared scores
 - Dark/light theme with system preference detection (no first-paint flash)
 - i18n (EN / 中文)
 - Hidden retro terminal (double-click the name, `Ctrl+\``, or the hints row)
@@ -19,7 +19,7 @@ Personal profile page. Vanilla HTML/CSS/JS with native ES modules — no framewo
 - `index.html` — markup; i18n via `data-i18n` / `data-i18n-aria` / `data-i18n-placeholder`
 - `styles.css` — styling, themes, reduced-motion and print rules
 - `js/` — ES modules: `app.js` (entry) plus `state`, `i18n`, `theme`, `overlays`, `ux`, `terminal`, `assistant`, `assistant-commands`, `embedded-browser`
-- `earth-online/` — standalone interactive 3D Earth (45 cities, live weather, shared scores, MapLibre/OSM Orbital Blueprint city views); served at `/earth-online/` with no build step
+- `earth-online/` — standalone interactive 3D Earth (46 cities, live weather, shared scores, MapLibre/OSM Orbital Blueprint city views); served at `/earth-online/` with no build step
 - `tests/assistant-commands.test.js` — zero-dependency Node tests for the local command layer
 - `tests/embedded-browser.test.js` — zero-dependency Node tests for in-app browser detection
 
