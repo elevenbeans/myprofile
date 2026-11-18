@@ -970,7 +970,7 @@
   .route-row.is-done .route-row__n,.route-row.is-done .route-row__meta{color:var(--ok)}
   .route-row.is-done .route-row__city{text-decoration:line-through;text-decoration-color:rgba(94,234,212,.4)}
   .passport-grid{
-    display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin-top:14px;
+    display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:14px;
   }
   .passport-stamp{
     position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:3px;
@@ -982,8 +982,8 @@
     border-color:rgba(125,211,252,.4);background:rgba(125,211,252,.07);color:var(--ink);outline:none;
   }
   .passport-stamp__num{font-family:var(--mono);font-size:8px;letter-spacing:.08em;color:var(--dim)}
-  .passport-stamp strong{font-size:11.5px;font-weight:500;line-height:1.25;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
-  .passport-stamp__country{font-family:var(--mono);font-size:7.5px;letter-spacing:.05em;color:var(--dim);text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+  .passport-stamp strong{font-size:11.5px;font-weight:500;line-height:1.35;color:var(--muted);white-space:normal;overflow:visible;overflow-wrap:anywhere;max-width:100%}
+  .passport-stamp__country{font-family:var(--mono);font-size:7.5px;line-height:1.35;letter-spacing:.05em;color:var(--dim);text-transform:uppercase;white-space:normal;overflow:visible;overflow-wrap:anywhere;max-width:100%}
   .passport-stamp__scans{margin-top:auto;font-family:var(--mono);font-size:7.5px;letter-spacing:.05em;color:var(--dim);text-transform:uppercase}
   .passport-stamp.is-visited{border-color:rgba(212,163,115,.3);background:rgba(212,163,115,.06);color:var(--ink)}
   .passport-stamp.is-visited strong{color:var(--accent)}
@@ -2848,13 +2848,14 @@ function renderPassport(){
   }
   const route = currentRoute();
   if (passportRouteEl) passportRouteEl.innerHTML = routeSectionHTML(route);
-  passportListEl.innerHTML = CITIES.map((city, index) => {
+  const ordered = CITIES.slice().sort((a, b) => Number(!!explorer.visits[b.id]) - Number(!!explorer.visits[a.id]));
+  passportListEl.innerHTML = ordered.map((city, index) => {
     const visit = explorer.visits[city.id];
     const scans = Math.min(3, scanCount(city.id));
     const classes = 'passport-stamp' + (visit ? ' is-visited' : '') + (scans >= 3 ? ' is-scanned' : '');
     const meta = visit ? tr('passport-first', { date: stampDate(visit.first, city) }) : tr('passport-unvisited');
     return '<button type="button" class="' + classes + '" data-city-id="' + city.id + '" title="' + meta + '">' +
-      '<span class="passport-stamp__num">' + String(index + 1).padStart(2, '0') + ' / ' + CITIES.length + '</span>' +
+      '<span class="passport-stamp__num">' + String(index + 1).padStart(2, '0') + '</span>' +
       '<strong>' + city.name[lang] + '</strong>' +
       '<span class="passport-stamp__country">' + city.country[lang] + '</span>' +
       '<span class="passport-stamp__scans">' + scans + '/3 SCAN</span>' +
