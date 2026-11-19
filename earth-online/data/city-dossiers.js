@@ -386,5 +386,13 @@ export const CITY_DOSSIERS = {
       zh: '振风塔立在迎江寺与长江之间，七层八角砖木塔身把安庆老城和江面收进同一根垂直轴线。',
       en: 'Zhenfeng Pagoda rises between Yingjiang Temple and the Yangtze, tying Anqing’s old town to the river in one vertical axis.'
     }
+  },
+  qianxian: {
+    year: 684,
+    architect: null,
+    fact: {
+      zh: '乾陵把梁山整座山体纳入陵园，司马道、双阙和石刻列阵沿山势展开，建筑高度让位于地形。',
+      en: 'Qianling folds the whole Liangshan ridge into a tomb landscape, with the spirit way and stone guardians following the terrain rather than a tower.'
+    }
   }
 };
