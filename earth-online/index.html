@@ -554,15 +554,15 @@
   .city-scoreline{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-top:11px;font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;color:var(--dim);text-transform:uppercase}
   .city-scoreline b{font-size:18px;font-weight:400;letter-spacing:0;color:var(--accent);font-variant-numeric:tabular-nums}
 
+  .panel__cityline{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
   .city-page{
-    display:flex;align-items:center;justify-content:space-between;gap:8px;
-    margin-top:13px;padding:9px 11px;border:1px solid rgba(125,211,252,.18);border-radius:7px;
-    background:rgba(125,211,252,.045);color:var(--ink);text-decoration:none;
-    font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;
-    transition:border-color .2s,background .2s,color .2s;
+    display:inline-flex;align-items:center;gap:4px;padding:2px 5px;border:1px solid rgba(125,211,252,.26);
+    border-radius:4px;background:rgba(125,211,252,.06);color:var(--cyan);text-decoration:none;
+    font-family:var(--mono);font-size:8px;line-height:1.4;letter-spacing:.06em;text-transform:uppercase;
+    vertical-align:middle;transition:border-color .2s,background .2s,color .2s;
   }
-  .city-page:hover,.city-page:focus-visible{border-color:rgba(125,211,252,.5);background:rgba(125,211,252,.1);color:#fff;outline:none}
-  .city-page em{font-style:normal;color:var(--accent);font-size:12px;letter-spacing:0}
+  .city-page:hover,.city-page:focus-visible{border-color:rgba(125,211,252,.55);background:rgba(125,211,252,.13);color:#fff;outline:none}
+  .city-page em{font-style:normal;color:var(--accent);font-size:9px;letter-spacing:0}
   .enter-city{margin-top:17px}
   .act--enter{border-color:rgba(125,211,252,.42);background:rgba(125,211,252,.08);color:#c9f0ff}
   .act--enter:hover{background:rgba(125,211,252,.15);border-color:rgba(125,211,252,.7);color:#fff;box-shadow:0 0 34px rgba(125,211,252,.16)}
@@ -1328,7 +1328,12 @@
       <div class="panel__head">
         <div>
           <div class="panel__eyebrow"><span id="pCountry">—</span><span class="sep">·</span><span id="pCoord">—</span></div>
-          <h2 class="panel__city" id="pCity" aria-live="polite">—</h2>
+          <div class="panel__cityline">
+            <h2 class="panel__city" id="pCity" aria-live="polite">—</h2>
+            <a class="city-page" id="cityPageLink" href="#" target="_blank" rel="noopener noreferrer" hidden>
+              <span data-i18n="city-page">城市页</span><em>↗</em>
+            </a>
+          </div>
         </div>
         <button type="button" class="icon-btn" id="closeBtn" aria-label="关闭" data-i18n-aria="close">✕</button>
       </div>
@@ -1366,10 +1371,6 @@
 
       <div class="panel__section" data-i18n="panel-forecast">未来三天</div>
       <div class="forecast" id="pForecast"></div>
-
-      <a class="city-page" id="cityPageLink" href="#" target="_blank" rel="noopener noreferrer" hidden>
-        <span data-i18n="city-page">城市页</span><em>↗</em>
-      </a>
 
       <div class="enter-city">
         <button type="button" class="act act--enter" id="enterCityBtn" data-i18n="enter-city">进入城市 · +10</button>

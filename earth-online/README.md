@@ -43,7 +43,7 @@ The passport, scan progress, daily route and card export are frontend-only:
 
 ## City pages
 
-The city panel links to the corresponding [Budgetair](https://www.budgetair.co.uk/) city page when one exists:
+The city panel links to the corresponding [Budgetair](https://www.budgetair.co.uk/) city page next to the city name when one exists:
 
 - **城市页 / City page ↗** opens the external page in a new tab.
 - The URL map lives in `data/city-pages.js`; it is a plain `cityId → HTTPS URL` table.
