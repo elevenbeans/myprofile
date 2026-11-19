@@ -554,6 +554,15 @@
   .city-scoreline{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-top:11px;font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;color:var(--dim);text-transform:uppercase}
   .city-scoreline b{font-size:18px;font-weight:400;letter-spacing:0;color:var(--accent);font-variant-numeric:tabular-nums}
 
+  .city-page{
+    display:flex;align-items:center;justify-content:space-between;gap:8px;
+    margin-top:13px;padding:9px 11px;border:1px solid rgba(125,211,252,.18);border-radius:7px;
+    background:rgba(125,211,252,.045);color:var(--ink);text-decoration:none;
+    font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+    transition:border-color .2s,background .2s,color .2s;
+  }
+  .city-page:hover,.city-page:focus-visible{border-color:rgba(125,211,252,.5);background:rgba(125,211,252,.1);color:#fff;outline:none}
+  .city-page em{font-style:normal;color:var(--accent);font-size:12px;letter-spacing:0}
   .enter-city{margin-top:17px}
   .act--enter{border-color:rgba(125,211,252,.42);background:rgba(125,211,252,.08);color:#c9f0ff}
   .act--enter:hover{background:rgba(125,211,252,.15);border-color:rgba(125,211,252,.7);color:#fff;box-shadow:0 0 34px rgba(125,211,252,.16)}
@@ -1358,6 +1367,10 @@
       <div class="panel__section" data-i18n="panel-forecast">未来三天</div>
       <div class="forecast" id="pForecast"></div>
 
+      <a class="city-page" id="cityPageLink" href="#" target="_blank" rel="noopener noreferrer" hidden>
+        <span data-i18n="city-page">城市页</span><em>↗</em>
+      </a>
+
       <div class="enter-city">
         <button type="button" class="act act--enter" id="enterCityBtn" data-i18n="enter-city">进入城市 · +10</button>
         <p class="panel__hint" data-i18n="enter-hint">进入地标与周边 3D 场景 · +10 分</p>
@@ -1507,6 +1520,7 @@
   </div>
 <script type="module">
 import { CITY_DOSSIERS } from './data/city-dossiers.js';
+import { CITY_PAGE_URLS } from './data/city-pages.js';
 
 /* ------------------------------------------------------------------
    Earth Online · mini
@@ -1716,6 +1730,7 @@ const I18N = {
     'board-updated':'更新于 {t}',
     'board-empty':'暂无数据',
     'city-score':'城市积分',
+    'city-page':'城市页',
     'passport-label':'轨道护照',
     'passport-note':'本地收集记录，只存在当前浏览器；不参与全球城市分数。',
     'passport-summary':'{visited}/{total} 已盖章 · {scanned} 城已完成扫描',
@@ -1892,6 +1907,7 @@ const I18N = {
     'board-updated':'Updated {t}',
     'board-empty':'No data yet',
     'city-score':'CITY SCORE',
+    'city-page':'City page',
     'passport-label':'Orbital passport',
     'passport-note':'A local collection, stored only in this browser; it does not affect the global city score.',
     'passport-summary':'{visited}/{total} stamped · {scanned} fully scanned',
@@ -2168,6 +2184,7 @@ const scanDossierBtn = $('#scanDossierBtn');
 const scanListEl = $('#scanList');
 const pCityScoreEl = $('#pCityScore');
 const enterCityBtn = $('#enterCityBtn');
+const cityPageLinkEl = $('#cityPageLink');
 const cityViewEl = $('#cityView');
 const cityGestureEl = $('#cityGesture');
 const cityBackEl = $('#cityBack');
@@ -3633,6 +3650,24 @@ function setPanelHeader(city){
   $('#pCountry').textContent = city.country[lang];
   $('#pCoord').textContent = formatCoord(city.lat, city.lon);
   $('#pCity').textContent = city.name[lang];
+  if (cityPageLinkEl){
+    const raw = CITY_PAGE_URLS[city.id];
+    let href = '';
+    try {
+      const url = new URL(raw || '');
+      if (url.protocol === 'https:') href = url.href;
+    } catch (err) { href = ''; }
+    cityPageLinkEl.hidden = !href;
+    if (href){
+      cityPageLinkEl.href = href;
+      cityPageLinkEl.title = city.name[lang] + ' · ' + tr('city-page');
+      cityPageLinkEl.setAttribute('aria-label', city.name[lang] + ' · ' + tr('city-page'));
+    } else {
+      cityPageLinkEl.removeAttribute('href');
+      cityPageLinkEl.removeAttribute('title');
+      cityPageLinkEl.removeAttribute('aria-label');
+    }
+  }
 }
 
 function updatePanelClock(){
@@ -8294,6 +8329,10 @@ const GUIDE_ITEMS = [
   {
     zh: { title: '城市明信片', desc: '桌面生成 1600×1000，手机生成 1080×1350 竖版 PNG，带城市二维码；支持保存和系统分享。', tech: 'Canvas + QR + Share' },
     en: { title: 'City postcard', desc: 'Renders 1600×1000 on desktop or 1080×1350 portrait on phones, with a city QR code, Save and native Share.', tech: 'Canvas + QR + Share' }
+  },
+  {
+    zh: { title: '城市页外链', desc: '天气面板按城市 ID 显示 Budgetair 城市页入口；有 URL 才显示，点击新标签打开，不影响积分。', tech: 'city-pages.js' },
+    en: { title: 'City page link', desc: 'The weather panel shows a Budgetair city page when one is mapped by city ID; it opens in a new tab and does not affect scores.', tech: 'city-pages.js' }
   },
   {
     zh: { title: '底图兜底', desc: '矢量瓦片不可用时自动使用 Esri 深灰/浅灰底图，城市、标签和地标仍然可读。', tech: 'OSM 矢量 + Esri 栅格' },

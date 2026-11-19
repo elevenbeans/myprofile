@@ -41,6 +41,15 @@ The passport, scan progress, daily route and card export are frontend-only:
 - The daily route is deterministic from the UTC date and a noon solar snapshot, so every visitor gets the same three stops for that day.
 - Postcards are composed on a Canvas from the live MapLibre canvas; no upload or server render is involved. Desktop cards are 1600×1000; phone cards are 1080×1350 with larger type. Export opens a preview with Save and, where supported, the native Share sheet. The PNG includes a QR code pointing at the city page, and the share payload also carries the city detail URL where the platform accepts it. WeChat Moments still requires saving the image and posting it from the album; a web page cannot open Moments directly.
 
+## City pages
+
+The city panel links to the corresponding [Budgetair](https://www.budgetair.co.uk/) city page when one exists:
+
+- **城市页 / City page ↗** opens the external page in a new tab.
+- The URL map lives in `data/city-pages.js`; it is a plain `cityId → HTTPS URL` table.
+- Pyongyang has no URL and therefore shows no link.
+- This is a link-out only: no iframe, no external API, no score change, and no dependency on the Budgetair page being reachable.
+
 ## All cities — Orbital Blueprint
 
 Every city now opens the same MapLibre/OSM city view instead of a procedural diorama:
