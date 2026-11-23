@@ -47,6 +47,7 @@ The city panel links to the corresponding [Budgetair](https://www.budgetair.co.u
 
 - **城市页 / City page ↗** opens the external page in a new tab.
 - The URL map lives in `data/city-pages.js`; it is a plain `cityId → HTTPS URL` table.
+- Every outbound city-page URL is tagged with `utm_source=earth-online`, `utm_medium=referral`, `utm_campaign=city-page` and `utm_content=<cityId>`.
 - Pyongyang has no URL and therefore shows no link.
 - This is a link-out only: no iframe, no external API, no score change, and no dependency on the Budgetair page being reachable.
 

@@ -3647,17 +3647,27 @@ function onCityClick(city){
 
 /* ---------------- city panel ---------------- */
 
+function cityPageHref(city, raw){
+  try {
+    const url = new URL(raw || '');
+    if (url.protocol !== 'https:') return '';
+    url.searchParams.set('utm_source', 'earth-online');
+    url.searchParams.set('utm_medium', 'referral');
+    url.searchParams.set('utm_campaign', 'city-page');
+    url.searchParams.set('utm_content', city.id);
+    return url.href;
+  } catch (err) {
+    return '';
+  }
+}
+
 function setPanelHeader(city){
   $('#pCountry').textContent = city.country[lang];
   $('#pCoord').textContent = formatCoord(city.lat, city.lon);
   $('#pCity').textContent = city.name[lang];
   if (cityPageLinkEl){
     const raw = CITY_PAGE_URLS[city.id];
-    let href = '';
-    try {
-      const url = new URL(raw || '');
-      if (url.protocol === 'https:') href = url.href;
-    } catch (err) { href = ''; }
+    const href = cityPageHref(city, raw);
     cityPageLinkEl.hidden = !href;
     if (href){
       cityPageLinkEl.href = href;
