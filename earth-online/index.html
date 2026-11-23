@@ -3,6 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!-- Google Tag Manager -->
+<script async src="https://www.googletagmanager.com/gtm.js?id=GTM-T94MQPM7"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+</script>
+<!-- End Google Tag Manager -->
 <title>Earth Online · mini — 3D 地球、46 城实时天气与城市地图</title>
 <meta name="description" content="Earth Online · mini 是一个可交互的 3D 地球：覆盖北京、上海、东京、巴黎、纽约等 46 座城市，查看实时天气、共享城市积分、OSM 3D 地标与 Orbital Blueprint 城市明信片。">
 <meta name="author" content="Elevenbeans">
@@ -1643,6 +1651,9 @@
 </style>
 </head>
 <body>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T94MQPM7" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
   <h1 class="sr-only">Earth Online · mini — 3D 地球、46 城实时天气与城市地图</h1>
   <div class="boot" id="boot">
     <div class="boot__inner">
@@ -1941,6 +1952,14 @@
 <script type="module">
 import { CITY_DOSSIERS } from './data/city-dossiers.js';
 import { CITY_PAGE_URLS } from './data/city-pages.js';
+
+// GTM/GA4 dataLayer events. GTM container is loaded in <head>.
+function trackEvent(name, params = {}){
+  try {
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({ event: name, site_section: 'earth-online', ...params });
+  } catch (err) { /* analytics must never break the app */ }
+}
 
 /* ------------------------------------------------------------------
    Earth Online · mini
@@ -3438,6 +3457,10 @@ function openPassport(){
   passportModalEl.classList.add('is-open');
   passportModalEl.setAttribute('aria-hidden', 'false');
   if (passportCloseEl) passportCloseEl.focus();
+  trackEvent('passport_open', {
+    visited: visitedCount(),
+    scanned: fullyScannedCount()
+  });
   sfx('tick');
 }
 function closePassport(){
@@ -4531,6 +4554,11 @@ function selectCity(city, opts = {}){
   focusCamera(city, instant);
   setPanelHeader(city);
   updateDocumentMeta(city);
+  trackEvent('city_focus', {
+    city_id: city.id,
+    city_name: city.name.en,
+    source: opts.fromRoute ? 'route' : 'ui'
+  });
   updatePanelClock();
   updatePanelScore();
   updateHudCity();
@@ -6451,8 +6479,17 @@ function markRouteStop(cityId){
   updateRouteStrip(route);
   if (isPassportOpen()) renderPassport();
   const city = findCityById(cityId);
+  trackEvent('route_stop', {
+    city_id: cityId,
+    city_name: city ? city.name.en : cityId,
+    progress: route.done.length,
+    total: route.stops.length
+  });
   if (city) toast(tr('route-toast', { city: city.name[lang] }), 'gold');
-  if (route.done.length === route.stops.length) toast(tr('route-complete'), 'gold');
+  if (route.done.length === route.stops.length){
+    trackEvent('route_complete', { stops: route.stops.length });
+    toast(tr('route-complete'), 'gold');
+  }
 }
 
 function buildCityDetail(city){
@@ -7423,6 +7460,12 @@ function scanCityPoint(city, point){
   }
   const scans = Math.min(3, scanCount(city.id));
   updateScanHUD();
+  trackEvent('landmark_scan', {
+    city_id: city.id,
+    city_name: city.name.en,
+    landmark: point.id,
+    progress: scans
+  });
   sfx(scans >= 3 ? 'contract' : 'tick');
   toast(tr('scan-toast', { n: scans, city: city.name[lang] }), scans >= 3 ? 'gold' : 'build');
   if (scans >= 3){
@@ -8063,6 +8106,7 @@ function openPostcardPreview(canvas, blob, city){
   postcardModalEl.classList.add('is-open');
   postcardModalEl.setAttribute('aria-hidden', 'false');
   if (postcardCloseEl) postcardCloseEl.focus();
+  trackEvent('postcard_generate', { city_id: city.id, city_name: city.name.en });
 }
 
 function closePostcard(){
@@ -8093,6 +8137,7 @@ function savePostcard(){
     a.click();
     a.remove();
   }
+  trackEvent('postcard_save', { city_id: postcardState.cityId, format: 'png' });
   toast(tr('postcard-saved'), 'gold');
 }
 
@@ -8121,6 +8166,7 @@ async function sharePostcard(){
       // Some targets reject files + url together; keep the image share working.
       await navigator.share({ files: shareData.files, title: shareData.title, text: shareData.text });
     }
+    trackEvent('postcard_share', { city_id: postcardState.cityId, method: 'web_share', has_url: true });
     toast(tr('postcard-share-ok'), 'gold');
   } catch (err){
     if (err && err.name === 'AbortError') return;
@@ -8470,6 +8516,11 @@ function enterCity(city, opts = {}){
   if (opts.award !== false) awardScore(city, 'detail');
   detail.active = true;
   detail.city = city;
+  trackEvent('city_enter', {
+    city_id: city.id,
+    city_name: city.name.en,
+    score_award: opts.award !== false
+  });
   activeMapConfig = CITY_MAPS[city.id] || null;
   setCityPhase(cityIsDay(city));
   recordVisit(city);
@@ -9017,6 +9068,14 @@ function bindUI(){
     if (point) scanCityPoint(detail.city, point);
   });
   if (postcardBtnEl) postcardBtnEl.addEventListener('click', openPostcard);
+  if (cityPageLinkEl) cityPageLinkEl.addEventListener('click', () => {
+    const city = world.selected;
+    trackEvent('city_page_click', {
+      city_id: city ? city.id : null,
+      city_name: city ? city.name.en : null,
+      url: cityPageLinkEl.href
+    });
+  });
   if (postcardCloseEl) postcardCloseEl.addEventListener('click', closePostcard);
   if (postcardSaveEl) postcardSaveEl.addEventListener('click', savePostcard);
   if (postcardShareEl) postcardShareEl.addEventListener('click', sharePostcard);

@@ -26,6 +26,18 @@ const ARCHIVE_URL = `${EARTH_URL}cities/`;
 const CITY_BASE = `${EARTH_URL}city/`;
 const OG_IMAGE = `${EARTH_URL}preview/home.webp`;
 const OG_IMAGE_ALT = 'Earth Online 的 3D 地球、城市积分与实时天气';
+const GTM_ID = 'GTM-T94MQPM7';
+const GTM_HEAD = `<!-- Google Tag Manager -->
+<script async src="https://www.googletagmanager.com/gtm.js?id=${GTM_ID}"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+</script>
+<!-- End Google Tag Manager -->`;
+const GTM_BODY = `<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=${GTM_ID}" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->`;
 
 const html = fs.readFileSync(INDEX_PATH, 'utf8');
 
@@ -226,6 +238,7 @@ function breadcrumbHtml(city){
 
 function headBlock({ title, description, canonical, ogType, jsonLd, cssHref }){
   return `<head>
+${GTM_HEAD}
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>${esc(title)}</title>
@@ -411,6 +424,7 @@ ${headBlock({
     cssHref: '../../city-pages.css'
   })}
 <body>
+${GTM_BODY}
 <a class="skip" href="#main">跳到正文</a>
 ${siteHeader()}
 <main id="main">
@@ -573,6 +587,7 @@ ${headBlock({
     cssHref: '../city-pages.css'
   })}
 <body>
+${GTM_BODY}
 <a class="skip" href="#main">跳到正文</a>
 ${siteHeader()}
 <main id="main">

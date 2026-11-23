@@ -51,6 +51,25 @@ The city panel links to the corresponding [Budgetair](https://www.budgetair.co.u
 - Pyongyang has no URL and therefore shows no link.
 - This is a link-out only: no iframe, no external API, no score change, and no dependency on the Budgetair page being reachable.
 
+## Analytics
+
+The shared `myprofile` Google Tag Manager container `GTM-T94MQPM7` is loaded on the profile page, Earth Online and all generated city/archive pages. There is no separate Earth Online GA property.
+
+Earth Online pushes these `dataLayer` events (with `site_section: earth-online`):
+
+- `city_focus`
+- `city_enter`
+- `city_page_click`
+- `passport_open`
+- `landmark_scan`
+- `postcard_generate`
+- `postcard_save`
+- `postcard_share`
+- `route_stop`
+- `route_complete`
+
+Configure the GA4 config tag and matching Custom Event triggers in GTM. Static pages send regular page views through the same container; SPA actions are available as the events above.
+
 ## Crawlable city pages
 
 Hash routes are useful for the app, but search engines treat `#/city/paris` as part of one page. The repo therefore also ships static, crawlable pages:
