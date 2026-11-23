@@ -1,4 +1,4 @@
-import { getLastFocused, setLastFocused } from './state.js?v=8';
+import { getLastFocused, setLastFocused } from './state.js?v=10';
 
 const overlays = new Map();
 let openStack = [];

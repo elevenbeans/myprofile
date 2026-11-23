@@ -711,7 +711,18 @@ main {
 .assistant__tool-header.read { color: var(--assistant-accent); }
 .assistant__tool-icon { font-size: 0.85rem; }
 .assistant__tool-title { font-weight: 600; }
-.assistant__tool-arrow { color: var(--assistant-muted); margin-left: auto; font-size: 0.7rem; }
+.assistant__tool-arrow { color: var(--assistant-muted); margin-left: 0.4rem; font-size: 0.7rem; }
+.assistant__tool-demo {
+  margin-left: auto;
+  padding: 0.05rem 0.42rem;
+  border: 1px solid var(--assistant-border);
+  border-radius: 999px;
+  font-size: 0.58rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--assistant-muted);
+  white-space: nowrap;
+}
 .assistant__tool-output {
   padding: 0.5rem 0.75rem;
   border-top: 1px solid var(--assistant-border);
@@ -721,6 +732,31 @@ main {
   white-space: pre-wrap;
   background: var(--assistant-bg);
   line-height: 1.5;
+}
+.assistant__tool-status {
+  margin-left: auto;
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--assistant-muted);
+  white-space: nowrap;
+}
+.assistant__tool-call.is-running .assistant__tool-status { color: var(--assistant-yellow); }
+.assistant__tool-call.is-running .assistant__tool-status::before {
+  content: '';
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  margin-right: 0.35rem;
+  border-radius: 50%;
+  background: currentColor;
+  animation: toolPulse 1.2s ease-in-out infinite;
+}
+.assistant__tool-call.is-ok .assistant__tool-status { color: var(--assistant-green); }
+.assistant__tool-call.is-error .assistant__tool-status { color: var(--assistant-red); }
+.assistant__tool-call.is-error .assistant__tool-result { color: var(--assistant-red); }
+@keyframes toolPulse {
+  50% { opacity: 0.25; }
 }
 
 .assistant__thinking {

@@ -1,4 +1,4 @@
-import { open, close, register } from './overlays.js?v=8';
+import { open, close, register } from './overlays.js?v=10';
 
 const termInput = document.getElementById('terminalInput');
 const termOutput = document.getElementById('terminalOutput');

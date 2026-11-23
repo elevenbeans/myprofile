@@ -52,6 +52,8 @@ function helpText(locale) {
       '- `clear` —— 清空对话与历史记录',
       '- `forget me` —— 清除已保存的记忆',
       '- `exit` —— 关闭此面板',
+      '',
+      '以上工具卡片都是离线演示——不会执行命令，也不会写文件。',
     ].join('\n');
   }
   return [
@@ -65,6 +67,8 @@ function helpText(locale) {
     '- `clear` — clear the transcript and saved history',
     '- `forget me` — wipe saved memory',
     '- `exit` — close this overlay',
+    '',
+    'Those tool cards are offline demos — no commands run and no files change.',
   ].join('\n');
 }
 

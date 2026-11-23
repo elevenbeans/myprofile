@@ -8,7 +8,7 @@ Personal profile page. Vanilla HTML/CSS/JS with native ES modules — no framewo
 - Dark/light theme with system preference detection (no first-paint flash)
 - i18n (EN / 中文)
 - Hidden retro terminal (double-click the name, `Ctrl+\``, or the hints row)
-- Hidden AI assistant (`ai` in the terminal, the hint button, or `Ctrl+Shift+\``) — streams real replies from the NAS `profile-chat` endpoint, grounded in the projects' own docs, with localStorage memory and offline easter-egg commands
+- Hidden AI assistant (`ai` in the terminal, the hint button, or `Ctrl+Shift+\``) — streams real replies from the NAS `profile-chat` endpoint, grounded in the projects' own docs, with localStorage memory and offline easter-egg commands. The endpoint negotiates an NDJSON event stream (`text` / `tool_call` / `tool_result` / `done`), so real `get_project_doc` executions render as tool cards instead of being invisible prompt injection; the client falls back to plain text when events are unavailable
 - The API allowlists `*.elevenbeans.me` origins, so in-app browsers (e.g. WeChat) are blocked; the assistant shows a "use a standard browser" hint and the offline commands still work
 - Keyboard accessible (skip link, focus management, ARIA, live regions)
 - Respects `prefers-reduced-motion`; core content works without JavaScript
@@ -18,9 +18,10 @@ Personal profile page. Vanilla HTML/CSS/JS with native ES modules — no framewo
 
 - `index.html` — markup; i18n via `data-i18n` / `data-i18n-aria` / `data-i18n-placeholder`
 - `styles.css` — styling, themes, reduced-motion and print rules
-- `js/` — ES modules: `app.js` (entry) plus `state`, `i18n`, `theme`, `overlays`, `ux`, `terminal`, `assistant`, `assistant-commands`, `embedded-browser`
+- `js/` — ES modules: `app.js` (entry) plus `state`, `i18n`, `theme`, `overlays`, `ux`, `terminal`, `assistant`, `assistant-events`, `assistant-commands`, `embedded-browser`
 - `earth-online/` — standalone interactive 3D Earth (46 cities, live weather, shared scores, MapLibre/OSM Orbital Blueprint city views); served at `/earth-online/` with no build step
 - `tests/assistant-commands.test.js` — zero-dependency Node tests for the local command layer
+- `tests/assistant-events.test.js` — zero-dependency Node tests for the NDJSON event parser (chunk splits, malformed lines, flush)
 - `tests/embedded-browser.test.js` — zero-dependency Node tests for in-app browser detection
 
 ## Local development
@@ -41,7 +42,7 @@ The project showcase links to [`/earth-online/`](./earth-online/), a self-contai
 ## Tests
 
 ```bash
-npm test        # runs tests/assistant-commands.test.js and tests/embedded-browser.test.js
+npm test        # runs the assistant-commands, assistant-events and embedded-browser tests
 ```
 
 ## Asset versioning

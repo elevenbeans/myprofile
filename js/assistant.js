@@ -1,8 +1,9 @@
-import { open, close, register } from './overlays.js?v=8';
-import { resolveLocalCommand } from './assistant-commands.js?v=8';
-import { storage } from './state.js?v=8';
-import { t, getLang } from './i18n.js?v=8';
-import { isEmbeddedBrowser } from './embedded-browser.js?v=8';
+import { open, close, register } from './overlays.js?v=10';
+import { resolveLocalCommand } from './assistant-commands.js?v=10';
+import { createEventStreamParser } from './assistant-events.js?v=10';
+import { storage } from './state.js?v=10';
+import { t, getLang } from './i18n.js?v=10';
+import { isEmbeddedBrowser } from './embedded-browser.js?v=10';
 
 const assistantMessages = document.getElementById('assistantMessages');
 const assistantInput = document.getElementById('assistantInput');
@@ -189,6 +190,7 @@ function addAssistantToolCall(tool) {
     '<span class="assistant__tool-title">' +
     (tool.title || ({ bash: 'Run bash', edit: 'Edit file', read: 'Read file' }[tool.type] || 'Tool')) +
     '</span>' +
+    '<span class="assistant__tool-demo">offline demo</span>' +
     '<span class="assistant__tool-arrow">\u2193</span>';
   tc.appendChild(hdr);
   if (tool.cmd) {
@@ -205,6 +207,140 @@ function addAssistantToolCall(tool) {
   }
   assistantMessages.appendChild(tc);
   scrollMessages();
+}
+
+const TOOL_TITLES = { get_project_doc: 'Read project doc' };
+
+function formatToolArgs(args) {
+  if (args == null) return '';
+  if (typeof args === 'string') return args;
+  try {
+    return Object.entries(args)
+      .map(([key, value]) => {
+        const rendered = typeof value === 'string' ? value : JSON.stringify(value);
+        return key + ': ' + rendered;
+      })
+      .join('  \u00b7  ');
+  } catch (err) {
+    return '';
+  }
+}
+
+function addRealToolCall(call, beforeEl) {
+  const tc = document.createElement('div');
+  tc.className = 'assistant__tool-call is-running';
+
+  const hdr = document.createElement('div');
+  hdr.className = 'assistant__tool-header read';
+  const icon = document.createElement('span');
+  icon.className = 'assistant__tool-icon';
+  icon.textContent = '\u25C8';
+  const title = document.createElement('span');
+  title.className = 'assistant__tool-title';
+  title.textContent = TOOL_TITLES[call.name] || call.name || 'Tool';
+  const status = document.createElement('span');
+  status.className = 'assistant__tool-status';
+  status.textContent = 'running\u2026';
+  hdr.append(icon, title, status);
+  tc.appendChild(hdr);
+
+  const argsText = formatToolArgs(call.args);
+  if (argsText) {
+    const argsEl = document.createElement('div');
+    argsEl.className = 'assistant__tool-output';
+    argsEl.textContent = argsText;
+    tc.appendChild(argsEl);
+  }
+
+  const resultEl = document.createElement('div');
+  resultEl.className = 'assistant__tool-output assistant__tool-result';
+  resultEl.hidden = true;
+  tc.appendChild(resultEl);
+
+  if (beforeEl && beforeEl.parentNode === assistantMessages) {
+    assistantMessages.insertBefore(tc, beforeEl);
+    scrollMessages();
+  } else {
+    assistantMessages.appendChild(tc);
+    scrollMessages();
+  }
+  return { el: tc, status, resultEl };
+}
+
+function completeRealToolCall(card, result) {
+  if (!card) return;
+  const ok = result.ok !== false;
+  card.el.classList.remove('is-running');
+  card.el.classList.add(ok ? 'is-ok' : 'is-error');
+  card.status.textContent = ok
+    ? 'done' + (typeof result.ms === 'number' ? ' \u00b7 ' + result.ms + 'ms' : '')
+    : 'failed';
+  card.resultEl.hidden = false;
+  card.resultEl.textContent = result.summary || (ok ? 'ok' : t('assistant-error'));
+  scrollMessages();
+}
+
+async function readEventResponse(res, body, thinking, messageEl) {
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  const parser = createEventStreamParser();
+  const cards = new Map();
+  let full = '';
+  let started = false;
+  let failure = '';
+
+  function handle(event) {
+    if (!event || typeof event !== 'object') return;
+    if (event.type === 'text') {
+      const value = typeof event.value === 'string' ? event.value : '';
+      if (!value) return;
+      if (!started) {
+        thinking.remove();
+        started = true;
+      }
+      full += value;
+      renderStreaming(body, full);
+      return;
+    }
+    if (event.type === 'tool_call') {
+      if (!started) {
+        thinking.remove();
+        started = true;
+      }
+      cards.set(event.id, addRealToolCall(event, messageEl));
+      return;
+    }
+    if (event.type === 'tool_result') {
+      completeRealToolCall(cards.get(event.id), event);
+      return;
+    }
+    if (event.type === 'error') {
+      failure =
+        typeof event.message === 'string' && event.message
+          ? event.message
+          : t('assistant-offline');
+    }
+  }
+
+  while (true) {
+    const { value, done } = await reader.read();
+    if (done) break;
+    for (const event of parser.push(decoder.decode(value, { stream: true }))) handle(event);
+  }
+  const tail = decoder.decode();
+  if (tail) {
+    for (const event of parser.push(tail)) handle(event);
+  }
+  for (const event of parser.flush()) handle(event);
+
+  if (!failure && !full.trim() && cards.size > 0) {
+    failure =
+      getLang() === 'zh'
+        ? '工具已执行，但模型没有返回内容，请再试一次。'
+        : 'The tool ran, but the model returned no text. Please try again.';
+  }
+
+  return { full, started, failure };
 }
 
 function showAssistantThinking() {
@@ -281,6 +417,7 @@ async function runBackendReply(locale) {
   let full = '';
   let started = false;
   let finalReply = '';
+  let failure = '';
   let timedOut = false;
   let timeoutId = 0;
   const outbound = memory.history.map((m) => ({ role: m.role, content: m.content }));
@@ -297,7 +434,10 @@ async function runBackendReply(locale) {
 
     const res = await fetch(CHAT_ENDPOINT, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/x-ndjson',
+      },
       body: JSON.stringify({ messages: outbound, locale, profile: buildProfile() }),
       signal: controller.signal,
     });
@@ -308,6 +448,10 @@ async function runBackendReply(locale) {
       throw err;
     }
 
+    const isEventStream = (res.headers.get('content-type') || '').includes(
+      'application/x-ndjson'
+    );
+
     if (!res.body || typeof res.body.getReader !== 'function') {
       full = await res.text();
       if (!started) {
@@ -315,6 +459,11 @@ async function runBackendReply(locale) {
         started = true;
       }
       renderStreaming(body, full);
+    } else if (isEventStream) {
+      const result = await readEventResponse(res, body, thinking, div);
+      full = result.full;
+      started = result.started;
+      failure = result.failure;
     } else {
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
@@ -337,7 +486,9 @@ async function runBackendReply(locale) {
     }
 
     const trimmed = full.trim();
-    if (!trimmed || trimmed === OFFLINE_MARKER || trimmed.includes(OFFLINE_MARKER)) {
+    if (failure) {
+      renderError(body, failure);
+    } else if (!trimmed || trimmed === OFFLINE_MARKER || trimmed.includes(OFFLINE_MARKER)) {
       renderError(body, t('assistant-offline'));
     } else {
       body.innerHTML = marked(full);
