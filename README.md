@@ -36,7 +36,7 @@ The assistant calls the NAS endpoint. On `localhost` it uses `http://localhost:3
 
 ## Earth Online
 
-The project showcase links to [`/earth-online/`](./earth-online/), a self-contained static app: NASA globe, live Open-Meteo weather, a shared 46-city score board, and MapLibre/OSM Orbital Blueprint city views with wireframe landmarks, automatic day/night palettes, a local passport with landmark scans, daily routes and city postcards. Its README is the project doc used by the NAS profile-chat assistant. There is no build step; GitHub Pages serves the folder directly.
+The project showcase links to [`/earth-online/`](./earth-online/), a self-contained static app: NASA globe, live Open-Meteo weather, a shared 46-city score board, and MapLibre/OSM Orbital Blueprint city views with wireframe landmarks, automatic day/night palettes, a local passport with landmark scans, daily routes and city postcards, plus crawlable static city pages. Its README is the project doc used by the NAS profile-chat assistant. There is no build step; GitHub Pages serves the folder directly.
 
 ## Tests
 

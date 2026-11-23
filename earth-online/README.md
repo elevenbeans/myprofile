@@ -51,6 +51,18 @@ The city panel links to the corresponding [Budgetair](https://www.budgetair.co.u
 - Pyongyang has no URL and therefore shows no link.
 - This is a link-out only: no iframe, no external API, no score change, and no dependency on the Budgetair page being reachable.
 
+## Crawlable city pages
+
+Hash routes are useful for the app, but search engines treat `#/city/paris` as part of one page. The repo therefore also ships static, crawlable pages:
+
+- `/earth-online/cities/` — city archive grouped by country.
+- `/earth-online/city/<cityId>/` — one static page per city, including landmark, coordinates, POIs, streets, and links back into the interactive app.
+- `sitemap.xml` lists the home page, Earth Online, the archive and all 49 city pages (46 home cities + 3 detail-only cities).
+- `earth-online/index.html` updates its canonical to the matching static city page when a city is selected.
+- `node earth-online/scripts/generate-seo-pages.mjs` regenerates the pages, sitemap and main JSON-LD from the data in `index.html`; use `npm run seo:generate` or `npm run seo:check`.
+
+For Google discovery, submit `https://elevenbeans.me/sitemap.xml` in Search Console and request indexing for the root and archive pages after deployment.
+
 ## All cities — Orbital Blueprint
 
 Every city now opens the same MapLibre/OSM city view instead of a procedural diorama:
@@ -199,6 +211,19 @@ The home page uses an original slow piano piece in A minor: broken chords, a low
 - `?proc=1` — skip textures and render the procedural night-lights globe
 - `?shot=1` — screenshot mode: no intro zoom, no auto-rotation
 - `?api=https://…/api/earth-score` — override the score endpoint (useful for local NAS development)
+
+## SEO
+
+`/earth-online/` ships canonical, robots, Open Graph/Twitter tags and JSON-LD. Every city also has a static, crawlable page at `/earth-online/city/<id>/` with its landmark, coordinates, map POIs and nearby cities; `/earth-online/cities/` indexes all 49 pages (46 homepage cities + 3 detail-only). `sitemap.xml` and `robots.txt` live at the repo root.
+
+The city pages, archive, sitemap and the main JSON-LD block are generated from the data in `index.html`:
+
+```bash
+npm run seo:generate
+npm run seo:check
+```
+
+Do not edit generated `earth-online/city/**`, `earth-online/cities/index.html` or `sitemap.xml` by hand. Set `SEO_LASTMOD=YYYY-MM-DD` to override the date written to the sitemap and structured data.
 
 ## How it works
 

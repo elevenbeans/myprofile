@@ -3,6 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node tests/assistant-commands.test.js && node tests/embedded-browser.test.js"
+    "test": "node tests/assistant-commands.test.js && node tests/embedded-browser.test.js",
+    "seo:generate": "node earth-online/scripts/generate-seo-pages.mjs",
+    "seo:check": "node earth-online/scripts/generate-seo-pages.mjs --check"
   }
 }
