@@ -244,6 +244,7 @@ function headBlock({ title, description, canonical, ogType, jsonLd, cssHref }){
 <meta property="og:description" content="${esc(description)}">
 <meta property="og:url" content="${esc(canonical)}">
 <meta property="og:image" content="${OG_IMAGE}">
+<meta property="og:image:type" content="image/webp">
 <meta property="og:image:alt" content="${OG_IMAGE_ALT}">
 <meta property="og:image:width" content="1600">
 <meta property="og:image:height" content="1000">
