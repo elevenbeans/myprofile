@@ -200,9 +200,9 @@ function utmCityPage(raw, id){
   try {
     const u = new URL(raw);
     if (u.protocol !== 'https:') return '';
-    u.searchParams.set('utm_source', 'earth-online');
+    u.searchParams.set('utm_source', 'elevenbeans');
     u.searchParams.set('utm_medium', 'referral');
-    u.searchParams.set('utm_campaign', 'city-page');
+    u.searchParams.set('utm_campaign', 'earth-online-city-page');
     u.searchParams.set('utm_content', id);
     return u.href;
   } catch { return ''; }
