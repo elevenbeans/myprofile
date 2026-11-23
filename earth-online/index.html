@@ -4119,9 +4119,9 @@ function cityPageHref(city, raw){
   try {
     const url = new URL(raw || '');
     if (url.protocol !== 'https:') return '';
-    url.searchParams.set('utm_source', 'earth-online');
+    url.searchParams.set('utm_source', 'elevenbeans');
     url.searchParams.set('utm_medium', 'referral');
-    url.searchParams.set('utm_campaign', 'city-page');
+    url.searchParams.set('utm_campaign', 'earth-online-city-page');
     url.searchParams.set('utm_content', city.id);
     return url.href;
   } catch (err) {
