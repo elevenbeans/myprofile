@@ -1,9 +1,10 @@
-import { open, close, register } from './overlays.js?v=10';
-import { resolveLocalCommand } from './assistant-commands.js?v=10';
-import { createEventStreamParser } from './assistant-events.js?v=10';
-import { storage } from './state.js?v=10';
-import { t, getLang } from './i18n.js?v=10';
-import { isEmbeddedBrowser } from './embedded-browser.js?v=10';
+import { open, close, register } from './overlays.js?v=11';
+import { resolveLocalCommand } from './assistant-commands.js?v=11';
+import { createEventStreamParser } from './assistant-events.js?v=11';
+import { renderMarkdown } from './assistant-markdown.js?v=11';
+import { storage } from './state.js?v=11';
+import { t, getLang } from './i18n.js?v=11';
+import { isEmbeddedBrowser } from './embedded-browser.js?v=11';
 
 const assistantMessages = document.getElementById('assistantMessages');
 const assistantInput = document.getElementById('assistantInput');
@@ -128,27 +129,6 @@ function escapeHtml(s) {
   return d.innerHTML;
 }
 
-function marked(s) {
-  const inline = [];
-  const blocks = [];
-  return s
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/```(\w*)\n([\s\S]*?)```/g, (m, lang, code) => {
-      blocks.push(code);
-      return '\u0002' + (blocks.length - 1) + '\u0002';
-    })
-    .replace(/`([^`]+)`/g, (m, code) => {
-      inline.push(code);
-      return '\u0001' + (inline.length - 1) + '\u0001';
-    })
-    .replace(/\*\*(\S[^*]+)\*\*/g, '<strong>$1</strong>')
-    .replace(/\n/g, '<br>')
-    .replace(/\u0002(\d+)\u0002/g, (m, i) => '<pre>' + blocks[+i] + '</pre>')
-    .replace(/\u0001(\d+)\u0001/g, (m, i) => '<code>' + inline[+i] + '</code>');
-}
-
 function addAssistantMsg(type, content, cls) {
   const div = document.createElement('div');
   div.className = 'assistant__msg';
@@ -166,7 +146,7 @@ function addAssistantMsg(type, content, cls) {
 }
 
 function renderStreaming(body, text) {
-  body.innerHTML = marked(text) + '<span class="assistant__cursor"></span>';
+  body.innerHTML = renderMarkdown(text) + '<span class="assistant__cursor"></span>';
   scrollMessages();
 }
 
@@ -360,7 +340,7 @@ function showAssistantThinking() {
 }
 
 function addWelcomeMessage(key) {
-  addAssistantMsg('assistant', marked(t(key)));
+  addAssistantMsg('assistant', renderMarkdown(t(key)));
   const last = assistantMessages.lastElementChild;
   if (last) last.classList.add('assistant__welcome');
 }
@@ -376,7 +356,7 @@ function addAssistantWelcomeBack() {
 function renderHistory() {
   memory.history.forEach((m) => {
     if (m.role === 'user') addAssistantMsg('user', escapeHtml(m.content));
-    else addAssistantMsg('assistant', marked(m.content));
+    else addAssistantMsg('assistant', renderMarkdown(m.content));
   });
 }
 
@@ -491,7 +471,7 @@ async function runBackendReply(locale) {
     } else if (!trimmed || trimmed === OFFLINE_MARKER || trimmed.includes(OFFLINE_MARKER)) {
       renderError(body, t('assistant-offline'));
     } else {
-      body.innerHTML = marked(full);
+      body.innerHTML = renderMarkdown(full);
       scrollMessages();
       if (trimmed) {
         finalReply = trimmed;
@@ -506,7 +486,7 @@ async function runBackendReply(locale) {
       if (timedOut) {
         renderError(body, t('assistant-offline'));
       } else if (started) {
-        body.innerHTML = marked(full);
+        body.innerHTML = renderMarkdown(full);
       } else {
         div.remove();
       }
@@ -559,7 +539,7 @@ function submitAssistantInput(raw) {
   saveMemory();
 
   if (command && command.type === 'reply') {
-    addAssistantMsg('assistant', marked(command.text));
+    addAssistantMsg('assistant', renderMarkdown(command.text));
     if (Array.isArray(command.tools)) command.tools.forEach((tool) => addAssistantToolCall(tool));
     if (command.followup) {
       window.setTimeout(() => addAssistantToolCall(command.followup), 450);
@@ -579,7 +559,7 @@ function handleForget() {
   memory = defaultMemory();
   greetedThisSession = false;
   if (assistantMessages) assistantMessages.innerHTML = '';
-  addAssistantMsg('assistant', marked(t('assistant-forgotten')));
+  addAssistantMsg('assistant', renderMarkdown(t('assistant-forgotten')));
 }
 
 export function openAssistant(source) {

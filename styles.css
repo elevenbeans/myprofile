@@ -669,6 +669,13 @@ main {
   white-space: pre-wrap;
 }
 .assistant__msg-body strong { color: var(--assistant-strong); }
+.assistant__msg-body a {
+  color: var(--assistant-accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  word-break: break-word;
+}
+.assistant__msg-body a:hover { color: var(--assistant-strong); }
 .assistant__msg-body code {
   background: var(--assistant-code-bg);
   padding: 0.1em 0.35em;
