@@ -3561,6 +3561,15 @@ let cloudOn = true;
 
 const AUTO_SPEED = 0.00042;
 
+// The globe has radius 1, so the visible surface sits at (orbit.dist - 1).
+// Convert screen pixels to radians at that depth so a drag keeps the surface
+// under the cursor moving at roughly the same screen speed at every zoom.
+function globeDragRadiansPerPixel(){
+  const fov = ((camera && camera.fov) || 40) * Math.PI / 180;
+  const surface = Math.max(0.2, orbit.dist - 1);
+  return (Math.tan(fov / 2) * surface) / Math.max(1, window.innerHeight / 2);
+}
+
 /* ---------------- three.js init ---------------- */
 
 async function importThree(){
@@ -8729,8 +8738,9 @@ function bindOrbitControls(){
     const dx = e.clientX - prev.x;
     const dy = e.clientY - prev.y;
     if (Math.abs(dx) + Math.abs(dy) > 0){
-      orbit.tTheta = orbit.theta + dx * 0.0048;
-      orbit.tPhi = clamp(orbit.phi - dy * 0.0048, 0.16, Math.PI - 0.16);
+      const radPerPx = globeDragRadiansPerPixel();
+      orbit.tTheta = orbit.theta + dx * radPerPx;
+      orbit.tPhi = clamp(orbit.phi - dy * radPerPx, 0.16, Math.PI - 0.16);
       orbit.theta = orbit.tTheta;
       orbit.phi = orbit.tPhi;
       autoPauseUntil = performance.now() + 3500;
@@ -8781,10 +8791,11 @@ function bindOrbitControls(){
     if (e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'ArrowUp' || e.key === 'ArrowDown'){
       if (!world.selected){
         e.preventDefault();
-        if (e.key === 'ArrowLeft') orbit.tTheta -= 0.08;
-        if (e.key === 'ArrowRight') orbit.tTheta += 0.08;
-        if (e.key === 'ArrowUp') orbit.tPhi = clamp(orbit.tPhi - 0.06, 0.16, Math.PI - 0.16);
-        if (e.key === 'ArrowDown') orbit.tPhi = clamp(orbit.tPhi + 0.06, 0.16, Math.PI - 0.16);
+        const radPerPx = globeDragRadiansPerPixel();
+        if (e.key === 'ArrowLeft') orbit.tTheta -= 42 * radPerPx;
+        if (e.key === 'ArrowRight') orbit.tTheta += 42 * radPerPx;
+        if (e.key === 'ArrowUp') orbit.tPhi = clamp(orbit.tPhi - 30 * radPerPx, 0.16, Math.PI - 0.16);
+        if (e.key === 'ArrowDown') orbit.tPhi = clamp(orbit.tPhi + 30 * radPerPx, 0.16, Math.PI - 0.16);
         autoPauseUntil = performance.now() + 2500;
       }
     }
